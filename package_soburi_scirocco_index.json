@@ -9,8 +9,8 @@
           "version": "0.0.20181124",
           "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/scirocco-0.0.20181124/arduino-on-zephyr-scirocco-0.0.20181124.tar.bz2",
           "archiveFileName": "arduino-on-zephyr-scirocco-0.0.20181124.tar.bz2",
-          "checksum": "SHA-256:88f2a21d9042c51f6bd98fc519ce7953648df73a24ad94446d4e748db55c08d0",
-          "size": "87468751",
+          "checksum": "SHA-256:b1e94f5caa8bdc8f145609c5e89f68f8cdf5ad6b3935983aef24743fa50bd3c7",
+          "size": "87469621",
           "boards": [
             {
               "name": "ZephyrOS supported boards"
