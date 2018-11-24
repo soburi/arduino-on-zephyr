@@ -35,3 +35,9 @@ file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/preproc$<$<COMPILE_LANGUAGE:C>:
 ${CMAKE_CXX_COMPILER} -D$<JOIN:${defs}, -D> $<JOIN:${copts}, > -I$<JOIN:${incs}, -I> -isystem $<JOIN:${sysincs}, -isystem > -w -x c++ -E -CC -c %1 -o %2")
 
 
+file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/preproc$<$<COMPILE_LANGUAGE:C>:.c>$<$<COMPILE_LANGUAGE:ASM>:.asm>.sh
+	CONTENT
+"#! /bin/sh
+${CMAKE_CXX_COMPILER} -D$<JOIN:${defs}, -D> $<JOIN:${copts}, > -I$<JOIN:${incs}, -I> -isystem $<JOIN:${sysincs}, -isystem > -w -x c++ -E -CC -c $1 -o $2")
+
+

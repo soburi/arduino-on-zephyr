@@ -18,8 +18,14 @@ execute_process(
   ERROR_QUIET
 )
 
+if (WIN32)
+  set(run_preproc_script cmd /C preproc.bat)
+else ()
+  set(run_preproc_script sh preproc.sh)
+endif ()
+
 execute_process(
-  COMMAND cmd /C preproc.bat  ${ARDUINO_PREPROC_SOURCE} ${ARDUINO_PREPROC_TARGET}
+  COMMAND ${run_preproc_script} ${ARDUINO_PREPROC_SOURCE} ${ARDUINO_PREPROC_TARGET}
   WORKING_DIRECTORY ${preproc_dir}
   RESULT_VARIABLE retcode
 )
