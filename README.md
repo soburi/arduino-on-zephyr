@@ -10,7 +10,7 @@ Install Arduino on Zephyr plugin
 --------------------------------
 
 Use this additional package definition of 'Additional Boards Manager URLs' option that is on Arduino's preferences.
-* [http://soburi.github.io/arduino-on-zephyr/package_soburi_scirocco_index.json](http://soburi.github.io/arduino-on-zephyr/package_soburi_scirocco_index.json)
+* [https://soburi.github.io/arduino-on-zephyr/package_soburi_scirocco_index.json](https://soburi.github.io/arduino-on-zephyr/package_soburi_scirocco_index.json)
 
 Build environment setup
 ----------------------------
