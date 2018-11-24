@@ -1,6 +1,6 @@
 {
-  "name": "JN516x Boards",
-  "architecture": "jn516x",
+  "name": "ZephyrOS supported Boards",
+  "architecture": "zephyr",
   "category": "Contributed",
   "version": "XXXXXXXXXXXXXX",
   "url": "XXXXXXXXXXXXXXXXXX",
@@ -9,35 +9,14 @@
   "size": "XXXXXXXXXXXXXXXXX",
   "boards": [
     {
-      "name": "Generic JN516x board"
-    },
-    {
-      "name": "TOCOS TWE Lite"
-    },
-    {
-      "name": "SeeedStudio Mesh Bee"
+      "name": "ZephyrOS supported boards"
     }
   ],
   "toolsDependencies": [
     {
-      "packager": "intiki",
+      "packager": "scirocco",
       "name": "intiki",
-      "version": "1.0.0"
-    },
-    {
-      "packager": "intiki",
-      "name": "msys2-contiki-build",
-      "version": "0.0.1"
-    },
-    {
-      "packager": "intiki",
-      "name": "BA2-toolchain",
-      "version": "4.7.4-r36379"
-    },
-    {
-      "packager": "intiki",
-      "name": "jenprog",
-      "version": "1.1.20180614"
+      "version": "1.0.1"
     }
   ]
 }

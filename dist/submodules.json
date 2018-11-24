@@ -1,37 +1,7 @@
 [
   {
-    "path": "system/contiki",
-    "url": "https://github.com/soburi/contiki",
-    "revision": "b89fd608d843284a697004fe436f00cfeae10c0b"
-  },
-  {
-    "path": "system/contiki/cpu/cc26xx-cc13xx/lib/cc13xxware",
-    "url": "https://github.com/contiki-os/cc13xxware.git",
-    "revision": "0f44f949b4a7862ae3273739279df6297a4a4e45"
-  },
-  {
-    "path": "system/contiki/cpu/cc26xx-cc13xx/lib/cc26xxware",
-    "url": "https://github.com/contiki-os/cc26xxware.git",
-    "revision": "e816e3508b87744186acae2c5f792ad378836ae3"
-  },
-  {
-    "path": "system/contiki/platform/stm32nucleo-spirit1/stm32cube-lib",
-    "url": "https://github.com/STclab/stm32nucleo-spirit1-lib",
-    "revision": "34e784ff39a5dc4da288ce696235f41b1db4bf5c"
-  },
-  {
-    "path": "system/contiki/tools/cc2538-bsl",
-    "url": "https://github.com/JelmerT/cc2538-bsl.git",
-    "revision": "c6100a7794c7b530923145c03e37412013a4551e"
-  },
-  {
-    "path": "system/contiki/tools/mspsim",
-    "url": "https://github.com/contiki-os/mspsim.git",
-    "revision": "47ae45cb0f36337115e32adb2a5ba0bf6e1e4437"
-  },
-  {
-    "path": "system/contiki/tools/sensniff",
-    "url": "https://github.com/g-oikonomou/sensniff.git",
-    "revision": "0d57c1129b601d29a58bffe6e34803af5e1701af"
+    "path": "system/zephyr",
+    "url": "https://github.com/soburi/zephyr",
+    "revision": "9e895acf4e0c0cc2d9f007131bf2201c06dd51a7"
   }
 ]

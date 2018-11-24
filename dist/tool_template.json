@@ -1,45 +1,6 @@
 [
   {
-    "name": "msys2-contiki-build",
-    "version": "XXXXX",
-    "systems": [
-      {
-        "url": "https://github.com/soburi/${NAME}/releases/download/${VERSION}/${NAME}_${ARCH}_${VERSION}.tar.bz2",
-        "host": "XXXXXXXXXXXXXXXX",
-        "archiveFileName": "XXXXX",
-        "checksum": "XXXXXXXXXXXX",
-        "size": "XXXXXXXXXXXXXXXX"
-      }
-    ]
-  },
-  {
     "name": "intiki",
-    "version": "XXXXX",
-    "systems": [
-      {
-        "url": "https://github.com/soburi/${NAME}/releases/download/${VERSION}/${NAME}_${ARCH}_${VERSION}.tar.bz2",
-        "host": "XXXXXXXXXXXXXXXX",
-        "archiveFileName": "XXXXX",
-        "checksum": "XXXXXXXXXXXX",
-        "size": "XXXXXXXXXXXXXXXX"
-      }
-    ]
-  },
-  {
-    "name": "BA2-toolchain",
-    "version": "XXXXX",
-    "systems": [
-      {
-        "url": "https://github.com/soburi/${NAME}/releases/download/${VERSION}/${NAME}_${ARCH}_${VERSION}.tar.bz2",
-        "host": "XXXXXXXXXXXXXXXX",
-        "archiveFileName": "XXXXX",
-        "checksum": "XXXXXXXXXXXX",
-        "size": "XXXXXXXXXXXXXXXX"
-      }
-    ]
-  },
-  {
-    "name": "jenprog",
     "version": "XXXXX",
     "systems": [
       {
