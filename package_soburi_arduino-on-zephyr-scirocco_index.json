@@ -6,11 +6,11 @@
           "name": "ZephyrOS supported Boards",
           "architecture": "zephyr",
           "category": "Contributed",
-          "version": "0.0.1811241318",
-          "url": "https://github.com/soburi/arduino-on-zephyr/archive/dc829d3c425c217e55aff4a8acbc1bc3e1db4a74.tar.gz",
-          "archiveFileName": "arduino-on-zephyr-scirocco-0.0.1811241318.tar.gz",
-          "checksum": "SHA-256:ae238c46c273d7ff9205270b2fc887c35fef38e4639857bfe19168e485d9ce81",
-          "size": "67702",
+          "version": "0.0.1811241450",
+          "url": "https://github.com/soburi/arduino-on-zephyr/archive/54b03989705c07e798b8a65303ed3ef941733103.tar.gz",
+          "archiveFileName": "arduino-on-zephyr-scirocco-0.0.1811241450.tar.gz",
+          "checksum": "SHA-256:a6ab81a37acfbbd4ed0214c4b61394ee4cefdd109d2c8dcc0d8e88cfe727c233",
+          "size": "67721",
           "boards": [
             {
               "name": "ZephyrOS supported boards"
