@@ -24,8 +24,11 @@
 #include "Stream.h"
 #include "variant.h"
 
-#include "wiring_private.h"
+
 #include "RingBuffer.h"
+
+#include <device.h>
+#include <i2c.h>
 
  // WIRE_HAS_END means Wire has end()
 #define WIRE_HAS_END 1
@@ -33,9 +36,9 @@
 class TwoWire : public Stream
 {
   public:
-    TwoWire(struct i2c_device *i2cdev);
+    TwoWire(struct device *i2cdev);
     void begin();
-    void begin(uint8_t);
+    void begin(uint8_t, bool enableGeneralCall = false);
     void end();
     void setClock(uint32_t);
 
@@ -62,10 +65,8 @@ class TwoWire : public Stream
     inline size_t write(int n) { return write((uint8_t)n); }
     using Print::write;
 
-    void onService(void);
-
   private:
-    struct i2c_device* i2c;
+    struct device* i2c;
     uint32_t clock;
     bool master_mode;
 
@@ -75,6 +76,26 @@ class TwoWire : public Stream
     // Callback user functions
     void (*onRequestCallback)(void);
     void (*onReceiveCallback)(int);
+
+    RingBufferN<SERIAL_BUFFER_SIZE> rxBuf;
+    RingBufferN<SERIAL_BUFFER_SIZE> txBuf;
+
+    bool request_received;
+    bool data_received;
+
+    struct i2c_slave_config slave_config;
+
+    static int dispatch_write_requested(struct i2c_slave_config *config);
+    static int dispatch_read_requested(struct i2c_slave_config *config, u8_t *val);
+    static int dispatch_write_received(struct i2c_slave_config *config, u8_t *val);
+    static int dispatch_read_processed(struct i2c_slave_config *config, u8_t *val);
+    static int dispatch_stop(struct i2c_slave_config *config); 
+    
+    int onWriteRequested(struct i2c_slave_config *config);
+    int onReadRequested(struct i2c_slave_config *config, u8_t *val);
+    int onWriteReceived(struct i2c_slave_config *config, u8_t *val);
+    int onReadProcessed(struct i2c_slave_config *config, u8_t *val);
+    int onStop(struct i2c_slave_config *config);
 
     // TWI clock frequency
     static const uint32_t TWI_CLOCK = 100000;
