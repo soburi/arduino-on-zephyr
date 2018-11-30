@@ -17,14 +17,15 @@
 */
 
 #include <zephyr.h>
-#include "include/uart.h"
+#include <uart.h>
 #include "Uart.h"
 #include "Arduino.h"
 #include "wiring_private.h"
 
+
 Uart::Uart(struct device *_s)
 {
-  uart = device_get_binding("");
+  uart = _s;
 }
 
 void Uart::begin(unsigned long baudrate)
@@ -32,8 +33,16 @@ void Uart::begin(unsigned long baudrate)
 	begin(baudrate, SERIAL_8N1);
 }
 
-void Uart::begin(unsigned long baudrate, uint16_t config)
+void Uart::begin(unsigned long baud, uint16_t conf)
 {
+	begin_impl(baud, conf);
+}
+
+void Uart::begin_impl(unsigned long baud, uint16_t conf)
+{
+	//TODO newapi
+	uart_irq_callback_user_data_set(uart, Uart::IrqDispatch, this);
+	uart_irq_rx_enable(uart);
 }
 
 void Uart::end()
@@ -49,11 +58,30 @@ void Uart::flush()
 
 void Uart::IrqHandler()
 {
-	unsigned char c;
-	int ret = 0;//uart_fifo_read(uart, &c, 1); 
-	if(ret) {
-		rxBuffer.store_char(c);
+	uart_irq_update(uart);
+
+	if (uart_irq_tx_ready(uart)) {
+		data_transmitted = true;
 	}
+
+	int rxcount = uart_irq_rx_ready(uart);
+	if(rxcount == 0) return;
+
+	do {
+		static uint8_t buf[32];
+		int ret = uart_fifo_read(uart, buf, max(rxcount, 32) ); 
+		if(ret) {
+			for(int i=0; i<max(rxcount, 32); i++) {
+				rxBuffer.store_char(buf[i]);
+			}
+		}
+		rxcount = uart_irq_rx_ready(uart);
+	} while(rxcount > 0);
+}
+
+void Uart::IrqDispatch(void* data)
+{
+	reinterpret_cast<Uart*>(data)->IrqHandler();
 }
 
 int Uart::available()
@@ -76,8 +104,31 @@ int Uart::read()
 	return rxBuffer.read_char();
 }
 
+size_t Uart::write(const uint8_t *buffer, size_t size)
+{
+	uart_irq_tx_enable(uart);
+
+	int len = size;
+	while (len) {
+		int written;
+
+		data_transmitted = false;
+		written = uart_fifo_fill(uart, buffer, len);
+		while (data_transmitted == false) {
+			k_yield();
+		}
+
+		len -= written;
+		buffer += written;
+	}
+
+	uart_irq_tx_disable(uart);
+	return 0;
+}
+
+
 size_t Uart::write(const uint8_t data)
 {
-	//uart_poll_out(uart, data);
+	write(&data, 1);
 	return 1;
 }

@@ -27,6 +27,7 @@
 #include "Arduino.h"
 #ifdef __cplusplus
 #include "Uart.h"
+#include "UartACM.h"
 #endif // __cplusplus
 
 #ifdef __cplusplus
@@ -154,6 +155,7 @@ extern Uart Serial2;
 #ifdef HAS_UART_3
 extern Uart Serial3;
 #endif
+extern UartACM SerialACM;
 
 #endif
 

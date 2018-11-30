@@ -19,12 +19,14 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <zephyr.h>
 #include "HardwareSerial.h"
 #include "RingBuffer.h"
 
 #include <stddef.h>
-#include <include/uart.h>
+#include <uart.h>
 
 class Uart : public HardwareSerial
 {
@@ -39,15 +41,23 @@ class Uart : public HardwareSerial
     int read();
     void flush();
     size_t write(const uint8_t data);
+    size_t write(const uint8_t *buffer, size_t size);
+
     using Print::write; // pull in write(str) and write(buf, size) from Print
 
     void IrqHandler();
 
     operator bool() { return true; }
 
-  private:
+  protected:
     struct device *uart;
+    virtual void begin_impl(unsigned long baudrate, uint16_t config);
+  private:
     RingBuffer rxBuffer;
+    static void IrqDispatch(void* data);
+
+    volatile bool data_transmitted;
+
 #if 0
     RingBuffer txBuffer;
 
@@ -66,3 +76,5 @@ class Uart : public HardwareSerial
     SercomParityMode extractParity(uint16_t config);
 #endif
 };
+
+#endif
