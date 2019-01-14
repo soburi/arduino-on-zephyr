@@ -21,6 +21,25 @@
 
 #include <ctype.h>
 
+#if !defined(CONFIG_NEWLIB_LIBC)
+static inline int islower(int c)
+{
+	return 0;
+}
+static inline int ispunct(int c)
+{
+	return 0;
+}
+static inline int isblank(int c)
+{
+	return 0;
+}
+static inline int iscntrl(int c)
+{
+	return 0;
+}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

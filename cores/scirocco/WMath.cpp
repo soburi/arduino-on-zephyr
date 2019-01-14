@@ -19,6 +19,11 @@
 extern "C" {
   #include "stdlib.h"
   #include "stdint.h"
+  
+#if !defined(CONFIG_NEWLIB_LIBC)
+  extern void srand(unsigned int x);
+  extern int rand();
+#endif
 }
 #include "WMath.h"
 

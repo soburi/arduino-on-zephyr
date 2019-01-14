@@ -19,50 +19,25 @@
 #include "delay.h"
 #include "Arduino.h"
 
-#include "platform.h"
-
-#include "wiring_private.h"
-
-#include <sys/clock.h>
+#include <sys_clock.h>
 
 unsigned long millis( void )
 {
-	return clock_seconds() * 1000 + (RTIMER_NOW() % RTIMER_ARCH_SECOND) * 1000 / RTIMER_ARCH_SECOND;
+	return k_uptime_get();
 }
 
-// Interrupt-compatible version of micros
-// Theory: repeatedly take readings of SysTick counter, millis counter and SysTick interrupt pending flag.
-// When it appears that millis counter and pending is stable and SysTick hasn't rolled over, use these
-// values to calculate micros. If there is a pending SysTick, add one to the millis counter in the calculation.
 unsigned long micros( void )
 {
-	return RTIMER_NOW() /(RTIMER_ARCH_SECOND/1000000);
-}
-
-static struct etimer delay_timer;
-
-static void delay_timer_start(void* data)
-{
-	uint32_t ms = *(uint32_t*)data;
-	etimer_set(&delay_timer, CLOCK_SECOND * ms /1000);
-}
-
-static int delay_timer_expired(process_event_t ev, process_data_t data, void* param)
-{
-	(void)ev; (void)data; (void)param;
-	return etimer_expired(&delay_timer);
+	return k_uptime_get() * 1000; //TODO
 }
 
 void delay( unsigned long ms )
 {
-	yield_until(delay_timer_start, &ms, delay_timer_expired, NULL);
+	k_sleep(ms);
 }
 
-void _delayMicrosecondsDefault( unsigned int usec )
+void _delayMicroseconds( unsigned int usec )
 {
-	clock_delay_usec(usec);
+	k_busy_wait(usec);
 }
 
-#ifndef OVERLOAD_DELAYMICROSECONDS
-void delayMicroseconds( unsigned int usec ) __attribute__((weak,alias("_delayMicrosecondsDefault")));
-#endif

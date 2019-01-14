@@ -16,13 +16,15 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <zephyr.h>
+#include "include/uart.h"
 #include "Uart.h"
 #include "Arduino.h"
 #include "wiring_private.h"
 
-Uart::Uart(struct uart_device *_s)
+Uart::Uart(struct device *_s)
 {
-  uart=_s;
+  uart = device_get_binding("");
 }
 
 void Uart::begin(unsigned long baudrate)
@@ -32,29 +34,26 @@ void Uart::begin(unsigned long baudrate)
 
 void Uart::begin(unsigned long baudrate, uint16_t config)
 {
-	uint8_t parity  =  config & HARDSER_PARITY_MASK;
-	uint8_t stopbit = (config & HARDSER_STOP_BIT_MASK) >> 4;
-	uint8_t wordlen = ((config & HARDSER_DATA_MASK) >> 8) + 4;
-	uint8_t flowctrl = 0;
-	
-	uart->init(uart->portinfo, baudrate, parity, stopbit, wordlen, flowctrl);
-	uart->set_input(uart->portinfo, uart->input);
 }
 
 void Uart::end()
 {
 	flush();
-	uart->deinit(uart->portinfo);
+	//uart->deinit(uart->portinfo);
 }
 
 void Uart::flush()
 {
-	while (uart->busy(uart->portinfo) ) ;
+	//while (uart_irq_tx_complete(uart) );
 }
 
 void Uart::IrqHandler()
 {
-	rxBuffer.store_char(uart->received);
+	unsigned char c;
+	int ret = 0;//uart_fifo_read(uart, &c, 1); 
+	if(ret) {
+		rxBuffer.store_char(c);
+	}
 }
 
 int Uart::available()
@@ -64,7 +63,7 @@ int Uart::available()
 
 int Uart::availableForWrite()
 {
-	return uart->txbuffer_availables(uart->portinfo);
+	return 0;//return uart->txbuffer_availables(uart->portinfo);
 }
 
 int Uart::peek()
@@ -79,6 +78,6 @@ int Uart::read()
 
 size_t Uart::write(const uint8_t data)
 {
-	uart->writeb(uart->portinfo, data);
+	//uart_poll_out(uart, data);
 	return 1;
 }

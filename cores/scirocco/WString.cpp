@@ -22,6 +22,12 @@
 #include "WString.h"
 #include "itoa.h"
 #include "avr/dtostrf.h"
+#if !defined(CONFIG_NEWLIB_LIBC)
+extern "C" {
+  extern long atol(char* buffer);
+  extern double atof(char* buffer);
+}
+#endif
 
 /*********************************************/
 /*  Constructors                             */

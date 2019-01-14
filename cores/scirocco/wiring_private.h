@@ -22,56 +22,20 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "platform.h"
-#include <sys/mt.h>
-#include <sys/process.h>
-#include <lib/sensors.h>
-#include <lib/list.h>
-#include <dev/button-sensor.h>
+#include <zephyr.h>
 
 #include "WInterrupts.h"
 #include "wiring_constants.h"
 
-typedef int (*fp_condition)(process_event_t, process_data_t, void*);
-typedef void (*fp_run)(void*);
+#include <gpio.h>
 
-enum main_thread_wait_type
-{
-	WT_NONE,
-	WT_WAIT_UNTIL,
-	WT_YIELD_UNTIL,
-	WT_YIELD,
-	WT_PAUSE
-};
+extern int* gpio_configs;
 
-extern void yield_to_main_thread(enum main_thread_wait_type type, fp_run run, void* run_param, fp_condition condition, void* condition_param);
-extern void yield_until(fp_run run, void* run_param, fp_condition condition, void* condition_param);
-
-extern void yield_continue(fp_run run, void* run_param);
-
-extern void post_continue();
-
-typedef struct
-{
-	struct start_process_list_t* next;
-	struct process* process;
-} start_process_t;
-
-extern void add_start_process(start_process_t* p);
-
-struct buttonCallback
-{
-	const struct sensors_sensor* button;
-	voidFuncPtr callback;
-	uint32_t mode;
-};
-struct buttonCallback* button2ButtonCallback(struct sensors_sensor*);
-
-struct sensors_sensor* gpioPin2Button(uint32_t pin);
-
+extern struct gpio_callback* gpio_cb;
 
 struct uart_device {
 	int     (*input)( uint8_t c);

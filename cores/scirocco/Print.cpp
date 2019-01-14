@@ -19,7 +19,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#if !defined(CONFIG_NEWLIB_LIBC)
+extern "C" {
+  extern int isnan(double x);
+  extern int isinf(double x);
+}
+#else
 #include <math.h>
+#endif
 #include "Arduino.h"
 
 #include "Print.h"

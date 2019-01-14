@@ -16,100 +16,55 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifdef USE_WINTERRUPTS_PSEUDO_IMPLEMENT
-
-#include <contiki.h>
-#include <lib/sensors.h>
-#include <sys/process.h>
-#include <dev/button-sensor.h>
-
 #include "Arduino.h"
 
 #include "wiring_private.h"
+#include <zephyr.h>
+#include <gpio.h>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-PROCESS(buttons_callback, "Buttons callback");
-#pragma GCC diagnostic pop
 
-static void winterrupts_c_constructor() __attribute__((constructor));
-static void winterrupts_c_constructor()
+
+static void (*callbacks[1])(void);
+
+void gpio_handler(struct device *port, struct gpio_callback *cb, u32_t pins)
 {
-	static start_process_t button_l;
-	button_l.process = &buttons_callback;
-	add_start_process(&button_l);
+	for(int i=0; i<32; i++)
+	{
+		if(pins & (1<<i)) callbacks[i]();
+	}
 }
 
-PROCESS_THREAD(buttons_callback, ev, data)
+void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode)
 {
-	PROCESS_BEGIN();
-
-	while(true)
+	int pinconf = gpio_configs[pin];
+	if(gpio_configs[pin] & 0xF000)
 	{
-		PROCESS_WAIT_EVENT_UNTIL(ev == sensors_event);
-
-		struct sensors_sensor* button = (struct sensors_sensor*)data;
-		int value = button->value(0);
-
-		const struct buttonCallback* cb = button2ButtonCallback(button);
-
-		if(cb)
-		{
-			if(  (cb->mode == CHANGE)
-			  || (cb->mode == RISING  && value == 1)
-			  || (cb->mode == FALLING && value == 0) )
-			{
-				cb->callback();
-			}
-		}
+		pinconf = GPIO_DIR_IN;
 	}
 
-	PROCESS_END();
+	switch(mode)
+	{
+	case LOW:
+		pinconf |= (GPIO_INT_LEVEL | GPIO_INT_ACTIVE_LOW);
+	case HIGH:
+		pinconf |= (GPIO_INT_LEVEL | GPIO_INT_ACTIVE_HIGH);
+	case CHANGE:
+		pinconf |= (GPIO_INT_EDGE  | GPIO_INT_DOUBLE_EDGE);
+	case FALLING:
+		pinconf |= (GPIO_INT_EDGE  | GPIO_INT_ACTIVE_LOW);
+	case RISING:
+		pinconf |= (GPIO_INT_EDGE  | GPIO_INT_ACTIVE_HIGH);
+	}
+
+	gpio_configs[pin] = pinconf;
+	gpio_pin_configure(device_get_binding(PIN2PORT(pin)), PIN2PORTPIN(pin), pinconf);
+	gpio_init_callback(&gpio_cb[pin], gpio_handler, BIT(PIN2PORTPIN(pin)));
+	gpio_add_callback(device_get_binding(PIN2PORT(pin)), &gpio_cb[pin]);
 }
 
-void _attachInterruptDefault(uint32_t pin, voidFuncPtr callback, uint32_t mode)
+void detachInterrupt(uint32_t pin)
 {
-	struct sensors_sensor* button = NULL;
-	struct buttonCallback* cb = NULL;
-	
-	button = gpioPin2Button(pin);
-
-	if(!button) return;
-
-	cb = button2ButtonCallback(button);
-
-	if(!cb) return;
-
-	cb->callback = callback;
-	cb->mode = mode;
-	SENSORS_ACTIVATE(*button);
+	gpio_remove_callback(device_get_binding(PIN2PORT(pin)), &gpio_cb[pin]);
 }
 
-void _detachInterruptDefault(uint32_t pin)
-{
-	struct sensors_sensor* button = gpioPin2Button(pin);
-	if(!button) return;
-	SENSORS_DEACTIVATE(*button);
-}
-
-struct sensors_sensor* _gpioPin2ButtonDefault(uint32_t pin)
-{
-	(void)pin;
-	return (struct sensors_sensor*)&button_sensor;
-}
-
-struct buttonCallback buttonCB = {0};
-struct buttonCallback* _button2ButtonCallbackDefault(const struct sensors_sensor* button)
-{
-	(void)button;
-	return &buttonCB;
-}
-
-void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode) __attribute__((weak,alias("_attachInterruptDefault")));
-void detachInterrupt(uint32_t pin) __attribute__((weak,alias("_detachInterruptDefault")));
-
-struct sensors_sensor* gpioPin2Button(uint32_t pin) __attribute__((weak,alias("_gpioPin2ButtonDefault")));
-struct buttonCallback* button2ButtonCallback(struct sensors_sensor*) __attribute__((weak,alias("_button2ButtonCallbackDefault")));
-
-#endif /* USE_WINTERRUPTS_PSEUDO_IMPLEMENT */
 

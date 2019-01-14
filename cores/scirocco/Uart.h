@@ -19,17 +19,17 @@
 
 #pragma once
 
+#include <zephyr.h>
 #include "HardwareSerial.h"
 #include "RingBuffer.h"
 
-#include <cstddef>
-
-struct uart_device;
+#include <stddef.h>
+#include <include/uart.h>
 
 class Uart : public HardwareSerial
 {
   public:
-    Uart(struct uart_device *_s);
+    Uart(struct device *_s);
     void begin(unsigned long baudRate);
     void begin(unsigned long baudrate, uint16_t config);
     void end();
@@ -46,7 +46,7 @@ class Uart : public HardwareSerial
     operator bool() { return true; }
 
   private:
-    struct uart_device *uart;
+    struct device *uart;
     RingBuffer rxBuffer;
 #if 0
     RingBuffer txBuffer;

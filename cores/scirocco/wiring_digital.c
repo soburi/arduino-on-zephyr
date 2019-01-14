@@ -16,57 +16,53 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifdef USE_WIRING_DIGITAL_PSEUDO_IMPLEMENT
-
 #include "Arduino.h"
-
-#include <dev/leds.h>
+#include "variant.h"
+#include "wiring_private.h"
+#include <gpio.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-uint32_t gpioPin2LedBits(uint32_t ulPin) __attribute__((weak));
-uint32_t gpioPin2LedBits(uint32_t ulPin)
-{
-	return ulPin;
-}
 
-void _pinModeDefault( uint32_t ulPin, uint32_t ulMode )
+void pinMode( uint32_t ulPin, uint32_t ulMode )
 {
-	(void)ulPin; (void)ulMode;
-}
-
-
-void _digitalWriteDefault( uint32_t ulPin, uint32_t ulVal )
-{
-	if(ulVal == LOW)
+	int mode = 0;
+	switch(ulMode)
 	{
-		leds_off( gpioPin2LedBits(ulPin) );
+	case INPUT:
+		mode = GPIO_DIR_IN;
+		break;
+	case OUTPUT:
+		mode = GPIO_DIR_OUT;
+		break;
+	case INPUT_PULLUP:
+		mode = GPIO_DIR_IN | GPIO_PUD_PULL_UP;
+		break;
 	}
-	else
-	{
-		leds_on( gpioPin2LedBits(ulPin) );
-	}
+
+	gpio_configs[ulPin] = mode;
+
+	gpio_pin_configure(device_get_binding(PIN2PORT(ulPin)), PIN2PORTPIN(ulPin), mode);
 }
 
 
-int _digitalReadDefault( uint32_t ulPin )
+void digitalWrite( uint32_t ulPin, uint32_t ulVal )
 {
-	if( leds_get() & gpioPin2LedBits(ulPin) )
-	{
-		return HIGH;
-	}
-	
-	return LOW;
+	gpio_pin_write(device_get_binding(PIN2PORT(ulPin)), PIN2PORTPIN(ulPin), ulVal ? 1 : 0);
 }
 
-void pinMode( uint32_t ulPin, uint32_t ulMode ) __attribute__((weak, alias("_pinModeDefault")));
-void digitalWrite( uint32_t ulPin, uint32_t ulVal ) __attribute__((weak, alias("_digitalWriteDefault")));
-int digitalRead( uint32_t ulPin ) __attribute__((weak, alias("_digitalReadDefault")));
+
+int digitalRead( uint32_t ulPin )
+{
+	u32_t value;
+	gpio_pin_read(device_get_binding(PIN2PORT(ulPin)), PIN2PORTPIN(ulPin), &value);
+	return value ? 1 : 0;
+}
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* USE_WIRING_DIGITAL_PSEUDO_IMPLEMENT */
 

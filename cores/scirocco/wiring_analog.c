@@ -16,8 +16,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifdef USE_WIRING_ANALOG_PSEUDO_IMPLEMENT
-
 #include "Arduino.h"
 #include "wiring_private.h"
 
@@ -25,20 +23,51 @@
 extern "C" {
 #endif
 
+#include <zephyr.h>
+#include <adc.h>
+#include <pwm.h>
 
-void _analogReferenceDefault( eAnalogReference ulMode ) { (void)ulMode; }
-void _analogWriteDefault( uint32_t ulPin, uint32_t ulValue ) { (void)ulPin; (void)ulValue; }
-uint32_t _analogReadDefault( uint32_t ulPin ) { (void)ulPin; return 0; }
-void _analogReadResolutionDefault(int res) { (void)res; }
-void _analogWriteResolutionDefault(int res) { (void)res; }
-void _analogOutputInitDefault( void ) { }
+static int pwm_resolution = 255;
 
-void analogReference( eAnalogReference ulMode ) __attribute__((weak,alias("_analogReferenceDefault")));
-void analogWrite( uint32_t ulPin, uint32_t ulValue ) __attribute__((weak,alias("_analogWriteDefault")));
-uint32_t analogRead( uint32_t ulPin ) __attribute__((weak,alias("_analogReadDefault")));
-void analogReadResolution(int res) __attribute__((weak,alias("_analogReadResolutionDefault")));
-void analogWriteResolution(int res) __attribute__((weak,alias("_analogWriteResolutionDefault")));
-void analogOutputInit( void ) __attribute__((weak,alias("_analogOutputInitDefault")));
+void analogReference( eAnalogReference ulMode )
+{
+	struct adc_channel_cfg cfg;
+	cfg.gain = ADC_GAIN_1; 
+	cfg.reference = EXTERNAL ? ADC_REF_EXTERNAL0 : ADC_REF_INTERNAL;
+	cfg.channel_id = 0;
+	cfg.differential = 0;
+
+	adc_channel_setup(NULL, &cfg);
+}
+
+uint32_t analogRead( uint32_t ulPin )
+{
+	struct adc_sequence seq;
+	adc_read(NULL, &seq);
+	return 0;
+}
+
+void _analogReadResolution(int res)
+{
+	struct adc_channel_cfg cfg;
+	cfg.gain = ADC_GAIN_1; 
+	cfg.reference = EXTERNAL ? ADC_REF_EXTERNAL0 : ADC_REF_INTERNAL;
+	cfg.channel_id = 0;
+	cfg.differential = 0;
+
+	adc_channel_setup(NULL, &cfg);
+}
+
+void analogWrite( uint32_t ulPin, uint32_t ulValue )
+{
+	pwm_pin_set_cycles(NULL, ulPin, pwm_resolution, ulValue);
+}
+
+void analogWriteResolution(int res)
+{
+	pwm_resolution = res;
+}
+
 
 
 
@@ -46,5 +75,4 @@ void analogOutputInit( void ) __attribute__((weak,alias("_analogOutputInitDefaul
 }
 #endif
 
-#endif /* USE_WIRING_ANALOG_PSEUDO_IMPLEMENT */
 
