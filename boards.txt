@@ -1,75 +1,10 @@
-menu.config=Configuration
-menu.trace=Trace
-menu.rpl=RPL
-
-jn516x.name=NXP JN516x
-jn516x.upload.tool=intiki
-jn516x.upload.protocol=intiki
-jn516x.build.mcu=jn516x
-jn516x.build.board=jn516x
-jn516x.build.f_cpu=32000000L
-jn516x.build.core=intiki
-jn516x.build.variant=jn516x
-jn516x.build.compiler.path={runtime.tools.BA2-toolchain.path}/bin/
-jn516x.build.compiler.path.windows=C:/NXP/bstudio_nxp/sdk/Tools/ba-elf-ba2-r36379/bin
-jn516x.build.uploader.path=""
-jn516x.build.options.makefile_template={runtime.platform.path}/variants/{build.variant}/makefile/Makefile.template
-jn516x.build.options.makefile_template.windows='{runtime.platform.path}/variants/{build.variant}/makefile/Makefile.template'
-jn516x.build.options.target_makefile={runtime.platform.path}/variants/{build.variant}/makefile/Makefile.override
-jn516x.build.options.target_makefile.windows='{runtime.platform.path}/variants/{build.variant}/makefile/Makefile.override'
-jn516x.build.options.flashprogrammer=FLASH_PROGRAMMER={runtime.tools.jenprog.path}/JennicModuleProgrammer
-jn516x.build.options.flashprogrammer.windows=FLASH_PROGRAMMER={runtime.tools.jenprog.path}/JennicModuleProgrammer.exe
-jn516x.build.make.vars=target_makefile={build.options.target_makefile} CONTIKI_TARGET_MAIN=override-contiki-jn516x-main.c TARGET_WITH_UART1=1 PREINCLUDE_FILES='{build.core.path}/weak_pragmas.h' {build.trace} {build.rpl} {build.options.flashprogrammer}
-jn516x.build.make.goals={build.project_name}.bin {build.project_name}.hex {build.project_name}.elf
-jn516x.menu.config.jn5169=JN5169
-jn516x.menu.config.jn5169.build.config_vars=CHIP=JN5169 LINKCMD='{runtime.platform.path}/variants/{build.variant}/ldscript/intiki_JN5169.ld'
-jn516x.menu.config.jn5168=JN5168
-jn516x.menu.config.jn5168.build.config_vars=CHIP=JN5168 LINKCMD='{runtime.platform.path}/variants/{build.variant}/ldscript/intiki_JN516x.ld'
-jn516x.menu.config.jn5164=JN5164
-jn516x.menu.config.jn5164.build.config_vars=CHIP=JN5164 LINKCMD='{runtime.platform.path}/variants/{build.variant}/ldscript/intiki_JN516x.ld'
-jn516x.menu.config.jn5161=JN5161
-jn516x.menu.config.jn5161.build.config_vars=CHIP=JN5161 LINKCMD='{runtime.platform.path}/variants/{build.variant}/ldscript/intiki_JN516x.ld'
-jn516x.menu.config.meshbee=Mesh Bee
-jn516x.menu.config.meshbee.build.config_vars=CHIP=JN5168 LINKCMD='{runtime.platform.path}/variants/{build.variant}/ldscript/intiki_JN516x.ld'
-jn516x.menu.trace.OFF=Off
-jn516x.menu.trace.OFF.build.trace=
-jn516x.menu.trace.ON=On
-jn516x.menu.trace.ON.build.trace=TRACE=1
-jn516x.menu.rpl.ON=Enable
-jn516x.menu.rpl.ON.build.rpl=CONTIKI_WITH_RPL=1
-jn516x.menu.rpl.OFF=Disable
-jn516x.menu.rpl.OFF.build.rpl=CONTIKI_WITH_RPL=0
-
-twelite.name=Mono Wireless TWELITE
-twelite.upload.tool=intiki
-twelite.upload.protocol=intiki
-twelite.build.mcu=jn516x
-twelite.build.board=jn516x
-twelite.build.f_cpu=32000000L
-twelite.build.core=intiki
-twelite.build.variant=jn516x
-twelite.build.compiler.path={runtime.tools.BA2-toolchain.path}/bin/
-twelite.build.compiler.path.windows=C:/MWSDK/Tools/ba-elf-ba2-r36379/bin
-twelite.build.uploader.path=""
-twelite.build.options.makefile_template={runtime.platform.path}/variants/{build.variant}/makefile/Makefile.template
-twelite.build.options.makefile_template.windows='{runtime.platform.path}/variants/{build.variant}/makefile/Makefile.template'
-twelite.build.options.target_makefile={runtime.platform.path}/variants/{build.variant}/makefile/Makefile.override
-twelite.build.options.target_makefile.windows='{runtime.platform.path}/variants/{build.variant}/makefile/Makefile.override'
-twelite.build.options.sdkbase=SDK_BASE_DIR=/opt/MWSDK/ChipLib/SW4063V1416
-twelite.build.options.sdkbase.windows=SDK_BASE_DIR=C:/MWSDK/ChipLib/SW4063V1416
-twelite.build.options.flashprogrammer=FLASH_PROGRAMMER={runtime.tools.jenprog.path}/JennicModuleProgrammer
-twelite.build.options.flashprogrammer.windows=FLASH_PROGRAMMER={runtime.tools.jenprog.path}/JennicModuleProgrammer.exe
-twelite.build.make.vars=target_makefile={build.options.target_makefile} CONTIKI_TARGET_MAIN=override-contiki-jn516x-main.c TARGET_WITH_UART1=1 PREINCLUDE_FILES='{build.core.path}/weak_pragmas.h' {build.trace} {build.rpl} {build.options.sdkbase} {build.options.flashprogrammer}
-twelite.build.make.goals={build.project_name}.bin {build.project_name}.hex {build.project_name}.elf
-twelite.menu.config.TWELITE_BLUE=TWELITE BLUE
-twelite.menu.config.TWELITE_BLUE.build.config_vars=CHIP=JN5164 LINKCMD='{runtime.platform.path}/variants/{build.variant}/ldscript/intiki_JN516x.ld'
-twelite.menu.config.TWELITE_RED=TWELITE RED
-twelite.menu.config.TWELITE_RED.build.config_vars=CHIP=JN5169 LINKCMD='{runtime.platform.path}/variants/{build.variant}/ldscript/intiki_JN5169.ld'
-twelite.menu.trace.OFF=Off
-twelite.menu.trace.OFF.build.trace=
-twelite.menu.trace.ON=On
-twelite.menu.trace.ON.build.trace=TRACE=1
-twelite.menu.rpl.ON=Enable
-twelite.menu.rpl.ON.build.rpl=CONTIKI_WITH_RPL=1
-twelite.menu.rpl.OFF=Disable
-twelite.menu.rpl.OFF.build.rpl=CONTIKI_WITH_RPL=0
+bbc_microbit.name=bbc_microbit
+bbc_microbit.upload.tool=intiki
+bbc_microbit.upload.protocol=intiki
+bbc_microbit.build.mcu=cortex-m0
+bbc_microbit.build.board=bbc_microbit
+bbc_microbit.build.f_cpu=32000000L
+bbc_microbit.build.core=scirocco
+bbc_microbit.build.variant=bbc_microbit
+bbc_microbit.build.compiler.path=D:\gcc-arm-none-eabi-7-2018-q2-update-win32\bin
+bbc_microbit.build.compiler.triplet=arm-none-eabi

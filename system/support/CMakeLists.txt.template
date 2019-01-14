@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.8.2)
+
+include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
+project(NONE)
+
+target_sources(app PRIVATE ### <<<ARDUINO_PREPROC_MACROS_SOURCE>>> ###)
+target_sources(app PRIVATE ### <<<ARDUINO_CORES_SRCS>>> ### )
+target_sources(app PRIVATE ### <<<ARDUINO_VARIANT_SRCS>>> ### )
+target_sources(app PRIVATE ### <<<ARDUINO_LIBRARIES_SRCS>>> ### )
+target_sources(app PRIVATE ### <<<ARDUINO_SKETCH_SRCS>>> ### )
+
+zephyr_compile_definitions(### <<<ARDUINO_PREPROC_MACROS_DEFINE_MACROS>>> ###)
+
+target_include_directories(zephyr_interface BEFORE INTERFACE $ENV{ZEPHYR_BASE})
+
+target_include_directories(zephyr_interface BEFORE INTERFACE ### <<<ARDUINO_PREPROC_MACROS_INCLUDE_DIRS>>> ###)
+include_directories( ### <<<ARDUINO_INCLUDE_DIRS>>> ### )
+link_directories( ### <<<ARDUINO_LIBRARY_DIRS>>> ### )
+add_definitions( ### <<<ARDUINO_DEFINE_MACROS>>> ### )
+
+zephyr_compile_options(-nostdinc)
+
+get_target_property(defs zephyr_interface INTERFACE_COMPILE_DEFINITIONS)
+get_target_property(copts zephyr_interface INTERFACE_COMPILE_OPTIONS)
+get_target_property(incs zephyr_interface INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(sysincs zephyr_interface INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
+
+foreach(x IN LISTS sysincs)
+	list(REMOVE_ITEM incs ${x})
+endforeach()
+
+file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/preproc$<$<COMPILE_LANGUAGE:C>:.c>$<$<COMPILE_LANGUAGE:ASM>:.asm>.bat
+	CONTENT
+"@echo off
+${CMAKE_CXX_COMPILER} -D$<JOIN:${defs}, -D> $<JOIN:${copts}, > -I$<JOIN:${incs}, -I> -isystem $<JOIN:${sysincs}, -isystem > -w -x c++ -E -CC -c %1 -o %2")
+
+
