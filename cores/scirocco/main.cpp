@@ -52,6 +52,7 @@ int main( void )
   {
     loop();
     if (serialEventRun) serialEventRun();
+    k_yield();
   }
 
   return 0;
