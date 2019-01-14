@@ -43,7 +43,6 @@ void pinMode( uint32_t ulPin, uint32_t ulMode )
 	}
 
 	gpio_configs[ulPin] = mode;
-
 	gpio_pin_configure(device_get_binding(PIN2PORT(ulPin)), PIN2PORTPIN(ulPin), mode);
 }
 

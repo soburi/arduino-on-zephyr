@@ -19,6 +19,10 @@
 #ifndef _VARIANT_JN516X_
 #define _VARIANT_JN516X_
 
+#define GPIO_PIN_NO 32
+#define PIN2PORT(x) DT_GPIO_P0_DEV_NAME
+#define PIN2PORTPIN(x) (x)
+
 
 #include "Arduino.h"
 #ifdef __cplusplus
@@ -29,10 +33,6 @@
 extern "C"
 {
 #endif // __cplusplus
-
-#define GPIO_PIN_NO 32
-#define PIN2PORT(x) CONFIG_GPIO_P0_DEV_NAME
-#define PIN2PORTPIN(x) (x)
 
 
 /*----------------------------------------------------------------------------
@@ -49,9 +49,11 @@ extern "C"
 // #define digitalPinToTimer(P)
 
 // LEDs
-#define PIN_LED2             (2)
-#define PIN_LED3             (3)
-#define LED_BUILTIN          PIN_LED2
+#define PIN_LED1             (13)
+#define PIN_LED2             (14)
+#define PIN_LED3             (15)
+#define PIN_LED4             (16)
+#define LED_BUILTIN          PIN_LED1
 
 /*
  * Analog pins

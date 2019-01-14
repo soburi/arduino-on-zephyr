@@ -18,24 +18,23 @@
 
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <zephyr.h>
+#include <gpio.h>
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 
-#include <zephyr.h>
-
 #include "WInterrupts.h"
 #include "wiring_constants.h"
+#include "variant.h"
 
-#include <gpio.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern int gpio_configs[GPIO_PIN_NO];
 
-extern int* gpio_configs;
-
-extern struct gpio_callback* gpio_cb;
+extern struct gpio_callback gpio_cb[GPIO_PIN_NO];
 
 struct uart_device {
 	int     (*input)( uint8_t c);

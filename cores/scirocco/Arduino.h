@@ -29,7 +29,7 @@
 #endif
 
 #include <zephyr.h>
-#include <board.h>
+//#include <board.h>
 #include <device.h>
 #include <gpio.h>
 

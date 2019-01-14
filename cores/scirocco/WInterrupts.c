@@ -24,7 +24,7 @@
 
 
 
-static void (*callbacks[1])(void);
+static voidFuncPtr callbacks[GPIO_PIN_NO];
 
 void gpio_handler(struct device *port, struct gpio_callback *cb, u32_t pins)
 {
@@ -42,6 +42,7 @@ void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode)
 		pinconf = GPIO_DIR_IN;
 	}
 
+	pinconf |= GPIO_INT;
 	switch(mode)
 	{
 	case LOW:
@@ -57,14 +58,19 @@ void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode)
 	}
 
 	gpio_configs[pin] = pinconf;
+	callbacks[pin] = callback;
+
 	gpio_pin_configure(device_get_binding(PIN2PORT(pin)), PIN2PORTPIN(pin), pinconf);
 	gpio_init_callback(&gpio_cb[pin], gpio_handler, BIT(PIN2PORTPIN(pin)));
 	gpio_add_callback(device_get_binding(PIN2PORT(pin)), &gpio_cb[pin]);
+	gpio_pin_enable_callback(device_get_binding(PIN2PORT(pin)), pin);
+
 }
 
 void detachInterrupt(uint32_t pin)
 {
 	gpio_remove_callback(device_get_binding(PIN2PORT(pin)), &gpio_cb[pin]);
+	gpio_pin_disable_callback(device_get_binding(PIN2PORT(pin)), pin);
 }
 
 
