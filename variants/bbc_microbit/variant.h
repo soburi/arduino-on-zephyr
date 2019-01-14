@@ -30,6 +30,11 @@ extern "C"
 {
 #endif // __cplusplus
 
+#define GPIO_PIN_NO 32
+#define PIN2PORT(x) CONFIG_GPIO_P0_DEV_NAME
+#define PIN2PORTPIN(x) (x)
+
+
 /*----------------------------------------------------------------------------
  *        Pins
  *----------------------------------------------------------------------------*/
