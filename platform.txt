@@ -32,6 +32,7 @@ build.usr.bin.path.macosx=/usr/local/bin
 build.make.command=cmake
 build.intiki.verbose=-1
 build.zephyr.env=ZEPHYR_BASE={build.system.path}/zephyr ZEPHYR_TOOLCHAIN_VARIANT=cross-compile CROSS_COMPILE={build.compiler.path}/{build.compiler.triplet}- 
+build.zephyr.env.linux=ZEPHYR_BASE={build.system.path}/zephyr ZEPHYR_TOOLCHAIN_VARIANT=zephyr ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk
 
 intiki.cmd={runtime.tools.intiki.path}/intiki
 intiki.cmd-v={intiki.cmd} {compiler.warning_flags} -verbose {build.intiki.verbose}

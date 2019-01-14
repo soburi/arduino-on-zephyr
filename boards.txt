@@ -1,4 +1,4 @@
-bbc_microbit.name=bbc_microbit
+bbc_microbit.name=BBC micro:bit
 bbc_microbit.upload.tool=intiki
 bbc_microbit.upload.protocol=intiki
 bbc_microbit.build.mcu=cortex-m0
@@ -7,4 +7,17 @@ bbc_microbit.build.f_cpu=32000000L
 bbc_microbit.build.core=scirocco
 bbc_microbit.build.variant=bbc_microbit
 bbc_microbit.build.compiler.path=D:\gcc-arm-none-eabi-7-2018-q2-update-win32\bin
+bbc_microbit.build.compiler.path.linux=/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/arm-zephyr-eabi/
 bbc_microbit.build.compiler.triplet=arm-none-eabi
+
+nrf52840_pca10056.name=nRF52840 Development Kit
+nrf52840_pca10056.upload.tool=intiki
+nrf52840_pca10056.upload.protocol=intiki
+nrf52840_pca10056.build.mcu=cortex-m0
+nrf52840_pca10056.build.board=nrf52840_pca10056
+nrf52840_pca10056.build.f_cpu=32000000L
+nrf52840_pca10056.build.core=scirocco
+nrf52840_pca10056.build.variant=nrf52840_pca10056
+nrf52840_pca10056.build.compiler.path=D:\gcc-arm-none-eabi-7-2018-q2-update-win32\bin
+nrf52840_pca10056.build.compiler.path.linux=/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/arm-zephyr-eabi/
+nrf52840_pca10056.build.compiler.triplet=arm-none-eabi
