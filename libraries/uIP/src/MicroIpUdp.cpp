@@ -16,13 +16,11 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-extern "C" {
-#include "string.h"
-#include <net/ip/uip.h>
-#include <net/ip/resolv.h>
-#define DEBUG DEBUG_NONE
-#include <net/ip/uip-debug.h>
-}
+#include <stdint.h>
+#include <stdlib.h>
+#include <zephyr.h>
+#include <kernel.h>
+#include <misc/byteorder.h>
 
 #include "Arduino.h"
 #include "wiring_private.h"
@@ -30,48 +28,23 @@ extern "C" {
 #include "MicroIp.h"
 #include "MicroIpUdp.h"
 
-struct udp_socket_params {
-  const MicroIPUDP* udp;
-  const uip_ipaddr_t* ipaddr;
-  uint16_t port;
-  int retval;
-};
+#include "zephyr_udp.h"
 
+#define PRINTF printk
 struct receive_pack {
   uint16_t length;
-  uip_ipaddr_t ipaddr;
+  struct z_in_addr in_addr;
   uint16_t port;
 };
-
-static const int sz_pack = sizeof(struct receive_pack);
 
 MicroIPUDP::MicroIPUDP() : remaining(0)
 {
-  ringbuf_init(&rxbuf, rbuf, static_cast<uint8_t>(MICROIPUDP_RXBUF_SIZE));
+  udp_init_context(context, this, MicroIPUDP::dispatch);
 }
 
 uint8_t MicroIPUDP::begin(uint16_t port)
 {
-  PRINTF("MicroIPUDP::begin(port)\n");
-  struct udp_socket_params params = { this, NULL, port, 0 };
-
-  yield_continue(do_udp_socket_register, &params);
-
-  PRINTF("MicroIPUDP::begin(port) reg_params.retval=%d\n", params.retval);
-  if(params.retval != 1)
-  {
-    return 0;
-  }
-
-  params.retval = 0;
-  yield_continue(do_udp_socket_bind, &params);
-
-  PRINTF("return MicroIPUDP::begin(port) params.retval=%d\n", params.retval);
-  if(params.retval != 1)
-  {
-    return 0;
-  }
-
+//  udp_start_listen(context, port);
   return 1;
 }
 
@@ -82,7 +55,7 @@ int MicroIPUDP::available()
 
 void MicroIPUDP::stop()
 {
-  udp_socket_close(&sock);
+  udp_close(context);
 }
 
 int MicroIPUDP::beginPacket(const char *host, uint16_t port)
@@ -96,35 +69,25 @@ int MicroIPUDP::beginPacket(const char *host, uint16_t port)
 
 int MicroIPUDP::beginPacket(IPAddress ip, uint16_t port)
 {
-  txidx = 0;
-  uip_ipaddr_t dest;
-  uip_ipaddr_IPAddress(&dest, ip);
-
-  struct udp_socket_params params = { this, &dest, port, 0 };
-  yield_continue(do_udp_socket_connect, &params);
-
+  udp_connect(context, raw_in_addr(ip), __bswap_16(port));
   return 1;
 }
 
 int MicroIPUDP::endPacket()
 {
-  struct udp_socket_params params = { this, NULL, 0, 0 };
-  yield_continue(do_udp_socket_send, &params);
-  txidx = 0;
-  if(params.retval < 0) {
-    return 0;
-  }
+  udp_send(context, txbuf._aucBuffer, txbuf.available());
+  txbuf.clear();
   return 1;
 }
 
 size_t MicroIPUDP::write(uint8_t byte)
 {
-  if( (txidx+1) < UIP_BUFSIZE ) {
-    tbuf[txidx++] = byte;
+  if( !txbuf.isFull() ) {
+    txbuf.store_char(byte);
     return 1;
   }
   else {
-    return -1;
+    return 0;
   }
 }
 
@@ -141,7 +104,7 @@ size_t MicroIPUDP::write(const uint8_t *buffer, size_t size)
 
 int MicroIPUDP::parsePacket()
 {
-  //PRINTF("MicroIPUDP::parsePacket %d %d\n", ringbuf_elements(&rxbuf), available());
+  PRINTF("MicroIPUDP::parsePacket %d %d\n", rxbuf.available(), available());
   if( available() ) {
     //notify
     //discard current data
@@ -150,18 +113,24 @@ int MicroIPUDP::parsePacket()
     }
   }
 
-  struct receive_pack pack;
-
   // garbage cleanup.
-  if( ringbuf_elements(&rxbuf) < sz_pack ) {
+  if( rxbuf.available() < static_cast<int>(sizeof(struct receive_pack)) ) {
     while( raw_read() != -1);
     remaining = 0;
   }
   else {
-    raw_read(reinterpret_cast<uint8_t*>(&pack) ,sz_pack);
+    struct receive_pack pack;
+    raw_read(reinterpret_cast<uint8_t*>(&pack) ,sizeof(struct receive_pack));
 
-    remaining = pack.length - sz_pack;
-    _remoteIP = pack.ipaddr.u8;
+    remaining = pack.length - sizeof(struct receive_pack);
+    _remoteIP = IPAddress(sys_be16_to_cpu(pack.in_addr.u16[0]),
+                          sys_be16_to_cpu(pack.in_addr.u16[1]),
+                          sys_be16_to_cpu(pack.in_addr.u16[2]),
+                          sys_be16_to_cpu(pack.in_addr.u16[3]),
+                          sys_be16_to_cpu(pack.in_addr.u16[4]),
+                          sys_be16_to_cpu(pack.in_addr.u16[5]),
+                          sys_be16_to_cpu(pack.in_addr.u16[6]),
+                          sys_be16_to_cpu(pack.in_addr.u16[7]));
     _remotePort = pack.port;
 
     PRINTF("return MicroIPUDP::parsePacket %d\n", available());
@@ -194,13 +163,7 @@ int MicroIPUDP::read(unsigned char* buf, size_t size)
 
 int MicroIPUDP::peek()
 {
-  struct ringbuf *r = &rxbuf;
-  if(((r->put_ptr - r->get_ptr) & r->mask) > 0) {
-    uint8_t c = CC_ACCESS_NOW(uint8_t, r->data[r->get_ptr]);
-    return c;
-  } else {
-    return -1;
-  }
+  return rxbuf.peek();
 }
 
 void MicroIPUDP::flush()
@@ -210,7 +173,7 @@ void MicroIPUDP::flush()
 
 int MicroIPUDP::raw_read()
 {
-  return ringbuf_get(&rxbuf);
+  return rxbuf.read_char();
 }
 
 int MicroIPUDP::raw_read(unsigned char* buf, size_t size)
@@ -225,22 +188,22 @@ int MicroIPUDP::raw_read(unsigned char* buf, size_t size)
   return size;
 }
 
-void MicroIPUDP::receive(const uip_ipaddr_t *source_addr, uint16_t source_port,
-               const uip_ipaddr_t *dest_addr, uint16_t dest_port,
-               const uint8_t *data, uint16_t datalen)
+void MicroIPUDP::receive(struct z_in_addr *source_addr, uint16_t source_port,
+                         struct z_in_addr *dest_addr, uint16_t dest_port,
+                         unsigned char *data, size_t datalen)
 {
-  const uint16_t store_size =static_cast<uint16_t>(datalen+sz_pack);
+  const uint16_t store_size = static_cast<uint16_t>(datalen + sizeof(struct receive_pack));
   struct receive_pack pack = { store_size, *source_addr, source_port };
   (void) dest_addr;
   (void) dest_port;
-  PRINTF("MicroIPUDP::receive %d %d %d\n", sz_pack, store_size, datalen );
+  PRINTF("MicroIPUDP::receive %d %d %d\n", sizeof(struct receive_pack), store_size, datalen );
 
-  if( store_size > ringbuf_size(&rxbuf) ) {
+  if( store_size > sizeof(rxbuf._aucBuffer) ) {
     //too large packet.
     return;
   }
 
-  if( store_size > ringbuf_elements(&rxbuf) ) {
+  if( store_size > rxbuf.available() ) {
     PRINTF("MicroIPUDP::receive available() %d %d\n", available(), remaining );
     if( available() ) {
       //notify discard
@@ -252,95 +215,28 @@ void MicroIPUDP::receive(const uip_ipaddr_t *source_addr, uint16_t source_port,
     }
   }
 
-  PRINTF("MicroIPUDP::receive ringbuf_size() %d ringbuf_elements() %d\n", ringbuf_size(&rxbuf) , ringbuf_elements(&rxbuf) );
-  while( store_size < ringbuf_elements(&rxbuf) ) {
-    // discard old packet.
-    parsePacket();
+  PRINTF("MicroIPUDP::receive ringbuf_size() %d ringbuf_elements() %d\n", sizeof(rxbuf._aucBuffer), rxbuf.available() );
+//  while( store_size < rxbuf.availableForStore() ) {
+//    // discard old packet.
+//    parsePacket();
+//  }
+
+  for(size_t i=0; i<sizeof(struct receive_pack); i++) {
+    rxbuf.store_char(((uint8_t*)&pack)[i]);
   }
 
-  for(int i=0; i<sz_pack; i++) {
-    int r = ringbuf_put(&rxbuf, ((uint8_t*)&pack)[i]);
-    if(r == 0) {
-      break;
-    }
+  for(size_t i=0; i<datalen; i++) {
+    rxbuf.store_char(data[i]);
   }
-
-  for(int i=0; i<datalen; i++) {
-    int r = ringbuf_put(&rxbuf, data[i]);
-    if(r == 0) {
-      break;
-    }
-  }
-  PRINTF("MicroIPUDP::receive ringbuf_size() %d ringbuf_elements() %d\n", ringbuf_size(&rxbuf) , ringbuf_elements(&rxbuf) );
+  PRINTF("MicroIPUDP::receive ringbuf_size() %d ringbuf_elements() %d\n", sizeof(rxbuf._aucBuffer) , rxbuf.available() );
 
 }
 
-void MicroIPUDP::input_callback(struct udp_socket *c, void *ptr,
-                               const uip_ipaddr_t *source_addr, uint16_t source_port,
-                               const uip_ipaddr_t *dest_addr, uint16_t dest_port,
-                               const uint8_t *data, uint16_t datalen)
+void MicroIPUDP::dispatch(void* thisptr, struct z_in_addr* srcaddr, uint16_t srcport,
+                                         struct z_in_addr* dstaddr, uint16_t dstport,
+                          unsigned char* buffer, size_t len)
 {
-  MicroIPUDP* udp = reinterpret_cast<MicroIPUDP*>(ptr);
-  (void)c;
-
-  PRINTF("data=%p\n", data);
-  int i=0;
-  for(i=0; i< datalen; i++)
-  {
-    if(i%16 == 0)
-    {
-      PRINTF("    ");
-    }
-    if(i%8 == 0)
-    {
-      PRINTF("\n");
-    }
-    PRINTF("%02x ", data[i]);
-  }
-  PRINTF("\n");
-
-  udp->receive(source_addr, source_port, dest_addr, dest_port, data, datalen);
+  PRINTF("MicroIPUDP::dispatch\n");
+  reinterpret_cast<MicroIPUDP*>(thisptr)->receive(srcaddr, srcport, dstaddr, dstport, buffer, len);
 }
 
-void MicroIPUDP::do_udp_socket_register(void* ptr)
-{
-  struct udp_socket_params* params = reinterpret_cast<struct udp_socket_params*>(ptr);
-
-  PRINTF("do_udp_socket_register\n");
-  MicroIPUDP* udp = const_cast<MicroIPUDP*>(params->udp);
-  params->retval = udp_socket_register(&udp->sock, udp, MicroIPUDP::input_callback);
-}
-
-void MicroIPUDP::do_udp_socket_bind(void* ptr)
-{
-  struct udp_socket_params* params = reinterpret_cast<struct udp_socket_params*>(ptr);
-
-  PRINTF("do_udp_socket_bind\n");
-  MicroIPUDP* udp = const_cast<MicroIPUDP*>(params->udp);
-  params->retval = udp_socket_bind(&udp->sock, params->port);
-}
-
-
-void MicroIPUDP::do_udp_socket_connect(void* ptr)
-{
-  struct udp_socket_params* params = reinterpret_cast<struct udp_socket_params*>(ptr);
-
-  int ret = udp_socket_connect(const_cast<udp_socket*>(&params->udp->sock),
-                               const_cast<uip_ipaddr_t*>(params->ipaddr), params->port);
-  PRINTF("return do_udp_socket_connect %d\n", ret);
-
-  params->retval = ret;
-}
-
-void MicroIPUDP::do_udp_socket_send(void* ptr)
-{
-  struct udp_socket_params* params = reinterpret_cast<struct udp_socket_params*>(ptr);
-
-  MicroIPUDP* udp = const_cast<MicroIPUDP*>(params->udp);
-
-  PRINTF("do_udp_socket_send ");
-  PRINT6ADDR(&udp->sock.udp_conn->ripaddr);
-  PRINTF(":%d\n", udp->sock.udp_conn->rport);
-
-  params->retval = udp_socket_send(&udp->sock, udp->tbuf, udp->txidx);
-}

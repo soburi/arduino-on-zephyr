@@ -84,6 +84,8 @@ public:
   virtual uint16_t remotePort() =0;
 protected:
   uint8_t* rawIPAddress(IPAddress& addr) { return addr.raw_address(); };
+  uint16_t* rawIPAddress6(IPAddress& addr) { return addr.raw_address6(); };
+  struct z_in_addr* raw_in_addr(IPAddress& addr) { return addr.raw_in_addr(); };
 };
 
 #endif

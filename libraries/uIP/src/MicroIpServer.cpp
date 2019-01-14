@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
+#if 0
 extern "C" {
 #define DEBUG DEBUG_NONE
 #include <net/ip/uip-debug.h>
@@ -61,3 +61,4 @@ size_t MicroIPServer::write(const uint8_t *buffer, size_t size)
 {
   return internal_client.write(buffer, size);
 }
+#endif

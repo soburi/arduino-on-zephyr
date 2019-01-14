@@ -19,22 +19,8 @@
 #ifndef MICROIPUDP_H
 #define MICROIPUDP_H
 
-extern "C" {
-#include <net/ip/udp-socket.h>
-#include <lib/ringbuf.h>
-}
-
-#include <Udp.h>
-
-#define UDP_TX_PACKET_MAX_SIZE 24
-
-#ifndef MICROIPUDP_TXBUF_SIZE
-#define MICROIPUDP_TXBUF_SIZE 128
-#endif
-
-#ifndef MICROIPUDP_RXBUF_SIZE
-#define MICROIPUDP_RXBUF_SIZE UIP_BUFSIZE
-#endif
+#include "Udp.h"
+#include "RingBuffer.h"
 
 class MicroIPUDP : public UDP {
 private:
@@ -42,12 +28,10 @@ private:
   uint16_t _remotePort; 
   uint16_t remaining; 
 
-  struct udp_socket sock;
+  RingBufferN<1024> txbuf;
+  RingBufferN<1024> rxbuf;
 
-  struct ringbuf rxbuf;
-  uint8_t rbuf[MICROIPUDP_RXBUF_SIZE];
-  uint8_t tbuf[MICROIPUDP_TXBUF_SIZE];
-  uint32_t txidx;
+  uint8_t context[255];
 
 public:
   MicroIPUDP();  
@@ -75,20 +59,13 @@ private:
   int raw_read();
   int raw_read(unsigned char* buffer, size_t len);
 
-  void receive(const uip_ipaddr_t *source_addr, uint16_t source_port,
-               const uip_ipaddr_t *dest_addr, uint16_t dest_port,
-               const uint8_t *data, uint16_t datalen);
-
-
-  static void input_callback(struct udp_socket *c, void *ptr,
-                             const uip_ipaddr_t *source_addr, uint16_t source_port,
-                             const uip_ipaddr_t *dest_addr, uint16_t dest_port,
-                             const uint8_t *data, uint16_t datalen);
-
-  static void do_udp_socket_register(void* ptr);
-  static void do_udp_socket_bind(void* ptr);
-  static void do_udp_socket_connect(void* ptr);
-  static void do_udp_socket_send(void* ptr);
+  void receive(struct z_in_addr* srcaddr, uint16_t scrport,
+	       struct z_in_addr* dstaddr, uint16_t dstport,
+	       unsigned char* buffer, size_t len);
+  static void dispatch(void* thisptr,
+		       struct z_in_addr* srcaddr, uint16_t scrport,
+		       struct z_in_addr* dstaddr, uint16_t dstport,
+		       unsigned char* buffer, size_t len);
 };
 
 #endif

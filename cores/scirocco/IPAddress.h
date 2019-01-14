@@ -22,42 +22,27 @@
 #define IPAddress_h
 
 #include <stdint.h>
+#include <zephyr/types.h>
+#include <misc/byteorder.h>
+
 #include "Printable.h"
 #include "WString.h"
+#include "zephyr_in_addr.h"
 
 // A class to make it easier to handle and pass around IP addresses
 
 class IPAddress : public Printable {
 private:
-    union {
-#if defined(CONFIG_NET_IPV6)
-      uint16_t u16[8];
-      uint8_t u8[16];
-      struct _v4map_data {
-        uint8_t prefix[12];
-        union _v4_data{
-          uint8_t bytes[4];
-          uint32_t dword;
-        } v4;
-      } v4map;
-#else
-      uint16_t u16[2];
-      uint8_t u8[4];
-      struct _v4map_data {
-        uint8_t prefix[0];
-        union _v4_data{
-          uint8_t bytes[4];
-          uint32_t dword;
-        } v4;
-      } v4map;
-#endif
-    } _address;
+    struct z_in_addr _address;
 
     // Access the raw byte array containing the address.  Because this returns a pointer
     // to the internal structure rather than a copy of the address this function should only
     // be used when you know that the usage of the returned uint8_t* will be transient and not
     // stored.
     uint8_t* raw_address() { return _address.v4map.v4.bytes; };
+    uint16_t* raw_address6() { return _address.u16; };
+    struct z_in_addr* raw_in_addr() { return &_address; };
+    bool isV6MappedAddress() const;
 
 public:
     // Constructors
@@ -115,8 +100,8 @@ public:
         uint16_t* raw_address() { return addr; }
 
         public:
-        uint16_t operator[](int index) const { return addr[index]; }
-        uint16_t& operator[](int index) { return addr[index]; }
+        uint16_t operator[](int index) const { return sys_be16_to_cpu(addr[index]); }
+        //uint16_t& operator[](int index) { return sys_be16_to_cpu(addr[index]); }
         virtual size_t printTo(Print& p) const;
 
         friend class IPAddress;

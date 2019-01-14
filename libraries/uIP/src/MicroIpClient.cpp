@@ -16,22 +16,14 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-extern "C" {
-#include "string.h"
-#include <net/ip/uip.h>
-#include <net/ip/resolv.h>
-#define DEBUG DEBUG_NONE
-#include <net/ip/uip-debug.h>
-}
-
 #include "Arduino.h"
 #include "wiring_private.h"
 #include "MicroIp.h"
 #include "MicroIpClient.h"
-
+#if 0
 struct tcp_socket_params {
   MicroIPClient* client;
-  const uip_ipaddr_t* ipaddr;
+  //const uip_ipaddr_t* ipaddr;
   uint16_t port;
   int retval;
 };
@@ -306,3 +298,4 @@ void MicroIPClient::event_callback(struct tcp_socket *s, void *ptr, tcp_socket_e
   client->event_wait= false;
   post_continue();
 }
+#endif

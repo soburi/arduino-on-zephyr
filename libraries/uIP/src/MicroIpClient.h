@@ -21,11 +21,6 @@
 
 #include <stdint.h>
 
-extern "C" {
-#include <net/ip/tcp-socket.h>
-#include <lib/ringbuf.h>
-}
-
 #include "Arduino.h"
 #include "Print.h"
 #include "Client.h"
@@ -63,7 +58,7 @@ public:
   using Print::write;
 
 private:
-  MicroIPClient(struct tcp_socket* psock);
+  //MicroIPClient(struct tcp_socket* psock);
   size_t receive(const uint8_t *input_data_ptr, int input_data_len);
 
   int listen(uint16_t port);
@@ -74,20 +69,20 @@ private:
   static void do_tcp_socket_listen(void* ptr);
   static void do_tcp_socket_close(void* ptr);
 
-  static  int wait_tcp_socket_event(process_event_t ev, process_data_t data, void* param);
+  //static  int wait_tcp_socket_event(process_event_t ev, process_data_t data, void* param);
 
-  static  int  data_callback(struct tcp_socket *s, void *ptr, const unsigned char* input_data_ptr, int input_data_len);
-  static void event_callback(struct tcp_socket *s, void *ptr, tcp_socket_event_t event);
+  //static  int  data_callback(struct tcp_socket *s, void *ptr, const unsigned char* input_data_ptr, int input_data_len);
+  //static void event_callback(struct tcp_socket *s, void *ptr, tcp_socket_event_t event);
 
-  struct tcp_socket* _psock;
-  struct tcp_socket sock;
-  struct ringbuf rxbuf;
-  uint8_t rbuf[MICROIPCLIENT_RXBUF_SIZE];
+  //struct tcp_socket* _psock;
+  //struct tcp_socket sock;
+  //struct ringbuf rxbuf;
+  //uint8_t rbuf[MICROIPCLIENT_RXBUF_SIZE];
 
   uint8_t socket_rxbuf[4];
-  uint8_t socket_txbuf[MICROIPCLIENT_TXBUF_SIZE];
+  //uint8_t socket_txbuf[MICROIPCLIENT_TXBUF_SIZE];
 
-  tcp_socket_event_t state;
+  //tcp_socket_event_t state;
 
   bool event_wait;
 };

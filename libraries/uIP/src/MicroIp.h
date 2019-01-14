@@ -26,7 +26,7 @@
 #include "MicroIpServer.h"
 #include "MicroIpRPL.h"
 
-#if NETSTACK_CONF_WITH_IPV6
+#if defined(CONFIG_NET_IPV6)
 #define uip_ipaddr_IPAddress(addr, ipaddr) \
     uip_ip6addr((addr), (ipaddr).v6[0], (ipaddr).v6[1], (ipaddr).v6[2], (ipaddr).v6[3],\
                       (ipaddr).v6[4], (ipaddr).v6[5], (ipaddr).v6[6], (ipaddr).v6[7])
@@ -47,12 +47,12 @@ public:
   int begin();
   int maintain();
 
-  IPAddress localIP() { return globalAddress(); }
+  //IPAddress localIP() { return globalAddress(); }
   IPAddress subnetMask();
   IPAddress gatewayIP();
   IPAddress dnsServerIP();
 
-#if NETSTACK_CONF_WITH_IPV6
+#if defined(CONFIG_NET_IPV6)
   IPAddress linklocalAddress(int state);
   IPAddress linklocalAddress();
   IPAddress globalAddress(int state);

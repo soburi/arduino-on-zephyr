@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
+#if 0
 extern "C" {
 #include <net/ip/uip.h>
 #include <net/ipv6/uip-ds6.h>
@@ -55,3 +55,4 @@ int MicroIPRPL::begin(const IPAddress& prefix, uint32_t prefix_length)
 }
 
 MicroIPRPL RPL;
+#endif
