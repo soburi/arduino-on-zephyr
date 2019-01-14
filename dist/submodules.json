@@ -1,7 +1,7 @@
 [
   {
     "path": "system/zephyr",
-    "url": "https://github.com/soburi/zephyr",
-    "revision": "9e895acf4e0c0cc2d9f007131bf2201c06dd51a7"
+    "url": "https://github.com/zephyrproject-rtos/zephyr",
+    "revision": "7ab282703509b030b8bdc3ff9c247f860ebfabf9"
   }
 ]
