@@ -18,11 +18,7 @@ execute_process(
   ERROR_QUIET
 )
 
-if (WIN32)
-  set(run_preproc_script cmd /C preproc.bat)
-else ()
-  set(run_preproc_script sh preproc.sh)
-endif ()
+set(run_preproc_script sh preproc.sh)
 
 execute_process(
   COMMAND ${run_preproc_script} ${ARDUINO_PREPROC_SOURCE} ${ARDUINO_PREPROC_TARGET}
