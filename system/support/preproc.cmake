@@ -20,6 +20,13 @@ execute_process(
 
 set(run_preproc_script sh preproc.sh)
 
+if(NOT WIN32)
+  if(${ARDUINO_PREPROC_TARGET} STREQUAL "nul")
+    message(STATUS ARDUINO_PREPROC_TARGET=nul)
+    set(ARDUINO_PREPROC_TARGET /dev/null)
+  endif()
+endif()
+
 execute_process(
   COMMAND ${run_preproc_script} ${ARDUINO_PREPROC_SOURCE} ${ARDUINO_PREPROC_TARGET}
   WORKING_DIRECTORY ${preproc_dir}
