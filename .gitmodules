@@ -1,3 +1,6 @@
 [submodule "system/zephyr"]
 	path = system/zephyr
 	url = https://github.com/zephyrproject-rtos/zephyr
+[submodule "system/.west/west"]
+	path = system/.west/west
+	url = https://github.com/zephyrproject-rtos/west

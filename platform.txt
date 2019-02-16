@@ -80,17 +80,6 @@ recipe.hooks.objcopy.preobjcopy.1.pattern={intiki.cmd-v} -recipe makefile {make.
 recipe.hooks.objcopy.preobjcopy.2.pattern={intiki.cmd-v} -recipe make {make.paths} -make.command {build.make.command} -- {make.args} -P {build.system.path}/support/build.cmake
 
 
-tools.intiki.path={runtime.tools.intiki.path}
-tools.intiki.cmd.path={path}/intiki
-tools.intiki.cmd.path.windows={path}\intiki.exe
-tools.intiki.upload.pattern="{cmd.path}" -recipe make -make.command {build.make.command} -- -E chdir {build.path} {build.make.command} -E env ZEPHYR_BASE={build.system.path}/zephyr {build.make.command} --build . -- flash
-tools.intiki.build.unix.cmds.path={runtime.tools.msys2-contiki-build.path}
-tools.intiki.build.usr.bin.path={build.unix.cmds.path}/usr/binx
-tools.intiki.build.usr.bin.path.macosx=/usr/local/bin
-tools.intiki.build.intiki.verbose=-1
-tools.intiki.build.make.command=cmake
-tools.intiki.build.zephyr.env=ZEPHYR_BASE={build.system.path}/zephyr ZEPHYR_TOOLCHAIN_VARIANT=cross-compile CROSS_COMPILE={build.compiler.path}/{build.compiler.triplet}- 
-
-
-tools.intiki.upload.params.verbose=
-tools.intiki.upload.params.quiet=
+tools.west.upload.pattern={runtime.platform.path}/system/support/west_wrap.bat -z {runtime.platform.path}/system/zephyr flash --skip-rebuild --build-dir {build.path} --hex-file {build.path}/zephyr/zephyr.hex
+tools.west.upload.params.verbose=
+tools.west.upload.params.quiet=

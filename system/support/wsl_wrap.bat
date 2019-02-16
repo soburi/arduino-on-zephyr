@@ -1,2 +1,2 @@
 @echo off
-wsl -d Debian -- cmake %*
+C:\Windows\Sysnative\wsl.exe -d Debian cmake %*
