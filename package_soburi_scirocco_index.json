@@ -6,6 +6,28 @@
           "name": "ZephyrOS supported Boards",
           "architecture": "zephyr",
           "category": "Contributed",
+          "version": "0.0.20190217",
+          "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/scirocco-0.0.20190217/arduino-on-zephyr-scirocco-0.0.20190217.tar.bz2",
+          "archiveFileName": "arduino-on-zephyr-scirocco-0.0.20190217.tar.bz2",
+          "checksum": "SHA-256:ba00a494751f9d261f86925e2d55737eb4ae03da2c6ef21211b98d1ca9ed28cc",
+          "size": "95220787",
+          "boards": [
+            {
+              "name": "ZephyrOS supported boards"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "scirocco",
+              "name": "intiki",
+              "version": "1.0.2"
+            }
+          ]
+        },
+        {
+          "name": "ZephyrOS supported Boards",
+          "architecture": "zephyr",
+          "category": "Contributed",
           "version": "0.0.20181209",
           "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/scirocco-0.0.20181209/arduino-on-zephyr-scirocco-0.0.20181209.tar.bz2",
           "archiveFileName": "arduino-on-zephyr-scirocco-0.0.20181209.tar.bz2",
@@ -92,6 +114,40 @@
         }
       ],
       "tools": [
+        {
+          "name": "intiki",
+          "version": "1.0.2",
+          "systems": [
+            {
+              "archiveFileName": "intiki_x86_64-apple-darwin_1.0.2.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.2/intiki_x86_64-apple-darwin_1.0.2.tar.bz2",
+              "host": "x86_64-apple-darwin",
+              "checksum": "SHA-256:67c9620022e6301c2ce62f93b4ed9d79010fa3b3ed30144bc83b12dd0fad147d",
+              "size": "1013408"
+            },
+            {
+              "archiveFileName": "intiki_x86_64-pc-linux-gnu_1.0.2.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.2/intiki_x86_64-pc-linux-gnu_1.0.2.tar.bz2",
+              "host": "x86_64-pc-linux-gnu",
+              "checksum": "SHA-256:2bed72665c8bdb63d9415028f7b6868e89fba488e3239ed2ec1a0a9ff54e6dff",
+              "size": "1022618"
+            },
+            {
+              "archiveFileName": "intiki_i686-mingw32_1.0.2.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.2/intiki_i686-mingw32_1.0.2.tar.bz2",
+              "host": "i686-mingw32",
+              "checksum": "SHA-256:394580b0f42d0526440330b83baf0e54f50b389697a7a516f837205879d6a8f5",
+              "size": "998705"
+            },
+            {
+              "archiveFileName": "intiki_arm-linux-gnueabihf_1.0.2.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.2/intiki_arm-linux-gnueabihf_1.0.2.tar.bz2",
+              "host": "arm-linux-gnueabihf",
+              "checksum": "SHA-256:a9f4937b318f8f62c64f63381cf00861af6c11980ce3615ce7c1687c68235f80",
+              "size": "928263"
+            }
+          ]
+        },
         {
           "name": "intiki",
           "version": "1.0.1",
