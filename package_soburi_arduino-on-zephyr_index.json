@@ -6,6 +6,28 @@
           "name": "ZephyrOS supported Boards",
           "architecture": "zephyr",
           "category": "Contributed",
+          "version": "travis_0216_4",
+          "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/travis_0216_4/arduino-on-zephyr-travis_0216_4.tar.bz2",
+          "archiveFileName": "arduino-on-zephyr-travis_0216_4.tar.bz2",
+          "checksum": "SHA-256:de8ed6e153a35cc95bf4af107aee861fe139cf146be5558d5e47f4638acf5e62",
+          "size": "95219725",
+          "boards": [
+            {
+              "name": "ZephyrOS supported boards"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "scirocco",
+              "name": "intiki",
+              "version": "1.0.1"
+            }
+          ]
+        },
+        {
+          "name": "ZephyrOS supported Boards",
+          "architecture": "zephyr",
+          "category": "Contributed",
           "version": "1124_orig",
           "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/1124_orig/arduino-on-zephyr-1124_orig.tar.bz2",
           "archiveFileName": "arduino-on-zephyr-1124_orig.tar.bz2",
