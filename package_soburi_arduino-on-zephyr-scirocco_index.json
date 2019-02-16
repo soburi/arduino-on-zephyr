@@ -6,11 +6,11 @@
           "name": "ZephyrOS supported Boards",
           "architecture": "zephyr",
           "category": "Contributed",
-          "version": "0.0.1902020540",
-          "url": "https://github.com/soburi/arduino-on-zephyr/archive/8f7b0955eaa16e2a85a451ce4fb0c5e326291a38.tar.gz",
-          "archiveFileName": "arduino-on-zephyr-scirocco-0.0.1902020540.tar.gz",
-          "checksum": "SHA-256:83ae2c5d372c1437ccb66f79597cf08510a5a6894b8271147e15077056c66a14",
-          "size": "73912",
+          "version": "0.0.1902161607",
+          "url": "https://github.com/soburi/arduino-on-zephyr/archive/9b3a029880cb337faa2fe81d80f2523fb0ae057f.tar.gz",
+          "archiveFileName": "arduino-on-zephyr-scirocco-0.0.1902161607.tar.gz",
+          "checksum": "SHA-256:74467e8cb5a52d7215f7d66254069111ed9bdb4e436334a325905df6f480921a",
+          "size": "74490",
           "boards": [
             {
               "name": "ZephyrOS supported boards"
@@ -20,7 +20,7 @@
             {
               "packager": "scirocco",
               "name": "intiki",
-              "version": "1.0.1"
+              "version": "1.0.2"
             }
           ]
         }
@@ -28,35 +28,35 @@
       "tools": [
         {
           "name": "intiki",
-          "version": "1.0.1",
+          "version": "1.0.2",
           "systems": [
             {
-              "archiveFileName": "intiki_x86_64-apple-darwin_1.0.1.tar.bz2",
-              "url": "https://github.com/soburi/intiki/releases/download/1.0.1/intiki_x86_64-apple-darwin_1.0.1.tar.bz2",
+              "archiveFileName": "intiki_x86_64-apple-darwin_1.0.2.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.2/intiki_x86_64-apple-darwin_1.0.2.tar.bz2",
               "host": "x86_64-apple-darwin",
-              "checksum": "SHA-256:f30a8b03a4a4073954065f7b1fd196f48014cbb4c08cc00d128b41185c3fb23a",
-              "size": "1011260"
+              "checksum": "SHA-256:67c9620022e6301c2ce62f93b4ed9d79010fa3b3ed30144bc83b12dd0fad147d",
+              "size": "1013408"
             },
             {
-              "archiveFileName": "intiki_x86_64-pc-linux-gnu_1.0.1.tar.bz2",
-              "url": "https://github.com/soburi/intiki/releases/download/1.0.1/intiki_x86_64-pc-linux-gnu_1.0.1.tar.bz2",
+              "archiveFileName": "intiki_x86_64-pc-linux-gnu_1.0.2.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.2/intiki_x86_64-pc-linux-gnu_1.0.2.tar.bz2",
               "host": "x86_64-pc-linux-gnu",
-              "checksum": "SHA-256:38f910ade1788cb4bf94d654b76535204ba5d02c02a958d0f0a5edc687874626",
-              "size": "1021757"
+              "checksum": "SHA-256:2bed72665c8bdb63d9415028f7b6868e89fba488e3239ed2ec1a0a9ff54e6dff",
+              "size": "1022618"
             },
             {
-              "archiveFileName": "intiki_i686-mingw32_1.0.1.tar.bz2",
-              "url": "https://github.com/soburi/intiki/releases/download/1.0.1/intiki_i686-mingw32_1.0.1.tar.bz2",
+              "archiveFileName": "intiki_i686-mingw32_1.0.2.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.2/intiki_i686-mingw32_1.0.2.tar.bz2",
               "host": "i686-mingw32",
-              "checksum": "SHA-256:664cbde7253ec5fe6b3e748906ee2b0407a22b475e7197fb759a7cf2a2e6d887",
-              "size": "997481"
+              "checksum": "SHA-256:394580b0f42d0526440330b83baf0e54f50b389697a7a516f837205879d6a8f5",
+              "size": "998705"
             },
             {
-              "archiveFileName": "intiki_arm-linux-gnueabihf_1.0.1.tar.bz2",
-              "url": "https://github.com/soburi/intiki/releases/download/1.0.1/intiki_arm-linux-gnueabihf_1.0.1.tar.bz2",
+              "archiveFileName": "intiki_arm-linux-gnueabihf_1.0.2.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.2/intiki_arm-linux-gnueabihf_1.0.2.tar.bz2",
               "host": "arm-linux-gnueabihf",
-              "checksum": "SHA-256:a40b6115d97faa5b9d61573b3c3bf85704cb6845698244936c3ffcc68c403618",
-              "size": "927540"
+              "checksum": "SHA-256:a9f4937b318f8f62c64f63381cf00861af6c11980ce3615ce7c1687c68235f80",
+              "size": "928263"
             }
           ]
         }
