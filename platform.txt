@@ -30,14 +30,16 @@ build.unix.cmds.path={runtime.tools.msys2-contiki-build.path}
 build.usr.bin.path={build.unix.cmds.path}/usr/binx
 build.usr.bin.path.macosx=/usr/local/bin
 build.make.command=cmake
+build.make.command.windows={runtime.platform.path}/system/support/wsl_wrap.bat
 build.intiki.verbose=-1
-build.zephyr.env=ZEPHYR_BASE={build.system.path}/zephyr ZEPHYR_TOOLCHAIN_VARIANT=cross-compile CROSS_COMPILE={build.compiler.path}/{build.compiler.triplet}- 
-build.zephyr.env.linux=ZEPHYR_BASE={build.system.path}/zephyr ZEPHYR_TOOLCHAIN_VARIANT=zephyr ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk
+build.zephyr.env=ZEPHYR_BASE={build.system.path}/zephyr ZEPHYR_TOOLCHAIN_VARIANT=zephyr ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk
 
 intiki.cmd={runtime.tools.intiki.path}/intiki
 intiki.cmd-v={intiki.cmd} {compiler.warning_flags} -verbose {build.intiki.verbose}
-make.paths=-build.usr.bin.path "{build.usr.bin.path}" -build.compiler.path "{build.compiler.path}" -build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version}
-make.args=-E env {build.zephyr.env} {build.make.command} -DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path} -DBOARD={build.variant}
+intiki.opts=
+intiki.opts.windows=-path.format msys -path.prefix /mnt
+make.paths=-build.usr.bin.path "{build.usr.bin.path}" -build.compiler.path "{build.compiler.path}" -build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version} {intiki.opts}
+make.args=-E env {build.zephyr.env} cmake -DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path} -DBOARD={build.variant}
 
 arduino.defines=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
 
