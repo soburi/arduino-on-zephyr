@@ -26,9 +26,6 @@ compiler.ar.extra_flags=
 # Makefile generate patterns
 # --------------------
 
-build.unix.cmds.path={runtime.tools.msys2-contiki-build.path}
-build.usr.bin.path={build.unix.cmds.path}/usr/binx
-build.usr.bin.path.macosx=/usr/local/bin
 build.make.command=cmake
 build.make.command.windows={runtime.platform.path}/system/support/wsl_wrap.bat
 build.intiki.verbose=-1
@@ -38,7 +35,7 @@ intiki.cmd={runtime.tools.intiki.path}/intiki
 intiki.cmd-v={intiki.cmd} {compiler.warning_flags} -verbose {build.intiki.verbose}
 intiki.opts=
 intiki.opts.windows=-path.format msys -path.prefix /mnt
-make.paths=-build.usr.bin.path "{build.usr.bin.path}" -build.compiler.path "{build.compiler.path}" -build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version} {intiki.opts}
+make.paths=-build.compiler.path "{build.compiler.path}" -build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version} {intiki.opts}
 make.args=-E env {build.zephyr.env} cmake -DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path} -DBOARD={build.variant}
 
 arduino.defines=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
@@ -80,17 +77,8 @@ recipe.hooks.objcopy.preobjcopy.1.pattern={intiki.cmd-v} -recipe makefile {make.
 recipe.hooks.objcopy.preobjcopy.2.pattern={intiki.cmd-v} -recipe make {make.paths} -make.command {build.make.command} -- {make.args} -P {build.system.path}/support/build.cmake
 
 
-tools.intiki.path={runtime.tools.intiki.path}
-tools.intiki.cmd.path={path}/intiki
-tools.intiki.cmd.path.windows={path}\intiki.exe
-tools.intiki.upload.pattern="{cmd.path}" -recipe make -make.command {build.make.command} -- -E chdir {build.path} {build.make.command} -E env ZEPHYR_BASE={build.system.path}/zephyr {build.make.command} --build . -- flash
-tools.intiki.build.unix.cmds.path={runtime.tools.msys2-contiki-build.path}
-tools.intiki.build.usr.bin.path={build.unix.cmds.path}/usr/binx
-tools.intiki.build.usr.bin.path.macosx=/usr/local/bin
-tools.intiki.build.intiki.verbose=-1
-tools.intiki.build.make.command=cmake
-tools.intiki.build.zephyr.env=ZEPHYR_BASE={build.system.path}/zephyr ZEPHYR_TOOLCHAIN_VARIANT=cross-compile CROSS_COMPILE={build.compiler.path}/{build.compiler.triplet}- 
-
-
-tools.intiki.upload.params.verbose=
-tools.intiki.upload.params.quiet=
+tools.west.upload.cmd.windows={runtime.platform.path}/system/support/west_wrap.bat
+tools.west.upload.cmd={runtime.platform.path}/system/support/west_wrap.sh
+tools.west.upload.pattern={upload.cmd} -z {runtime.platform.path}/system/zephyr flash --skip-rebuild --build-dir {build.path} --hex-file {build.path}/zephyr/zephyr.hex
+tools.west.upload.params.verbose=
+tools.west.upload.params.quiet=

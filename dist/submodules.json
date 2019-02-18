@@ -1,7 +1,13 @@
 [
   {
+    "path": "system/.west/west",
+    "url": "https://github.com/zephyrproject-rtos/west",
+    "revision": "ab560b5c64551cadffe191eecd79ff979cec3c8d"
+  },
+  {
     "path": "system/zephyr",
     "url": "https://github.com/zephyrproject-rtos/zephyr",
-    "revision": "7ab282703509b030b8bdc3ff9c247f860ebfabf9"
+    "revision": "588d7b068c9166f043ccb0f9bf50bf39d0173cee"
   }
 ]
+
