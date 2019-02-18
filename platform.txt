@@ -75,6 +75,7 @@ recipe.hooks.core.prebuild.1.pattern={intiki.cmd-v} -recipe stage -stage core {m
 recipe.hooks.linking.prelink.1.pattern={intiki.cmd-v} -recipe stage -stage link {make.paths}
 recipe.hooks.objcopy.preobjcopy.1.pattern={intiki.cmd-v} -recipe makefile {make.paths} -template {build.system.path}/support/CMakeLists.txt.template -makefile {build.path}/_cmakefile/CMakeLists.txt
 recipe.hooks.objcopy.preobjcopy.2.pattern={intiki.cmd-v} -recipe make {make.paths} -make.command {build.make.command} -- {make.args} -P {build.system.path}/support/build.cmake
+recipe.hooks.postbuild.1.pattern={intiki.cmd-v} -recipe make {make.paths} -make.command {build.make.command} -- {make.args} -P {build.system.path}/support/postbuild.cmake
 
 
 tools.west.upload.cmd.windows={runtime.platform.path}/system/support/west_wrap.bat

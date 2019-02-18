@@ -4,6 +4,16 @@ set(build_dir ${ARDUINO_BUILD_PATH})
 
 file(COPY ${ARDUINO_VARIANT_PATH}/prj.conf DESTINATION ${ARDUINO_BUILD_PATH}/_cmakefile )
 
+if(EXISTS ${build_dir}/zephyr/ )
+  execute_process(
+    COMMAND  python3   $ENV{ZEPHYR_BASE}/scripts/subfolder_list.py
+    --directory        $ENV{ZEPHYR_BASE}/include
+    --out-file         ${build_dir}/zephyr/misc/generated/syscalls_subdirs.txt
+    --trigger          ${build_dir}/zephyr/misc/generated/syscalls_subdirs.trigger
+    --create-links     ${build_dir}/zephyr/misc/generated/syscalls_links
+  )
+endif()
+
 if(EXISTS ${ARDUINO_BUILD_PATH}/_cmakefile/.NOT_CHANGED )
   file(REMOVE ${ARDUINO_BUILD_PATH}/_cmakefile/.NOT_CHANGED )
 else()
