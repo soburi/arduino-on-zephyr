@@ -15,9 +15,26 @@ Use this additional package definition of 'Additional Boards Manager URLs' optio
 Build environment setup
 ----------------------------
 
-Follow [Development Environment Setup on Windows](https://docs.zephyrproject.org/latest/getting_started/getting_started.html) instructions.
+Read [Set Up a Development System](https://docs.zephyrproject.org/latest/getting_started/index.html#set-up-a-development-system) instructions.
 
-On windows, use [Option1: Windows Command Prompt](https://docs.zephyrproject.org/latest/getting_started/installation_win.html#option-1-windows-command-prompt)
+On Debian/Ubuntu system, run this commands.
+
+```
+sudo apt-get install --no-install-recommends git cmake ninja-build gperf \
+  ccache dfu-util device-tree-compiler wget \
+  python3-pip python3-setuptools python3-wheel xz-utils file make gcc \
+  gcc-multilib
+
+sudo apt-get install --no-install-recommends automake libtool
+
+pip3 install -r <(wget https://raw.githubusercontent.com/zephyrproject-rtos/zephyr/master/scripts/requirements.txt)
+pip3 install west
+
+wget https://github.com/zephyrproject-rtos/meta-zephyr-sdk/releases/download/0.9.5/zephyr-sdk-0.9.5-setup.run
+chmod +x zephyr-sdk-0.9.5-setup.run
+sudo ./zephyr-sdk-0.9.5-setup.run --target /opt/zephyr-sdk/ -- -y -d /opt/zephyr-sdk/
+```
+
 
 Limitations
 ===========
