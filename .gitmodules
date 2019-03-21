@@ -4,3 +4,9 @@
 [submodule "system/.west/west"]
 	path = system/.west/west
 	url = https://github.com/zephyrproject-rtos/west
+[submodule "system/net-tools"]
+	path = system/net-tools
+	url = https://github.com/zephyrproject-rtos/net-tools
+[submodule "system/modules/lib/tinycbor"]
+	path = system/modules/lib/tinycbor
+	url = https://github.com/zephyrproject-rtos/tinycbor

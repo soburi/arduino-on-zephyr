@@ -1,3 +1,4 @@
 [manifest]
 path = zephyr
-
+[zephyr]
+base = zephyr
