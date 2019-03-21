@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2015 Arduino LLC.  All right reserved.
-  Copyright (c) 2015-2018 Tokita, Hiroshi
+  Copyright (c) 2015-2019 Tokita, Hiroshi
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,14 +19,12 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include <zephyr.h>
+#include <uart.h>
 #include "HardwareSerial.h"
 #include "RingBuffer.h"
 
 #include <stddef.h>
-#include <uart.h>
 
 class Uart : public HardwareSerial
 {
@@ -50,31 +48,27 @@ class Uart : public HardwareSerial
     operator bool() { return true; }
 
   protected:
-    struct device *uart;
     virtual void begin_impl(unsigned long baudrate, uint16_t config);
+    static void IrqDispatch(void* data);
+    struct device *uart;
+
   private:
     RingBuffer rxBuffer;
-    static void IrqDispatch(void* data);
+    uint8_t txbuffer[255];
+    int txidx;
+    int txcount;
 
-    volatile bool data_transmitted;
-
+    struct k_sem tx_sem;
+    struct k_sem rx_sem;
 #if 0
-    RingBuffer txBuffer;
 
     uint8_t uc_pinRX;
     uint8_t uc_pinTX;
     SercomRXPad uc_padRX;
     SercomUartTXPad uc_padTX;
-    uint8_t uc_pinRTS;
-    volatile uint32_t* pul_outsetRTS;
-    volatile uint32_t* pul_outclrRTS;
-    uint32_t ul_pinMaskRTS;
-    uint8_t uc_pinCTS;
 
-    SercomNumberStopBit extractNbStopBit(uint16_t config);
-    SercomUartCharSize extractCharSize(uint16_t config);
-    SercomParityMode extractParity(uint16_t config);
+    SercomNumberStopBit extractNbStopBit(uint8_t config);
+    SercomUartCharSize extractCharSize(uint8_t config);
+    SercomParityMode extractParity(uint8_t config);
 #endif
 };
-
-#endif
