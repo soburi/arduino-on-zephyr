@@ -162,7 +162,13 @@ unsigned char String::reserve(unsigned int size)
 
 unsigned char String::changeBuffer(unsigned int maxStrLen)
 {
+#ifdef CONFIG_NEWLIB_LIBC
 	char *newbuffer = (char *)realloc(buffer, maxStrLen + 1);
+#else
+	char *newbuffer = NULL;
+	if(buffer) newbuffer = (char *)realloc(buffer, maxStrLen + 1);
+	else newbuffer = (char *)malloc(maxStrLen + 1);
+#endif
 	if (newbuffer) {
 		buffer = newbuffer;
 		capacity = maxStrLen;
