@@ -19,6 +19,11 @@
 #include "Print.h"
 #include "IPAddress.h"
 
+#include <zephyr.h>
+#pragma GCC diagnostic ignored "-Wparentheses"
+#include <net/net_ip.h>
+#pragma GCC diagnostic warning "-Wparentheses"
+#include <net/socket.h>
 #include <misc/byteorder.h>
 
 #if defined(CONFIG_NET_IPV6)
@@ -27,9 +32,29 @@
 #define INIT_IPBYTES(a, b, c, d) {a,b,c,d}
 #endif
 
-extern "C" {
-    bool parse_ipaddr(const char* ipstr, uint8_t* buf);
+static bool parse_ipaddr(const char* addr, uint8_t* buf)
+{
+    struct sockaddr sa;
+    bool ret = net_ipaddr_parse(addr, strlen(addr), &sa);
+    if(ret) {
+        if(sa.sa_family == AF_INET6) {
+#if defined(CONFIG_NET_IPV6)
+            memcpy(buf, ((struct sockaddr_in6*)(&sa))->sin6_addr.s6_addr, 16);
+#else
+	    return false;
+#endif
+	}
+	else if(sa.sa_family == AF_INET) {
+#if defined(CONFIG_NET_IPV6)
+            uint8_t prefix[12] = { 0,0,0,0,  0,0,0,0, 0,0,0xFF,0xFF};
+            memcpy(buf, prefix, 12);
+#endif
+            memcpy(buf+12, ((struct sockaddr_in*)(&sa))->sin_addr.s4_addr, 4);
+	}
+    }
+    return ret;
 }
+
 
 IPAddress::IPAddress()
     : v6(_address.u16)
@@ -50,15 +75,21 @@ IPAddress::IPAddress(uint16_t d0, uint16_t d1, uint16_t d2, uint16_t d3,
                      uint16_t d4, uint16_t d5, uint16_t d6, uint16_t d7)
     : v6(_address.u16)
 {
-    _address.u16[0] = __bswap_16(d0); _address.u16[1] = __bswap_16(d1);
-    _address.u16[2] = __bswap_16(d2); _address.u16[3] = __bswap_16(d3);
-    _address.u16[4] = __bswap_16(d4); _address.u16[5] = __bswap_16(d5);
-    _address.u16[6] = __bswap_16(d6); _address.u16[7] = __bswap_16(d7);
+    _address.u16[0] = sys_be16_to_cpu(d0); _address.u16[1] = sys_be16_to_cpu(d1);
+    _address.u16[2] = sys_be16_to_cpu(d2); _address.u16[3] = sys_be16_to_cpu(d3);
+    _address.u16[4] = sys_be16_to_cpu(d4); _address.u16[5] = sys_be16_to_cpu(d5);
+    _address.u16[6] = sys_be16_to_cpu(d6); _address.u16[7] = sys_be16_to_cpu(d7);
 }
 
 IPAddress::IPAddress(const uint16_t *a)
-    : IPAddress(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[6])
+    : v6(_address.u16)
 {
+    if(a) {
+        memcpy(_address.u16, a, sizeof(_address.u16));
+    }
+    else {
+        memset(_address.u16, 0, sizeof(_address.u16));
+    }
 }
 #endif
 
@@ -76,9 +107,14 @@ IPAddress::IPAddress(uint32_t addr)
 IPAddress::IPAddress(const uint8_t *addr)
     : v6(_address.u16)
 {
-    const uint8_t addrbytes[] = INIT_IPBYTES(addr[0], addr[1], addr[2], addr[3]);
-    memcpy(_address.u8, addrbytes, sizeof(addrbytes));
-
+    if(addr) {
+        const uint8_t addrbytes[] = INIT_IPBYTES(addr[0], addr[1], addr[2], addr[3]);
+        memcpy(_address.u8, addrbytes, sizeof(addrbytes));
+    }
+    else {
+        const uint8_t addrbytes[] = INIT_IPBYTES(0, 0, 0, 0);
+        memcpy(_address.u8, addrbytes, sizeof(addrbytes));
+    }
 }
 
 bool IPAddress::fromString(const char *addr)
@@ -88,8 +124,14 @@ bool IPAddress::fromString(const char *addr)
 
 IPAddress& IPAddress::operator=(const uint8_t *addr)
 {
-    const uint8_t addrbytes[] = INIT_IPBYTES(addr[0], addr[1], addr[2], addr[3]);
-    memcpy(_address.u8, addrbytes, sizeof(addrbytes));
+    if(addr) {
+        const uint8_t addrbytes[] = INIT_IPBYTES(addr[0], addr[1], addr[2], addr[3]);
+        memcpy(_address.bytes, addrbytes, sizeof(addrbytes));
+    }
+    else {
+        const uint8_t addrbytes[] = INIT_IPBYTES(0, 0, 0, 0);
+        memcpy(_address.bytes, addrbytes, sizeof(addrbytes));
+    }
     return *this;
 }
 
@@ -106,12 +148,14 @@ IPAddress& IPAddress::operator=(uint32_t addr)
 
 bool IPAddress::operator==(const uint8_t* addr) const
 {
-    return memcmp(addr, _address.u8, sizeof(_address.u8)) == 0;
+    if(!addr) return false;
+    return memcmp(addr, _address.bytes, sizeof(_address.bytes)) == 0;
 }
 
 #if defined(CONFIG_NET_IPV6)
 bool IPAddress::operator==(const uint16_t* addr) const
 {
+    if(!addr) return false;
     return memcmp(addr, _address.u16, sizeof(_address.u16)) == 0;
 }
 #endif
@@ -125,7 +169,12 @@ IPAddress& IPAddress::operator=(const IPAddress& addr)
 
 IPAddress& IPAddress::operator=(const uint16_t *addr)
 {
-    memcpy(_address.u16, addr, sizeof(_address.u16));
+    if(addr) {
+        memcpy(_address.u16, addr, sizeof(_address.u16));
+    }
+    else {
+        memset(_address.u16, 0, sizeof(_address.u16));
+    }
     return *this;
 }
 #endif
@@ -133,9 +182,9 @@ IPAddress& IPAddress::operator=(const uint16_t *addr)
 bool IPAddress::isV6MappedAddress() const
 {
 #if defined(CONFIG_NET_IPV6)
-    if( _address.u16[0] == 0 && _address.u16[1] == 0 && _address.u16[2] == 0 && _address.u16[3] == 0 && _address.u16[4] == 0 &&
-        _address.u16[5] == 0 && _address.u16[6] == 0 && _address.u16[7] == 0 && _address.u16[8] == 0 && _address.u16[9] == 0 &&
-        _address.u16[10] == 0xFF && _address.u16[11] == 0xFF)
+    if( _address.u16[0] == 0 && _address.u16[1] == 0 &&
+        _address.u16[3] == 0 && _address.u16[4] == 0 &&
+	_address.u16[5] == 0xFFFF)
     {
         return true;
     }
@@ -150,14 +199,10 @@ bool IPAddress::isV6MappedAddress() const
 
 size_t IPAddress::printTo(Print& p) const
 {
-    size_t n = 0;
-    if( isV6MappedAddress() || sizeof(_address.v4map.prefix) == 0) {
-        for (int i =0; i < 3; i++) {
-            n += p.print(_address.v4map.v4.bytes[i], DEC);
-            n += p.print('.');
-        }
-        n += p.print(_address.v4map.v4.bytes[3], DEC);
-        return n;
+    if( isV6MappedAddress() || sizeof(_address.prefix) == 0) {
+        char buf[INET_ADDRSTRLEN];
+        zsock_inet_ntop(AF_INET, _address.bytes, buf, sizeof(buf));
+        return p.print(buf);
     }
     else
     {
@@ -167,25 +212,18 @@ size_t IPAddress::printTo(Print& p) const
 
 size_t IPAddress::V6RawAccessor::printTo(Print& p) const
 {
-    size_t n = 0;
-    unsigned int i;
-    int f;
-    for(i = 0, f = 0; i < sizeof(_address.u16)/2; i++) {
-        uint16_t a = addr[i];
-        if(a == 0 && f >= 0) {
-            if(f++ == 0) {
-                n += p.print("::");
-            }
-        }
-        else {
-            if(f > 0) {
-                f = -1;
-            } else if(i > 0) {
-                n += p.print(':');
-            }
-            n += p.print(a, HEX);
-        }
-    }
-    return n;
+    char buf[INET6_ADDRSTRLEN];
+    zsock_inet_ntop(AF_INET6, addr, buf, sizeof(buf));
+    return p.print(buf);
 }
 
+const IPAddress INADDR::NONE(0, 0, 0, 0);
+const IPAddress INADDR::ANY(0, 0, 0, 0);
+
+const IPAddress IN6ADDR::ANY_INIT(0, 0, 0, 0, 0, 0, 0, 0);
+const IPAddress IN6ADDR::LOOPBACK_INIT(0, 0, 0, 0, 0, 0, 0, 1);
+const IPAddress IN6ADDR::LINKLOCAL_ALLNODES_INIT(  0xff02,0,0,0, 0,0,0,1);
+const IPAddress IN6ADDR::INKLOCAL_ALLROUTERS_INIT(0xff02,0,0,0, 0,0,0,2);
+const IPAddress IN6ADDR::INTERFACELOCAL_ALLNODES_INIT(0xff01,0,0,0, 0,0,0,1);
+const IPAddress IN6ADDR::INTERFACELOCAL_ALLROUTERS_INIT(0xff01,0,0,0, 0,0,0,2);
+const IPAddress IN6ADDR::SITELOCAL_ALLROUTERS_INIT(0xff05,0,0,0, 0,0,0,2);

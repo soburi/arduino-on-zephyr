@@ -65,7 +65,7 @@ void loop() {
     serialBufferLen = Serial.readBytes(serialBuffer, MAX_V6_ADDR_STR);
 
     // Set destination IPaddress when string received from serial line.
-    if (destAddr == IN6ADDR_ANY_INIT)
+    if (destAddr == IN6ADDR.ANY_INIT)
     {
       bool valid = destAddr.fromString(serialBuffer);
       if (valid)
@@ -84,7 +84,7 @@ void loop() {
   }
 
   // When destination is set, send serial buffer 
-  if (!(destAddr == IN6ADDR_ANY_INIT) && serialBufferLen != 0)
+  if (!(destAddr == IN6ADDR.ANY_INIT) && serialBufferLen != 0)
   {
     // construct send data
     memcpy(packetBuffer, serialBuffer, serialBufferLen);

@@ -27,7 +27,28 @@
 
 #include "Printable.h"
 #include "WString.h"
-#include "zephyr_in_addr.h"
+
+struct z_in_addr {
+  union {
+#if defined(CONFIG_NET_IPV6)
+    uint16_t u16[8];
+    uint8_t u8[16];
+#else
+    uint16_t u16[2];
+    uint8_t u8[4];
+#endif
+    struct {
+#if defined(CONFIG_NET_IPV6)
+      uint8_t prefix[12];
+#else
+      uint8_t prefix[0];
+#endif
+      uint8_t bytes[4];
+      uint32_t dword;
+
+    };
+  };
+};
 
 // A class to make it easier to handle and pass around IP addresses
 
@@ -39,9 +60,8 @@ private:
     // to the internal structure rather than a copy of the address this function should only
     // be used when you know that the usage of the returned uint8_t* will be transient and not
     // stored.
-    uint8_t* raw_address() { return _address.v4map.v4.bytes; };
+    uint8_t* raw_address() { return _address.bytes; };
     uint16_t* raw_address6() { return _address.u16; };
-    struct z_in_addr* raw_in_addr() { return &_address; };
     bool isV6MappedAddress() const;
 
 public:
@@ -61,7 +81,7 @@ public:
 
     // Overloaded cast operator to allow IPAddress objects to be used where a pointer
     // to a four-byte uint8_t array is expected
-    operator uint32_t() const { return _address.v4map.v4.dword; };
+    operator uint32_t() const { return _address.dword; };
 #if defined(CONFIG_NET_IPV6)
     bool operator==(const IPAddress& addr) const { return ((*this) == addr._address.u16); };
 #else
@@ -73,8 +93,8 @@ public:
 #endif
 
     // Overloaded index operator to allow getting and setting individual octets of the address
-    uint8_t operator[](int index) const { return _address.v4map.v4.bytes[index]; };
-    uint8_t& operator[](int index) { return _address.v4map.v4.bytes[index]; };
+    uint8_t operator[](int index) const { return _address.bytes[index]; };
+    uint8_t& operator[](int index) { return _address.bytes[index]; };
 
     // Overloaded copy operators to allow initialisation of IPAddress objects from other types
     IPAddress& operator=(const uint8_t *address);
@@ -114,14 +134,27 @@ private:
 };
 
 const IPAddress INADDR_NONE(0,0,0,0);
+
+class INADDR {
+public:
+  static const IPAddress NONE;
+  static const IPAddress ANY;
+};
+
+const INADDR INADDR;
 #if defined(CONFIG_NET_IPV6)
-const IPAddress IN6ADDR_ANY_INIT(0, 0, 0, 0, 0, 0, 0, 0);
-const IPAddress IN6ADDR_LOOPBACK_INIT(0, 0, 0, 0, 0, 0, 0, 1);
-const IPAddress IN6ADDR_LINKLOCAL_ALLNODES_INIT(  0xff02,0,0,0, 0,0,0,1);
-const IPAddress IN6ADDR_LINKLOCAL_ALLROUTERS_INIT(0xff02,0,0,0, 0,0,0,2);
-const IPAddress IN6ADDR_INTERFACELOCAL_ALLNODES_INIT(0xff01,0,0,0, 0,0,0,1);
-const IPAddress IN6ADDR_INTERFACELOCAL_ALLROUTERS_INIT(0xff01,0,0,0, 0,0,0,2);
-const IPAddress IN6ADDR_SITELOCAL_ALLROUTERS_INIT(0xff05,0,0,0, 0,0,0,2);
+class IN6ADDR {
+public:
+  static const IPAddress ANY_INIT;
+  static const IPAddress LOOPBACK_INIT;
+  static const IPAddress LINKLOCAL_ALLNODES_INIT;
+  static const IPAddress INKLOCAL_ALLROUTERS_INIT;
+  static const IPAddress INTERFACELOCAL_ALLNODES_INIT;
+  static const IPAddress INTERFACELOCAL_ALLROUTERS_INIT;
+  static const IPAddress SITELOCAL_ALLROUTERS_INIT;
+};
+
+const IN6ADDR IN6ADDR;
 #endif
 
 #endif
