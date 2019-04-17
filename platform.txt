@@ -36,7 +36,7 @@ intiki.cmd-v={intiki.cmd} {compiler.warning_flags} -verbose {build.intiki.verbos
 intiki.opts=
 intiki.opts.windows=-path.format msys -path.prefix /mnt
 make.paths=-build.compiler.path "{build.compiler.path}" -build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version} {intiki.opts}
-make.args=-E env {build.zephyr.env} cmake -DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path} -DBOARD={build.variant}
+make.args=-E env {build.zephyr.env} cmake -DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path} -DBOARD={build.variant} -DOVERLAY_APPEND_NETWORK={build.network_conf}
 
 arduino.defines=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
 
@@ -78,8 +78,8 @@ recipe.hooks.objcopy.preobjcopy.2.pattern={intiki.cmd-v} -recipe make {make.path
 recipe.hooks.postbuild.1.pattern={intiki.cmd-v} -recipe make {make.paths} -make.command {build.make.command} -- {make.args} -P {build.system.path}/support/postbuild.cmake
 
 
-tools.west.upload.cmd.windows={runtime.platform.path}/system/support/west_wrap.bat
 tools.west.upload.cmd={runtime.platform.path}/system/support/west_wrap.sh
+tools.west.upload.cmd.windows={runtime.platform.path}/system/support/west_wrap.bat
 tools.west.upload.pattern={upload.cmd} -z {runtime.platform.path}/system/zephyr flash --skip-rebuild --build-dir {build.path} --hex-file {build.path}/zephyr/zephyr.hex
 tools.west.upload.params.verbose=
 tools.west.upload.params.quiet=

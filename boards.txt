@@ -1,3 +1,5 @@
+menu.network=Network
+
 bbc_microbit.name=BBC micro:bit
 bbc_microbit.upload.tool=west
 bbc_microbit.upload.protocol=west
@@ -9,6 +11,8 @@ bbc_microbit.build.variant=bbc_microbit
 bbc_microbit.build.compiler.path=D:\gcc-arm-none-eabi-7-2018-q2-update-win32\bin
 bbc_microbit.build.compiler.path.linux=/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/arm-zephyr-eabi/
 bbc_microbit.build.compiler.triplet=arm-none-eabi
+bbc_microbit.menu.network.bt=Bluetooth
+bbc_microbit.menu.network.bt.build.network_conf={runtime.platform.path}/variants/{build.variant}/overlay-bt.conf
 
 nrf52840_pca10056.name=nRF52840 Development Kit
 nrf52840_pca10056.upload.tool=west
@@ -21,3 +25,9 @@ nrf52840_pca10056.build.variant=nrf52840_pca10056
 nrf52840_pca10056.build.compiler.path=D:\gcc-arm-none-eabi-7-2018-q2-update-win32\bin
 nrf52840_pca10056.build.compiler.path.linux=/opt/zephyr-sdk/sysroots/x86_64-pokysdk-linux/usr/bin/arm-zephyr-eabi/
 nrf52840_pca10056.build.compiler.triplet=arm-none-eabi
+nrf52840_pca10056.menu.network.802154=IEEE802.15.4
+nrf52840_pca10056.menu.network.802154.build.network_conf={runtime.platform.path}/variants/{build.variant}/overlay-802154.conf
+nrf52840_pca10056.menu.network.ot=OpenThread
+nrf52840_pca10056.menu.network.ot.build.network_conf={runtime.platform.path}/variants/{build.variant}/overlay-ot.conf
+nrf52840_pca10056.menu.network.bt=Bluetooth
+nrf52840_pca10056.menu.network.bt.build.network_conf={runtime.platform.path}/variants/{build.variant}/overlay-bt.conf

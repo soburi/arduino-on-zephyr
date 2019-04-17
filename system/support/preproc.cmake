@@ -1,8 +1,19 @@
 cmake_minimum_required(VERSION 3.0.2)
 
 set(preproc_dir ${ARDUINO_BUILD_PATH}/preproc)
+set(conffiles ${ARDUINO_VARIANT_PATH}/prj.conf)
 
-file(COPY ${ARDUINO_VARIANT_PATH}/prj.conf DESTINATION ${ARDUINO_BUILD_PATH}/preproc/_cmakefile )
+get_cmake_property(_variableNames VARIABLES)
+foreach(varname ${_variableNames})
+  string(FIND ${varname} OVERLAY_APPEND_ match)
+  if(${match} EQUAL 0)
+    #message(STATUS "${varname}=${${varname}}")
+    list(APPEND conffiles ${${varname}})
+  endif()
+endforeach()
+string(JOIN " " conffile_opt ${conffiles})
+#message(STATUS "-DCONF_FILE="${conffile_opt})
+
 
 if(EXISTS ${preproc_dir}/zephyr/ )
   execute_process(
@@ -18,8 +29,9 @@ if(EXISTS ${ARDUINO_BUILD_PATH}/preproc/_cmakefile/.NOT_CHANGED )
   file(REMOVE ${ARDUINO_BUILD_PATH}/preproc/_cmakefile/.NOT_CHANGED )
 else()
   if(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.sh )
+    #message(${conffiles})
     execute_process(
-      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} _cmakefile
+      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} _cmakefile
       WORKING_DIRECTORY ${preproc_dir}
       OUTPUT_QUIET
       ERROR_QUIET
@@ -48,6 +60,14 @@ execute_process(
   WORKING_DIRECTORY ${preproc_dir}
   RESULT_VARIABLE retcode
 )
+
+file(GLOB_RECURSE sc_links ${preprod_dir}/zephyr/misc/generated/syscalls_links/*)
+
+foreach(l ${sc_links})
+  if(IS_SYMLINK ${l})
+    file(REMOVE ${l})
+  endif()
+endforeach()
 
 if(${retcode})
   message(FATAL_ERROR)
