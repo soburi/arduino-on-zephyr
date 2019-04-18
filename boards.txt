@@ -1,4 +1,5 @@
 menu.network=Network
+menu.uartlog=UART Log
 
 bbc_microbit.name=BBC micro:bit
 bbc_microbit.upload.tool=west
@@ -31,3 +32,7 @@ nrf52840_pca10056.menu.network.ot=OpenThread
 nrf52840_pca10056.menu.network.ot.build.network_conf={runtime.platform.path}/variants/{build.variant}/overlay-ot.conf
 nrf52840_pca10056.menu.network.bt=Bluetooth
 nrf52840_pca10056.menu.network.bt.build.network_conf={runtime.platform.path}/variants/{build.variant}/overlay-bt.conf
+nrf52840_pca10056.menu.uartlog.enable=Enable
+nrf52840_pca10056.menu.uartlog.enable.build.uartlog_conf={runtime.platform.path}/variants/{build.variant}/overlay-uartlog.conf
+nrf52840_pca10056.menu.uartlog.disable=Disable
+nrf52840_pca10056.menu.uartlog.disable.build.uartlog_conf=

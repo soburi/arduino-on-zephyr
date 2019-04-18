@@ -36,7 +36,7 @@ intiki.cmd-v={intiki.cmd} {compiler.warning_flags} -verbose {build.intiki.verbos
 intiki.opts=
 intiki.opts.windows=-path.format msys -path.prefix /mnt
 make.paths=-build.compiler.path "{build.compiler.path}" -build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version} {intiki.opts}
-make.args=-E env {build.zephyr.env} cmake -DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path} -DBOARD={build.variant} -DOVERLAY_APPEND_NETWORK={build.network_conf}
+make.args=-E env {build.zephyr.env} cmake -DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path} -DBOARD={build.variant} -DOVERLAY_APPEND_NETWORK={build.network_conf} -DOVERLAY_APPEND_UARTLOG={build.uartlog_conf}
 
 arduino.defines=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
 
