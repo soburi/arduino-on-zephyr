@@ -29,7 +29,7 @@ if(EXISTS ${ARDUINO_BUILD_PATH}/_cmakefile/.NOT_CHANGED )
   file(REMOVE ${ARDUINO_BUILD_PATH}/_cmakefile/.NOT_CHANGED )
 else()
   execute_process(
-    COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} _cmakefile
+    COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} _cmakefile
     WORKING_DIRECTORY ${build_dir}
   )
 endif()

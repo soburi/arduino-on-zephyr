@@ -29,14 +29,19 @@ compiler.ar.extra_flags=
 build.make.command=cmake
 build.make.command.windows={runtime.platform.path}/system/support/wsl_wrap.bat
 build.intiki.verbose=-1
-build.zephyr.env=ZEPHYR_BASE={build.system.path}/zephyr ZEPHYR_TOOLCHAIN_VARIANT=zephyr ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk
-
+build.zephyr.env.compiler=ZEPHYR_TOOLCHAIN_VARIANT=zephyr ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk
+build.zephyr.env.compiler.macosx=ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb GNUARMEMB_TOOLCHAIN_PATH=/opt/gcc-arm-none-eabi
+build.zephyr.env=ZEPHYR_BASE={build.system.path}/zephyr {build.zephyr.env.compiler}
+build.zephyr.args.arduino=-DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path}
+build.zephyr.args.board=-DBOARD={build.variant} -DEXTERNAL_PROJECT_PATH_OPENTHREAD={build.system.path}/openthread
+build.zephyr.args.configs={build.network_conf} {build.uartlog_conf}
+build.zephyr.args={build.zephyr.args.arduino} {build.zephyr.args.board} {build.zephyr.args.configs}
 intiki.cmd={runtime.tools.intiki.path}/intiki
 intiki.cmd-v={intiki.cmd} {compiler.warning_flags} -verbose {build.intiki.verbose}
 intiki.opts=
 intiki.opts.windows=-path.format msys -path.prefix /mnt
-make.paths=-build.compiler.path "{build.compiler.path}" -build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version} {intiki.opts}
-make.args=-E env {build.zephyr.env} cmake -DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path} -DBOARD={build.variant} -DOVERLAY_APPEND_NETWORK={build.network_conf} -DOVERLAY_APPEND_UARTLOG={build.uartlog_conf}
+make.paths=-build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version} {intiki.opts}
+make.args=-E env {build.zephyr.env} cmake {build.zephyr.args}
 
 arduino.defines=-DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
 

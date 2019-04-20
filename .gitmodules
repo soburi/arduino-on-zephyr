@@ -10,3 +10,6 @@
 [submodule "system/modules/lib/tinycbor"]
 	path = system/modules/lib/tinycbor
 	url = https://github.com/zephyrproject-rtos/tinycbor
+[submodule "system/openthread"]
+	path = system/openthread
+	url = https://github.com/openthread/openthread.git

@@ -31,7 +31,7 @@ else()
   if(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.sh )
     #message(${conffiles})
     execute_process(
-      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} _cmakefile
+      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} _cmakefile
       WORKING_DIRECTORY ${preproc_dir}
       OUTPUT_QUIET
       ERROR_QUIET
