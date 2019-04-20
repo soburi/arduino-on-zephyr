@@ -24,19 +24,19 @@
 #if !defined(CONFIG_NEWLIB_LIBC)
 static inline int islower(int c)
 {
-	return 0;
+	return (int)(((unsigned)(c)-(unsigned)'a') < 26U);
 }
 static inline int ispunct(int c)
 {
-	return 0;
+	return (int)((0x20 < c && c < 0x30) || (0x3a <= c && c <= 0x40) || (0x5b <= c && c <= 0x60) || (0x7a < c && c < 0x7f) );
 }
 static inline int isblank(int c)
 {
-	return 0;
+	return (int)(c == 0x09 || c == 0x20);
 }
 static inline int iscntrl(int c)
 {
-	return 0;
+	return (int)(c == 0x7f || c < 0x20);
 }
 #endif
 
