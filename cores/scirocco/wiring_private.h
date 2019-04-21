@@ -25,28 +25,38 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "WInterrupts.h"
 #include "wiring_constants.h"
 #include "variant.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int gpio_configs[GPIO_PIN_NO];
 
-extern struct gpio_callback gpio_cb[GPIO_PIN_NO];
+#define W_GPIO_PINS_PER_PORT 32
+#define W_GPIO_PORT_NUM (sizeof(gpio_port_names)/sizeof(const char*))
+#define W_PIN2PORT(x) (gpio_port_names[x / W_GPIO_PINS_PER_PORT])
+#define W_PIN2PORTPIN(x) (x % W_GPIO_PINS_PER_PORT)
+#define W_GPIO_PIN_NUM (W_GPIO_PINS_PER_PORT * W_GPIO_PORT_NUM)
 
-struct uart_device {
-	int     (*input)( uint8_t c);
-	void    (*init)(void*, uint32_t, uint8_t, uint8_t, uint8_t, uint8_t);
-	void    (*set_input)(void*, int (*input)(unsigned char));
-	void    (*writeb)(void*, unsigned char);
-	uint8_t (*busy)(void*);
-	int	(*txbuffer_availables)(void*);
-	void    (*deinit)(void*);
-	void*	portinfo;
-	uint8_t received;
+typedef void (*voidFuncPtr)(void);
+
+struct w_gpio_callbacks {
+	struct gpio_callback z_callback;
+	voidFuncPtr callback;
 };
+
+static const char* gpio_port_names[] = GPIO_PORT_NAMES;
+
+extern int w_pin_mode[W_GPIO_PIN_NUM];
+extern struct w_gpio_callbacks w_callbacks[W_GPIO_PIN_NUM];
+
+extern void w_digital_write( uint32_t ulPin, uint32_t ulVal );
+extern int w_digital_read( uint32_t ulPin );
+extern void w_attach_interrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode);
+extern void w_detach_interrupt(uint32_t pin);
+
+extern void w_configure_gpio_interrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode, uint32_t pinmode, uint32_t extraflag);
+
 
 struct spi_device {
 	int     (*init)(void*);

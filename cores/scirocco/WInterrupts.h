@@ -20,6 +20,7 @@
 #define _WIRING_INTERRUPTS_
 
 #include <stdint.h>
+#include "wiring_private.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,15 +41,21 @@ typedef void (*voidFuncPtr)(void);
  * \brief Specifies a named Interrupt Service Routine (ISR) to call when an interrupt occurs.
  *        Replaces any previous function that was attached to the interrupt.
  */
-void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode);
+inline void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode) { w_attach_interrupt(pin, callback, mode); }
 
 /*
  * \brief Turns off the given interrupt.
  */
-void detachInterrupt(uint32_t pin);
+inline void detachInterrupt(uint32_t pin) { w_detach_interrupt(pin); }
 
 #ifdef __cplusplus
 }
+
+inline void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode, uint32_t pinmode, uint32_t extraflag=0)
+{
+	w_configure_gpio_interrupt(pin, callback, mode, pinmode, extraflag);
+}
+
 #endif
 
 #endif

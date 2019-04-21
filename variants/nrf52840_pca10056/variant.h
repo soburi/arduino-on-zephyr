@@ -16,15 +16,9 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _VARIANT_JN516X_
-#define _VARIANT_JN516X_
+#ifndef _VARIANT_NRF52840PCA10056_
+#define _VARIANT_NRF52840PCA10056_
 
-#define GPIO_PIN_NO 32
-#define PIN2PORT(x) DT_GPIO_P0_DEV_NAME
-#define PIN2PORTPIN(x) (x)
-
-
-#include "Arduino.h"
 #ifdef __cplusplus
 #include "UartDevice.h"
 #endif // __cplusplus
@@ -33,6 +27,9 @@
 extern "C"
 {
 #endif // __cplusplus
+
+
+#define GPIO_PORT_NAMES	{ DT_GPIO_P0_DEV_NAME, DT_GPIO_P1_DEV_NAME }
 
 
 /*----------------------------------------------------------------------------
@@ -58,46 +55,29 @@ extern "C"
 /*
  * Analog pins
  */
-#define PIN_ADC1 (22)
-#define PIN_ADC2 (23)
-#define PIN_ADC3 (0)
-#define PIN_ADC4 (1)
-#define PIN_ADC5 (2)
-#define PIN_ADC6 (3)
+#define PIN_A1 (3)
+#define PIN_A2 (4)
+#define PIN_A3 (28)
+#define PIN_A4 (29)
+#define PIN_A5 (30)
+#define PIN_A6 (31)
 
-static const uint8_t ADC1   = PIN_ADC1;
-static const uint8_t ADC2   = PIN_ADC2;
-static const uint8_t ADC3   = PIN_ADC3;
-static const uint8_t ADC4   = PIN_ADC4;
-#if JENNIC_CHIP_NAME == _JN5169
-static const uint8_t ADC5   = PIN_ADC5;
-static const uint8_t ADC6   = PIN_ADC6;
-#endif
-
-static const uint8_t A0   = PIN_ADC1;
-static const uint8_t A1   = PIN_ADC2;
-static const uint8_t A2   = PIN_ADC3;
-static const uint8_t A3   = PIN_ADC4;
-#if JENNIC_CHIP_NAME == _JN5169
-static const uint8_t A5   = PIN_ADC5;
-static const uint8_t A6   = PIN_ADC6;
-#endif
-
-#define PIN_D0 (20)
-#define PIN_D1 (21)
-
-static const uint8_t D0   = PIN_D0;
-static const uint8_t D1   = PIN_D1;
+static const uint8_t A0   = PIN_A1;
+static const uint8_t A1   = PIN_A2;
+static const uint8_t A2   = PIN_A3;
+static const uint8_t A3   = PIN_A4;
+static const uint8_t A5   = PIN_A5;
+static const uint8_t A6   = PIN_A6;
 
 /*
  * SPI Interfaces
  */
 #define SPI_INTERFACES_COUNT 1
 
-#define PIN_SPI_MISO  (1)
-#define PIN_SPI_MOSI  PIN_D1
-#define PIN_SPI_SCK   PIN_D0
-#define PIN_SPI_SS    (19)
+#define PIN_SPI_MISO  (21)
+#define PIN_SPI_MOSI  (20)
+#define PIN_SPI_SCK   (19)
+#define PIN_SPI_SS    (17)
 
 static const uint8_t MOSI = PIN_SPI_MOSI ;
 static const uint8_t MISO = PIN_SPI_MISO ;
@@ -112,8 +92,8 @@ extern struct spi_device spi0;
  */
 #define WIRE_INTERFACES_COUNT 1
 
-#define PIN_WIRE_SDA  (15)
-#define PIN_WIRE_SCL  (14)
+#define PIN_WIRE_SDA  (26)
+#define PIN_WIRE_SCL  (27)
 
 static const uint8_t SDA = PIN_WIRE_SDA;
 static const uint8_t SCL = PIN_WIRE_SCL;
@@ -147,12 +127,6 @@ extern Uart Serial0;
 #endif
 #ifdef HAS_UART_1
 extern Uart Serial1;
-#endif
-#ifdef HAS_UART_2
-extern Uart Serial2;
-#endif
-#ifdef HAS_UART_3
-extern Uart Serial3;
 #endif
 
 #endif

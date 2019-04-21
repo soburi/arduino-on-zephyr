@@ -19,6 +19,8 @@
 #ifndef _WIRING_DIGITAL_
 #define _WIRING_DIGITAL_
 
+#include "wiring_private.h"
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -31,7 +33,7 @@
  * \param ulPin The number of the pin whose mode you wish to set
  * \param ulMode Can be INPUT, OUTPUT, INPUT_PULLUP or INPUT_PULLDOWN
  */
-extern void pinMode( uint32_t dwPin, uint32_t dwMode ) ;
+inline void pinMode( uint32_t dwPin, uint32_t dwMode ) { w_configure_gpio_interrupt(dwPin, NULL, -1, dwMode, 0); }
 
 /**
  * \brief Write a HIGH or a LOW value to a digital pin.
@@ -53,7 +55,7 @@ extern void pinMode( uint32_t dwPin, uint32_t dwMode ) ;
  * \param dwPin the pin number
  * \param dwVal HIGH or LOW
  */
-extern void digitalWrite( uint32_t dwPin, uint32_t dwVal ) ;
+inline void digitalWrite( uint32_t dwPin, uint32_t dwVal ) { w_digital_write(dwPin, dwVal); }
 
 /**
  * \brief Reads the value from a specified digital pin, either HIGH or LOW.
@@ -62,7 +64,7 @@ extern void digitalWrite( uint32_t dwPin, uint32_t dwVal ) ;
  *
  * \return HIGH or LOW
  */
-extern int digitalRead( uint32_t ulPin ) ;
+inline int digitalRead( uint32_t ulPin ) { return w_digital_read(ulPin); }
 
 #ifdef __cplusplus
 }
