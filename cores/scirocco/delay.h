@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2015 Arduino LLC.  All right reserved.
-  Copyright (c) 2015-2018 Tokita, Hiroshi
+  Copyright (c) 2015-2019 Tokita, Hiroshi
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 
 #include <stdint.h>
 #include "variant.h"
+#include <sys_clock.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +35,11 @@ extern "C" {
  *
  * \return Number of milliseconds since the program started (uint32_t)
  */
-extern unsigned long millis( void ) ;
+static inline unsigned long millis( void )
+{
+	return k_uptime_get();
+}
+
 
 /**
  * \brief Returns the number of microseconds since the Arduino board began running the current program.
@@ -46,7 +51,16 @@ extern unsigned long millis( void ) ;
  *
  * \note There are 1,000 microseconds in a millisecond and 1,000,000 microseconds in a second.
  */
-extern unsigned long micros( void ) ;
+static inline unsigned long micros( void )
+{
+#if defined(CONFIG_TIMER_READS_ITS_FREQUENCY_AT_RUNTIME)
+extern int z_clock_hw_cycles_per_sec;
+#define HW_CYCLES_PER_SEC z_clock_hw_cycles_per_sec;
+#else
+#define HW_CYCLES_PER_SEC CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC
+#endif
+	return ( (u32_t)( (u64_t)k_cycle_get_32() * USEC_PER_SEC / HW_CYCLES_PER_SEC) );
+}
 
 /**
  * \brief Pauses the program for the amount of time (in miliseconds) specified as parameter.
@@ -54,16 +68,20 @@ extern unsigned long micros( void ) ;
  *
  * \param dwMs the number of milliseconds to pause (uint32_t)
  */
-extern void delay( unsigned long dwMs ) ;
+static inline void delay( unsigned long dwMs )
+{
+	k_sleep(dwMs);
+}
 
 /**
  * \brief Pauses the program for the amount of time (in microseconds) specified as parameter.
  *
  * \param dwUs the number of microseconds to pause (uint32_t)
  */
-#ifndef OVERLOAD_DELAYMICROSECONDS
-extern void delayMicroseconds( unsigned int usec );
-#endif
+static inline void delayMicroseconds( unsigned int usec )
+{
+	k_busy_wait(usec);
+}
 
 #ifdef __cplusplus
 }
