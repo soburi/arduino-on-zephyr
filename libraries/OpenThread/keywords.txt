@@ -1,0 +1,111 @@
+#######################################
+# Syntax Coloring Map For MicroIP
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+OpenThread	KEYWORD1	OpenThreadClass
+BorderRouter	KEYWORD1	OTBorderRouter
+Commissioner		KEYWORD1	OTCommissioner
+Dataset		KEYWORD1	OTDataset
+Error		KEYWORD1	OTError
+Ip6		KEYWORD1	OTIp6
+Joiner		KEYWORD1	OTJoiner
+Link		KEYWORD1	OTLink
+Message		KEYWORD1	OTMessage
+NetData		KEYWORD1	OTNetData
+Server		KEYWORD1	OTServer
+Thread		KEYWORD1	OTThread
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+
+activescan	KEYWORD2
+autostart	KEYWORD2
+begin	KEYWORD2
+bufferinfo	KEYWORD2
+channel	KEYWORD2
+child	KEYWORD2
+childmax	KEYWORD2
+childtimeout	KEYWORD2
+commissioner	KEYWORD2
+commissioner_announce	KEYWORD2
+commissioner_energy	KEYWORD2
+commissioner_panid	KEYWORD2
+commissioner_provisioningurl	KEYWORD2
+commissioner_sessionid	KEYWORD2
+commissioner_start	KEYWORD2
+commissioner_stop	KEYWORD2
+contextreusedelay	KEYWORD2
+counter	KEYWORD2
+dataset_active	KEYWORD2
+dataset_commit_active	KEYWORD2
+dataset_commit_pending	KEYWORD2
+dataset_mgmtget_active	KEYWORD2
+dataset_mgmtget_pending	KEYWORD2
+dataset_mgmtset_active	KEYWORD2
+dataset_mgmtset_pending	KEYWORD2
+dataset_pending	KEYWORD2
+delaytimermin	KEYWORD2
+discover	KEYWORD2
+dump	KEYWORD2
+eidcache	KEYWORD2
+eidcache_num	KEYWORD2
+energyscan	KEYWORD2
+eui64	KEYWORD2
+extaddr	KEYWORD2
+extpanid	KEYWORD2
+factoryreset	KEYWORD2
+ifconfig	KEYWORD2
+ipaddr	KEYWORD2
+ipaddr_add	KEYWORD2
+ipaddr_del	KEYWORD2
+ipaddr_num	KEYWORD2
+ipmaddr	KEYWORD2
+ipmaddr_add	KEYWORD2
+ipmaddr_del	KEYWORD2
+ipmaddr_num	KEYWORD2
+joiner_start	KEYWORD2
+joiner_stop	KEYWORD2
+joinerid	KEYWORD2
+joinerport	KEYWORD2
+keysequencecounter	KEYWORD2
+keyswitchguadtime	KEYWORD2
+leaderdata	KEYWORD2
+leaderpartitionid	KEYWORD2
+leaderweight	KEYWORD2
+masterkey	KEYWORD2
+mode	KEYWORD2
+neighbor	KEYWORD2
+networkidtimeout	KEYWORD2
+networkname	KEYWORD2
+panid	KEYWORD2
+parent	KEYWORD2
+parentpriority	KEYWORD2
+ping	KEYWORD2
+pollperiod	KEYWORD2
+promiscuous	KEYWORD2
+pskc	KEYWORD2
+releaserouterid	KEYWORD2
+reset	KEYWORD2
+rloc16	KEYWORD2
+router	KEYWORD2
+routerdowngradethreshold	KEYWORD2
+routerrole	KEYWORD2
+routerselectionjitter	KEYWORD2
+routerupgradethreshold	KEYWORD2
+singleton	KEYWORD2
+state	KEYWORD2
+thread	KEYWORD2
+txpower	KEYWORD2
+version	KEYWORD2
+otErrorToString KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
