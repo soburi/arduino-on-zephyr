@@ -19,11 +19,19 @@
 #ifndef MICROIPUDP_H
 #define MICROIPUDP_H
 
+#include <zephyr.h>
+#include <net/socket.h>
+
 #include "Udp.h"
 #include "RingBuffer.h"
 
+struct sockaddr_storage;
+
 class MicroIPUDP : public UDP {
+friend class Dispatcher;
 private:
+  IPAddress destIP; 
+  uint16_t destPort; 
   IPAddress _remoteIP; 
   uint16_t _remotePort; 
   uint16_t remaining; 
@@ -31,7 +39,14 @@ private:
   RingBufferN<1024> txbuf;
   RingBufferN<1024> rxbuf;
 
-  uint8_t context[255];
+  struct zsock_pollfd pollfd;
+  uint8_t recv_buffer[128];
+  struct udp_work {
+	struct k_work Work;
+	MicroIPUDP* This;
+  } work;
+
+  int sock;
 
 public:
   MicroIPUDP();  
@@ -59,13 +74,10 @@ private:
   int raw_read();
   int raw_read(unsigned char* buffer, size_t len);
 
-  void receive(struct z_in_addr* srcaddr, uint16_t scrport,
-	       struct z_in_addr* dstaddr, uint16_t dstport,
-	       unsigned char* buffer, size_t len);
-  static void dispatch(void* thisptr,
-		       struct z_in_addr* srcaddr, uint16_t scrport,
-		       struct z_in_addr* dstaddr, uint16_t dstport,
-		       unsigned char* buffer, size_t len);
+  void receive(struct sockaddr_storage* addr, unsigned char* buffer, size_t len);
+
+  void dispatch();
+  static void Task(struct k_work *kwork);
 };
 
 #endif

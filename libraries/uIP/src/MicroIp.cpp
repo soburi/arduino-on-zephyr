@@ -17,14 +17,21 @@
 */
 
 #include "MicroIp.h"
+#pragma GCC diagnostic ignored "-Wparentheses"
+#include <net/net_if.h>
+#pragma GCC diagnostic warning "-Wparentheses"
+#include <net/net_l2.h>
 
-extern "C" {
-int init_vlan(void);
+MicroIPClass::MicroIPClass()
+{
 }
 
 int MicroIPClass::begin()
 {
-  init_vlan();
+  int ret = 0;
+  if( !net_if_is_up(net_if_get_default() ) ) {
+    ret = net_if_up(net_if_get_default() );
+  }
   return 1;
 }
 
@@ -33,51 +40,67 @@ int MicroIPClass::maintain(){
   return 0;
 }
 
-IPAddress MicroIPClass::linklocalAddress()
+#if defined(CONFIG_NET_IPV6)
+IPAddress MicroIPClass::linklocalAddress(int state, int idx)
 {
-  return IPAddress();
+  struct in6_addr* v6 = net_if_ipv6_get_ll(iface, static_cast<enum net_addr_state>(state));
+  if(v6) return IPAddress(v6->s6_addr16);
+  else   return IN6ADDR::ANY_INIT;
 }
 
-IPAddress MicroIPClass::linklocalAddress(int state)
+IPAddress MicroIPClass::globalAddress(int idx)
 {
-  return IPAddress();
+  struct in6_addr* v6 = net_if_ipv6_get_global_addr(&iface);
+  if(v6) return IPAddress(v6->s6_addr16);
+  else   return IN6ADDR::ANY_INIT;
 }
 
-IPAddress MicroIPClass::globalAddress()
+int MicroIPClass::prefixLength(IPAddress ip)
 {
-  return globalAddress(0);
-}
+  struct in6_addr v6;
+  v6.s6_addr16[0] = htons(ip.v6[0]);
+  v6.s6_addr16[1] = htons(ip.v6[1]);
+  v6.s6_addr16[2] = htons(ip.v6[2]);
+  v6.s6_addr16[3] = htons(ip.v6[3]);
+  v6.s6_addr16[4] = htons(ip.v6[4]);
+  v6.s6_addr16[5] = htons(ip.v6[5]);
+  v6.s6_addr16[5] = htons(ip.v6[6]);
+  v6.s6_addr16[7] = htons(ip.v6[7]);
 
-IPAddress MicroIPClass::globalAddress(int state)
-{
-  return IPAddress();
+  struct net_if_ipv6_prefix* prefix = net_if_ipv6_prefix_get(iface, &v6);
+  if(!prefix) return -1;
+  return prefix->len;
+  return 0;
 }
+#endif
 
-IPAddress MicroIPClass::interfaceID()
+IPAddress MicroIPClass::localIP()
 {
   //TODO
-  IPAddress ret;
+  return IN6ADDR::ANY_INIT;
+}
 
-  return ret;
+IPAddress MicroIPClass::subnetMask()
+{
+  //TODO
+  return IN6ADDR::ANY_INIT;
 }
 
 IPAddress MicroIPClass::gatewayIP()
 {
   //TODO
-  IPAddress ret;
-  return ret;
+  return IN6ADDR::ANY_INIT;
 }
 
 IPAddress MicroIPClass::dnsServerIP()
 {
   //TODO
-  IPAddress ret;
-  return ret;
+  return IN6ADDR::ANY_INIT;
 }
 
 IPAddress MicroIPClass::lookup(const char* host)
 {
-  return IPAddress();
+  return IN6ADDR::ANY_INIT;
 }
 
 MicroIPClass MicroIP;

@@ -22,54 +22,56 @@
 #include <inttypes.h>
 #include "IPAddress.h"
 
-#include "MicroIpClient.h"
-#include "MicroIpServer.h"
-#include "MicroIpRPL.h"
+#define IS_NET_L2(type, nif) &NET_L2_GET_NAME(type) == net_if_l2(nif)
 
-#if defined(CONFIG_NET_IPV6)
-#define uip_ipaddr_IPAddress(addr, ipaddr) \
-    uip_ip6addr((addr), (ipaddr).v6[0], (ipaddr).v6[1], (ipaddr).v6[2], (ipaddr).v6[3],\
-                      (ipaddr).v6[4], (ipaddr).v6[5], (ipaddr).v6[6], (ipaddr).v6[7])
-
-#define IPAddress_from_uip(addr) \
-    IPAddress((addr).u16[0], (addr).u16[1], (addr).u16[2], (addr).u16[3], \
-              (addr).u16[4], (addr).u16[5], (addr).u16[6], (addr).u16[7])
+#ifdef CONFIG_NET_L2_BT
+#define IS_BLUETOOTH_L2(netif) IS_NET_L2(BLUETOOTH, netif)
 #else
-#define uip_ipaddr_IPAddress(addr, ipaddr) \
-    uip_(ipaddr)((addr), (ipaddr)[0], (ipaddr)[1], (ipaddr)[2], (ipaddr)[3])
-#define IPAddress_from_uip(addr) \
-    IPAddress((addr).u8[0], (addr).u8[1], (addr).u8[2], (addr).u8[3])
+#define IS_BLUETOOTH_L2(netif) (false)
 #endif
+
+#ifdef CONFIG_NET_L2_IEEE802154
+#define IS_IEEE802154_L2(netif) IS_NET_L2(IEEE802154, netif)
+#else
+#define IS_IEEE802154_L2(netif) (false)
+#endif
+
+#ifdef CONFIG_NET_L2_OPENTHREAD
+#define IS_OPENTHREAD_L2(netif) IS_NET_L2(OPENTHREAD, netif)
+#else
+#define IS_OPENTHREAD_L2(netif) (false)
+#endif
+
+struct net_if;
 
 class MicroIPClass {
 public:
+  MicroIPClass();
 
   int begin();
   int maintain();
 
-  //IPAddress localIP() { return globalAddress(); }
+  IPAddress localIP();
   IPAddress subnetMask();
   IPAddress gatewayIP();
   IPAddress dnsServerIP();
 
 #if defined(CONFIG_NET_IPV6)
-  IPAddress linklocalAddress(int state);
-  IPAddress linklocalAddress();
-  IPAddress globalAddress(int state);
-  IPAddress globalAddress();
+  IPAddress linklocalAddress(int state=-1, int idx=0);
+  IPAddress globalAddress(int idx=0);
+  int prefixLength(IPAddress ip);
+#endif
 
-  IPAddress interfaceID();
-  IPAddress prefix();
-  unsigned int prefixLength();
   IPAddress lookup(const char* host);
   void setHostname(const char* hostname);
   void addDNS(const IPAddress& addr, uint32_t lifetime=0xFFFFFFFF);
   void removeDNS(const IPAddress& addr) { addDNS(addr, 0); }
-#endif
 
 private:
   friend class MicroIPClient;
   friend class MicroIPServer;
+protected:
+  struct net_if* iface;
 };
 
 extern MicroIPClass MicroIP;

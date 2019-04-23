@@ -21,6 +21,10 @@
 #include <zephyr.h>
 #include <kernel.h>
 #include <misc/byteorder.h>
+#pragma GCC diagnostic ignored "-Wparentheses"
+#include <net/socket.h>
+#pragma GCC diagnostic warning "-Wparentheses"
+#include <autoconf.h>
 
 #include "Arduino.h"
 #include "wiring_private.h"
@@ -28,23 +32,78 @@
 #include "MicroIp.h"
 #include "MicroIpUdp.h"
 
-#include "zephyr_udp.h"
+#if defined(CONFIG_NET_IPV6)
+#define INIT_SOCKADDR(ip, port) \
+{\
+    .sin6_family = AF_INET6, \
+    .sin6_port = htons(port), \
+    .sin6_addr = { \
+        .s6_addr16 = { htons(ip.v6[0]), htons(ip.v6[1]), htons(ip.v6[2]), htons(ip.v6[3]), \
+                       htons(ip.v6[4]), htons(ip.v6[5]), htons(ip.v6[6]), htons(ip.v6[7]) }, \
+    }, \
+    .sin6_scope_id = 0 \
+}
 
-#define PRINTF printk
+#define SOCKADDR struct sockaddr_in6
+#define ANY_ADDR IN6ADDR.ANY_INIT
+
+#else
+#define INIT_SOCKADDR(ip, port) \
+{\
+    .sin_family = AF_INET, \
+    .sin_port = htons(port), \
+    .sin_addr = { \
+        .s4_addr = { ip[0], ip[1], ip[2], ip[3] } \
+    } \
+}
+
+#define SOCKADDR struct sockaddr_in
+#define ANY_ADDR INADDR.NONE
+
+#endif
+
+static void ss_addr(IPAddress& remoteIP, struct sockaddr_storage* ss)
+{
+    if(ss->ss_family == AF_INET6) {
+      struct sockaddr_in6* sa = reinterpret_cast<struct sockaddr_in6*>(ss);
+      remoteIP = sa->sin6_addr.s6_addr16;
+    }
+    else if(ss->ss_family == AF_INET) {
+      struct sockaddr_in* sa = reinterpret_cast<struct sockaddr_in*>(ss);
+      remoteIP = sa->sin_addr.s4_addr;
+    }
+}
+
+static void ss_port(uint16_t& remotePort, struct sockaddr_storage* ss)
+{
+  if(ss->ss_family == AF_INET6) {
+    remotePort = htons(reinterpret_cast<struct sockaddr_in6*>(ss)->sin6_port);
+  }
+  else if(ss->ss_family == AF_INET) {
+    remotePort = htons(reinterpret_cast<struct sockaddr_in*>(ss)->sin_port);
+  }
+}
+
+#define PRINTF(...)
 struct receive_pack {
   uint16_t length;
-  struct z_in_addr in_addr;
-  uint16_t port;
+  struct sockaddr_storage addr;
 };
 
-MicroIPUDP::MicroIPUDP() : remaining(0)
+MicroIPUDP::MicroIPUDP()
 {
-  udp_init_context(context, this, MicroIPUDP::dispatch);
 }
 
 uint8_t MicroIPUDP::begin(uint16_t port)
 {
-//  udp_start_listen(context, port);
+  const SOCKADDR sa = INIT_SOCKADDR(ANY_ADDR, port);
+
+  sock = zsock_socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+  zsock_bind(sock, reinterpret_cast<const struct sockaddr*>(&sa), sizeof(sa));
+  //Dispatcher::DispatchTask.Append(this);
+  k_work_init(&work.Work, Task);
+  work.This = this;
+  k_work_submit(&work.Work);
   return 1;
 }
 
@@ -55,13 +114,14 @@ int MicroIPUDP::available()
 
 void MicroIPUDP::stop()
 {
-  udp_close(context);
+  //Dispatcher::DispatchTask.Remove(this);
+  zsock_close(sock);
 }
 
 int MicroIPUDP::beginPacket(const char *host, uint16_t port)
 {
   IPAddress remote = MicroIP.lookup(host);
-  if(remote == IN6ADDR_ANY_INIT) {
+  if(remote == ANY_ADDR) {
     return 0;
   }
   return beginPacket(remote, port);
@@ -69,13 +129,16 @@ int MicroIPUDP::beginPacket(const char *host, uint16_t port)
 
 int MicroIPUDP::beginPacket(IPAddress ip, uint16_t port)
 {
-  udp_connect(context, raw_in_addr(ip), __bswap_16(port));
+  destIP = ip;
+  destPort = port;
   return 1;
 }
 
 int MicroIPUDP::endPacket()
 {
-  udp_send(context, txbuf._aucBuffer, txbuf.available());
+  const SOCKADDR sa = INIT_SOCKADDR(destIP, destPort);
+
+  zsock_sendto(sock, txbuf._aucBuffer, txbuf.available(), 0, reinterpret_cast<const struct sockaddr*>(&sa), sizeof(sa));
   txbuf.clear();
   return 1;
 }
@@ -123,20 +186,15 @@ int MicroIPUDP::parsePacket()
     raw_read(reinterpret_cast<uint8_t*>(&pack) ,sizeof(struct receive_pack));
 
     remaining = pack.length - sizeof(struct receive_pack);
-    _remoteIP = IPAddress(sys_be16_to_cpu(pack.in_addr.u16[0]),
-                          sys_be16_to_cpu(pack.in_addr.u16[1]),
-                          sys_be16_to_cpu(pack.in_addr.u16[2]),
-                          sys_be16_to_cpu(pack.in_addr.u16[3]),
-                          sys_be16_to_cpu(pack.in_addr.u16[4]),
-                          sys_be16_to_cpu(pack.in_addr.u16[5]),
-                          sys_be16_to_cpu(pack.in_addr.u16[6]),
-                          sys_be16_to_cpu(pack.in_addr.u16[7]));
-    _remotePort = pack.port;
+
+    ss_addr(_remoteIP, &pack.addr);
+    ss_port(_remotePort, &pack.addr);
 
     PRINTF("return MicroIPUDP::parsePacket %d\n", available());
   }
   return available();
 }
+
 
 int MicroIPUDP::read()
 {
@@ -188,14 +246,10 @@ int MicroIPUDP::raw_read(unsigned char* buf, size_t size)
   return size;
 }
 
-void MicroIPUDP::receive(struct z_in_addr *source_addr, uint16_t source_port,
-                         struct z_in_addr *dest_addr, uint16_t dest_port,
-                         unsigned char *data, size_t datalen)
+void MicroIPUDP::receive(struct sockaddr_storage *source_addr, unsigned char *data, size_t datalen)
 {
   const uint16_t store_size = static_cast<uint16_t>(datalen + sizeof(struct receive_pack));
-  struct receive_pack pack = { store_size, *source_addr, source_port };
-  (void) dest_addr;
-  (void) dest_port;
+  struct receive_pack pack = { store_size, *source_addr };
   PRINTF("MicroIPUDP::receive %d %d %d\n", sizeof(struct receive_pack), store_size, datalen );
 
   if( store_size > sizeof(rxbuf._aucBuffer) ) {
@@ -232,11 +286,31 @@ void MicroIPUDP::receive(struct z_in_addr *source_addr, uint16_t source_port,
 
 }
 
-void MicroIPUDP::dispatch(void* thisptr, struct z_in_addr* srcaddr, uint16_t srcport,
-                                         struct z_in_addr* dstaddr, uint16_t dstport,
-                          unsigned char* buffer, size_t len)
+void MicroIPUDP::dispatch()
 {
-  PRINTF("MicroIPUDP::dispatch\n");
-  reinterpret_cast<MicroIPUDP*>(thisptr)->receive(srcaddr, srcport, dstaddr, dstport, buffer, len);
+  pollfd.fd = sock;
+  pollfd.events = ZSOCK_POLLIN;
+
+  zsock_poll(&pollfd, 1, -1);
+
+  if( !(pollfd.revents & ZSOCK_POLLIN) ) {
+    return;
+  }
+
+  struct sockaddr_storage fromaddr;
+  socklen_t addrlen = sizeof(fromaddr);
+
+  ssize_t sz = zsock_recvfrom(this->sock, recv_buffer, sizeof(recv_buffer), 0,
+                       reinterpret_cast<struct sockaddr*>(&fromaddr), &addrlen);
+  if(sz != 0) {
+    //TODO printk("errno = %d\n", errno);
+  }
+  this->receive(&fromaddr, recv_buffer, sz);
+}
+
+void MicroIPUDP::Task(struct k_work *kwork) {
+  struct udp_work* uw = reinterpret_cast<struct udp_work*>(kwork);
+  uw->This->dispatch();
+  k_work_submit(kwork);
 }
 
