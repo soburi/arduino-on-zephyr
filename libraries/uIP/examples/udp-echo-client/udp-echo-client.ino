@@ -19,6 +19,7 @@
 #include <MicroIp.h>
 #include <MicroIpUdp.h>
 #include <IPAddress.h>
+#include <DNSClient.h>
 
 const size_t MAX_PAYLOAD_LEN = 40;
 const char* UDP_CONNECTION_ADDR = "contiki-udp-server.local";
@@ -28,6 +29,7 @@ const int INTERVAL = 15;
 
 MicroIPUDP Udp;
 IPAddress server;
+DNSClient DNS;
 
 char packetBuffer[MAX_PAYLOAD_LEN];
 long lastsend;
@@ -37,10 +39,11 @@ void setup() {
   Serial.begin(1000000);
   Serial.println("Start udp-echo-cleint");
   MicroIP.begin();
+  DNS.begin();
 
-  server = MicroIP.lookup(UDP_CONNECTION_ADDR);
+  int success = DNS.getHostByName(UDP_CONNECTION_ADDR, server);
 
-  if (server == IN6ADDR_ANY_INIT) {
+  if (success) {
     Serial.print("Server [");
     Serial.print(UDP_CONNECTION_ADDR);
     Serial.println("] is not found.");

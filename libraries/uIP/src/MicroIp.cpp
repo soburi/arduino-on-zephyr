@@ -35,11 +35,6 @@ int MicroIPClass::begin()
   return 1;
 }
 
-int MicroIPClass::maintain(){
-  //Contiki is NOT support DHCPv6.
-  return 0;
-}
-
 #if defined(CONFIG_NET_IPV6)
 IPAddress MicroIPClass::linklocalAddress(int state, int idx)
 {
@@ -89,17 +84,6 @@ IPAddress MicroIPClass::subnetMask()
 IPAddress MicroIPClass::gatewayIP()
 {
   //TODO
-  return IN6ADDR::ANY_INIT;
-}
-
-IPAddress MicroIPClass::dnsServerIP()
-{
-  //TODO
-  return IN6ADDR::ANY_INIT;
-}
-
-IPAddress MicroIPClass::lookup(const char* host)
-{
   return IN6ADDR::ANY_INIT;
 }
 

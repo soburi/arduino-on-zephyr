@@ -31,6 +31,7 @@
 #include "Udp.h"
 #include "MicroIp.h"
 #include "MicroIpUdp.h"
+#include "DNSClient.h"
 
 #if defined(CONFIG_NET_IPV6)
 #define INIT_SOCKADDR(ip, port) \
@@ -120,8 +121,10 @@ void MicroIPUDP::stop()
 
 int MicroIPUDP::beginPacket(const char *host, uint16_t port)
 {
-  IPAddress remote = MicroIP.lookup(host);
-  if(remote == ANY_ADDR) {
+  DNSClient dc;
+  IPAddress remote;
+  int ret = dc.getHostByName(host, remote);
+  if(ret != 1) {
     return 0;
   }
   return beginPacket(remote, port);

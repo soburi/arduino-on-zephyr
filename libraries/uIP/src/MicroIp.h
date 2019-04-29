@@ -49,23 +49,16 @@ public:
   MicroIPClass();
 
   int begin();
-  int maintain();
 
   IPAddress localIP();
   IPAddress subnetMask();
   IPAddress gatewayIP();
-  IPAddress dnsServerIP();
 
 #if defined(CONFIG_NET_IPV6)
   IPAddress linklocalAddress(int state=-1, int idx=0);
   IPAddress globalAddress(int idx=0);
   int prefixLength(IPAddress ip);
 #endif
-
-  IPAddress lookup(const char* host);
-  void setHostname(const char* hostname);
-  void addDNS(const IPAddress& addr, uint32_t lifetime=0xFFFFFFFF);
-  void removeDNS(const IPAddress& addr) { addDNS(addr, 0); }
 
 private:
   friend class MicroIPClient;
