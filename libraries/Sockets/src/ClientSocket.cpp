@@ -18,8 +18,7 @@
 
 #include "Arduino.h"
 #include "wiring_private.h"
-#include "MicroIp.h"
-#include "MicroIpClient.h"
+#include "ClientSocket.h"
 #if 0
 struct tcp_socket_params {
   MicroIPClient* client;

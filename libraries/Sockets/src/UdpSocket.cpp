@@ -29,8 +29,8 @@
 #include "Arduino.h"
 #include "wiring_private.h"
 #include "Udp.h"
-#include "MicroIp.h"
-#include "MicroIpUdp.h"
+#include "UdpSocket.h"
+#include "NetworkInterface.h"
 #include "DNSClient.h"
 
 #if defined(CONFIG_NET_IPV6)

@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "MicroIp.h"
+#include "NetworkInterface.h"
 #pragma GCC diagnostic ignored "-Wparentheses"
 #include <net/net_if.h>
 #pragma GCC diagnostic warning "-Wparentheses"

@@ -21,9 +21,8 @@ extern "C" {
 #include <net/ip/uip-debug.h>
 }
 
-#include "MicroIp.h"
-#include "MicroIpClient.h"
-#include "MicroIpServer.h"
+#include "ClientSocket.h"
+#include "ServerSocket.h"
 
 MicroIPClient MicroIPServer::null_client(0);
 
