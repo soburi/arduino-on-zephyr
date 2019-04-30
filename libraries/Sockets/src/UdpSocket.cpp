@@ -91,11 +91,11 @@ struct receive_pack {
   struct sockaddr_storage addr;
 };
 
-MicroIPUDP::MicroIPUDP()
+UDPSocket::UDPSocket()
 {
 }
 
-uint8_t MicroIPUDP::begin(uint16_t port)
+uint8_t UDPSocket::begin(uint16_t port)
 {
   const SOCKADDR sa = INIT_SOCKADDR(ANY_ADDR, port);
 
@@ -108,18 +108,18 @@ uint8_t MicroIPUDP::begin(uint16_t port)
   return 1;
 }
 
-int MicroIPUDP::available()
+int UDPSocket::available()
 {
   return remaining;
 }
 
-void MicroIPUDP::stop()
+void UDPSocket::stop()
 {
   //Dispatcher::DispatchTask.Remove(this);
   zsock_close(sock);
 }
 
-int MicroIPUDP::beginPacket(const char *host, uint16_t port)
+int UDPSocket::beginPacket(const char *host, uint16_t port)
 {
   DNSClient dc;
   IPAddress remote;
@@ -130,14 +130,14 @@ int MicroIPUDP::beginPacket(const char *host, uint16_t port)
   return beginPacket(remote, port);
 }
 
-int MicroIPUDP::beginPacket(IPAddress ip, uint16_t port)
+int UDPSocket::beginPacket(IPAddress ip, uint16_t port)
 {
   destIP = ip;
   destPort = port;
   return 1;
 }
 
-int MicroIPUDP::endPacket()
+int UDPSocket::endPacket()
 {
   const SOCKADDR sa = INIT_SOCKADDR(destIP, destPort);
 
@@ -146,7 +146,7 @@ int MicroIPUDP::endPacket()
   return 1;
 }
 
-size_t MicroIPUDP::write(uint8_t byte)
+size_t UDPSocket::write(uint8_t byte)
 {
   if( !txbuf.isFull() ) {
     txbuf.store_char(byte);
@@ -157,7 +157,7 @@ size_t MicroIPUDP::write(uint8_t byte)
   }
 }
 
-size_t MicroIPUDP::write(const uint8_t *buffer, size_t size)
+size_t UDPSocket::write(const uint8_t *buffer, size_t size)
 {
   for(uint32_t i=0; i<size; i++) {
     int r = write(buffer[i]);
@@ -168,9 +168,9 @@ size_t MicroIPUDP::write(const uint8_t *buffer, size_t size)
   return size;
 }
 
-int MicroIPUDP::parsePacket()
+int UDPSocket::parsePacket()
 {
-  PRINTF("MicroIPUDP::parsePacket %d %d\n", rxbuf.available(), available());
+  PRINTF("UDPSocket::parsePacket %d %d\n", rxbuf.available(), available());
   if( available() ) {
     //notify
     //discard current data
@@ -193,13 +193,13 @@ int MicroIPUDP::parsePacket()
     ss_addr(_remoteIP, &pack.addr);
     ss_port(_remotePort, &pack.addr);
 
-    PRINTF("return MicroIPUDP::parsePacket %d\n", available());
+    PRINTF("return UDPSocket::parsePacket %d\n", available());
   }
   return available();
 }
 
 
-int MicroIPUDP::read()
+int UDPSocket::read()
 {
   if(remaining) {
     remaining--;
@@ -210,7 +210,7 @@ int MicroIPUDP::read()
   }
 }
 
-int MicroIPUDP::read(unsigned char* buf, size_t size)
+int UDPSocket::read(unsigned char* buf, size_t size)
 {
   for(uint32_t i=0; i<size; i++) {
     int r = read();
@@ -222,22 +222,22 @@ int MicroIPUDP::read(unsigned char* buf, size_t size)
   return size;
 }
 
-int MicroIPUDP::peek()
+int UDPSocket::peek()
 {
   return rxbuf.peek();
 }
 
-void MicroIPUDP::flush()
+void UDPSocket::flush()
 {
   //???
 }
 
-int MicroIPUDP::raw_read()
+int UDPSocket::raw_read()
 {
   return rxbuf.read_char();
 }
 
-int MicroIPUDP::raw_read(unsigned char* buf, size_t size)
+int UDPSocket::raw_read(unsigned char* buf, size_t size)
 {
   for(uint32_t i=0; i<size; i++) {
     int r = raw_read();
@@ -249,11 +249,11 @@ int MicroIPUDP::raw_read(unsigned char* buf, size_t size)
   return size;
 }
 
-void MicroIPUDP::receive(struct sockaddr_storage *source_addr, unsigned char *data, size_t datalen)
+void UDPSocket::receive(struct sockaddr_storage *source_addr, unsigned char *data, size_t datalen)
 {
   const uint16_t store_size = static_cast<uint16_t>(datalen + sizeof(struct receive_pack));
   struct receive_pack pack = { store_size, *source_addr };
-  PRINTF("MicroIPUDP::receive %d %d %d\n", sizeof(struct receive_pack), store_size, datalen );
+  PRINTF("UDPSocket::receive %d %d %d\n", sizeof(struct receive_pack), store_size, datalen );
 
   if( store_size > sizeof(rxbuf._aucBuffer) ) {
     //too large packet.
@@ -261,7 +261,7 @@ void MicroIPUDP::receive(struct sockaddr_storage *source_addr, unsigned char *da
   }
 
   if( store_size > rxbuf.available() ) {
-    PRINTF("MicroIPUDP::receive available() %d %d\n", available(), remaining );
+    PRINTF("UDPSocket::receive available() %d %d\n", available(), remaining );
     if( available() ) {
       //notify discard
       //discard current data
@@ -272,7 +272,7 @@ void MicroIPUDP::receive(struct sockaddr_storage *source_addr, unsigned char *da
     }
   }
 
-  PRINTF("MicroIPUDP::receive ringbuf_size() %d ringbuf_elements() %d\n", sizeof(rxbuf._aucBuffer), rxbuf.available() );
+  PRINTF("UDPSocket::receive ringbuf_size() %d ringbuf_elements() %d\n", sizeof(rxbuf._aucBuffer), rxbuf.available() );
 //  while( store_size < rxbuf.availableForStore() ) {
 //    // discard old packet.
 //    parsePacket();
@@ -285,11 +285,11 @@ void MicroIPUDP::receive(struct sockaddr_storage *source_addr, unsigned char *da
   for(size_t i=0; i<datalen; i++) {
     rxbuf.store_char(data[i]);
   }
-  PRINTF("MicroIPUDP::receive ringbuf_size() %d ringbuf_elements() %d\n", sizeof(rxbuf._aucBuffer) , rxbuf.available() );
+  PRINTF("UDPSocket::receive ringbuf_size() %d ringbuf_elements() %d\n", sizeof(rxbuf._aucBuffer) , rxbuf.available() );
 
 }
 
-void MicroIPUDP::dispatch()
+void UDPSocket::dispatch()
 {
   pollfd.fd = sock;
   pollfd.events = ZSOCK_POLLIN;
@@ -311,7 +311,7 @@ void MicroIPUDP::dispatch()
   this->receive(&fromaddr, recv_buffer, sz);
 }
 
-void MicroIPUDP::Task(struct k_work *kwork) {
+void UDPSocket::Task(struct k_work *kwork) {
   struct udp_work* uw = reinterpret_cast<struct udp_work*>(kwork);
   uw->This->dispatch();
   k_work_submit(kwork);

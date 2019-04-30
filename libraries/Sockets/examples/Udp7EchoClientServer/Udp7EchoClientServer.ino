@@ -18,8 +18,8 @@
   by Tokita Hiroshi
 */
 
-#include <MicroIp.h>
-#include <MicroIpUdp.h>
+#include <NetworkInterface.h>
+#include <UdpSocket.h>
 
 IPAddress destAddr;
 
@@ -32,7 +32,7 @@ char packetBuffer[MAX_PAYLOAD_LEN];
 char serialBuffer[MAX_V6_ADDR_STR];
 size_t serialBufferLen;
 
-MicroIPUDP Udp;
+UDPSocket Udp;
 
 void setup() {
   Serial.begin(1000000);
@@ -42,11 +42,11 @@ void setup() {
   Serial.println("/udp) listen start.");
   Serial.println();
 
-  MicroIP.begin();
+  NetIf.begin();
 
   // Show link-local address
   Serial.print("This linklocal Address is ");
-  Serial.println(MicroIP.linklocalAddress());
+  Serial.println(NetIf.linklocalAddress());
   Serial.println();
 
   Udp.begin(ECHO_PORT);

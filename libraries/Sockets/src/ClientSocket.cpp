@@ -21,33 +21,33 @@
 #include "ClientSocket.h"
 #if 0
 struct tcp_socket_params {
-  MicroIPClient* client;
+  ClientSocket* client;
   //const uip_ipaddr_t* ipaddr;
   uint16_t port;
   int retval;
 };
 
 struct tcp_send_params {
-  const MicroIPClient* client;
+  const ClientSocket* client;
   const uint8_t* buf;
   size_t size;
   int retval;
 };
 
 
-MicroIPClient::MicroIPClient() {
+ClientSocket::ClientSocket() {
   state = TCP_SOCKET_CLOSED;
   _psock = &sock;
   ringbuf_init(&rxbuf, rbuf, static_cast<uint8_t>(MICROIPCLIENT_RXBUF_SIZE) );
 }
 
-MicroIPClient::MicroIPClient(struct tcp_socket* psock) {
+ClientSocket::ClientSocket(struct tcp_socket* psock) {
   _psock = psock;
   ringbuf_init(&rxbuf, rbuf, static_cast<uint8_t>(MICROIPCLIENT_RXBUF_SIZE) );
 }
 
-int MicroIPClient::connect(const char* host, uint16_t port) {
-  PRINTF("MicroIPClient::connect(%s, %d)\n", host, port);
+int ClientSocket::connect(const char* host, uint16_t port) {
+  PRINTF("ClientSocket::connect(%s, %d)\n", host, port);
   IPAddress remote = MicroIP.lookup(host);
   if(remote == IN6ADDR_ANY_INIT) {
     return 0;
@@ -55,8 +55,8 @@ int MicroIPClient::connect(const char* host, uint16_t port) {
   return connect(remote, port);
 }
 
-int MicroIPClient::connect(IPAddress ip, uint16_t port) {
-  PRINTF("MicroIPClient::connect(ip,port)\n");
+int ClientSocket::connect(IPAddress ip, uint16_t port) {
+  PRINTF("ClientSocket::connect(ip,port)\n");
 
   uip_ipaddr_t ipaddr;
   uip_ipaddr_IPAddress(&ipaddr, ip);
@@ -64,7 +64,7 @@ int MicroIPClient::connect(IPAddress ip, uint16_t port) {
 
   yield_continue(do_tcp_socket_register, &params);
 
-  PRINTF("MicroIPClient::connect(ip,port) reg_params.retval=%d\n", params.retval);
+  PRINTF("ClientSocket::connect(ip,port) reg_params.retval=%d\n", params.retval);
   if(params.retval != 1)
   {
     return 0;
@@ -73,7 +73,7 @@ int MicroIPClient::connect(IPAddress ip, uint16_t port) {
   params.retval = 0;
   yield_until(do_tcp_socket_connect, &params, wait_tcp_socket_event, &params);
 
-  PRINTF("return MicroIPClient::connect(ip,port) params.retval=%d\n", params.retval);
+  PRINTF("return ClientSocket::connect(ip,port) params.retval=%d\n", params.retval);
   if(params.retval != 1)
   {
     return 0;
@@ -82,18 +82,18 @@ int MicroIPClient::connect(IPAddress ip, uint16_t port) {
   return (state == 0);
 }
 
-size_t MicroIPClient::write(uint8_t b) {
+size_t ClientSocket::write(uint8_t b) {
   return write(&b, 1);
 }
 
-size_t MicroIPClient::write(const uint8_t *buf, size_t size) {
-  PRINTF("MicroIPClient::write(%x,%d)\n", buf, size);
+size_t ClientSocket::write(const uint8_t *buf, size_t size) {
+  PRINTF("ClientSocket::write(%x,%d)\n", buf, size);
 
   struct tcp_send_params params = { this, buf, size, 0 };
   //yield_continue(do_tcp_socket_send, &params);
   yield_until(do_tcp_socket_send, &params, wait_tcp_socket_event, &params);
 
-  PRINTF("return MicroIPClient::write %d\n", params.retval);
+  PRINTF("return ClientSocket::write %d\n", params.retval);
   if (!params.retval) {
     setWriteError();
     return 0;
@@ -101,17 +101,17 @@ size_t MicroIPClient::write(const uint8_t *buf, size_t size) {
   return params.retval;
 }
 
-int MicroIPClient::available() {
+int ClientSocket::available() {
   int ret = ringbuf_elements(&rxbuf);
   //PRINTF("available %d\n", ret);
   return ret;
 }
 
-int MicroIPClient::read() {
+int ClientSocket::read() {
   return ringbuf_get(&rxbuf);
 }
 
-int MicroIPClient::read(uint8_t *buf, size_t size) {
+int ClientSocket::read(uint8_t *buf, size_t size) {
   for(uint32_t i=0; i<size; i++) {
     int r = ringbuf_get(&rxbuf);
     if(r == -1) {
@@ -122,7 +122,7 @@ int MicroIPClient::read(uint8_t *buf, size_t size) {
   return size;
 }
 
-int MicroIPClient::peek() {
+int ClientSocket::peek() {
   struct ringbuf *r = &rxbuf;
   if(((r->put_ptr - r->get_ptr) & r->mask) > 0) {
     uint8_t c = CC_ACCESS_NOW(uint8_t, r->data[r->get_ptr]);
@@ -132,16 +132,16 @@ int MicroIPClient::peek() {
   }
 }
 
-void MicroIPClient::flush() {
+void ClientSocket::flush() {
   // Nothing to do.
 }
 
-void MicroIPClient::do_tcp_socket_close(void* ptr)
+void ClientSocket::do_tcp_socket_close(void* ptr)
 {
   struct tcp_socket_params* params = reinterpret_cast<struct tcp_socket_params*>(ptr);
 
   PRINTF("do_tcp_socket_close\n");
-  const_cast<MicroIPClient*>(params->client)->event_wait = true;
+  const_cast<ClientSocket*>(params->client)->event_wait = true;
 
   int ret = tcp_socket_close(&params->client->sock);
   PRINTF("return do_tcp_socket_close %d\n", ret);
@@ -151,8 +151,8 @@ void MicroIPClient::do_tcp_socket_close(void* ptr)
   }
 }
 
-void MicroIPClient::stop() {
-  PRINTF("MicroIPClient::stop()\n");
+void ClientSocket::stop() {
+  PRINTF("ClientSocket::stop()\n");
 
   struct tcp_socket_params params = { this, NULL, 0, 0 };
 
@@ -164,23 +164,23 @@ void MicroIPClient::stop() {
   }
 }
 
-uint8_t MicroIPClient::connected() {
+uint8_t ClientSocket::connected() {
   uint8_t connected_ = (state == TCP_SOCKET_CONNECTED || state == TCP_SOCKET_DATA_SENT);
   return connected_;
 }
 
-uint8_t MicroIPClient::status() {
+uint8_t ClientSocket::status() {
   return state;
 }
 
 // the next function allows us to use the client returned by
-// MicroIPServer::available() as the condition in an if-statement.
+// ServerSocket::available() as the condition in an if-statement.
 
-MicroIPClient::operator bool() {
+ClientSocket::operator bool() {
   return (_psock != NULL);
 }
 
-size_t MicroIPClient::receive(const uint8_t *input_data_ptr, int input_data_len)
+size_t ClientSocket::receive(const uint8_t *input_data_ptr, int input_data_len)
 {
   for(int i=0; i<input_data_len; i++) {
     int r = ringbuf_put(&rxbuf, input_data_ptr[i]);
@@ -192,23 +192,23 @@ size_t MicroIPClient::receive(const uint8_t *input_data_ptr, int input_data_len)
 }
 
 
-void MicroIPClient::do_tcp_socket_register(void* ptr)
+void ClientSocket::do_tcp_socket_register(void* ptr)
 {
   struct tcp_socket_params* params = reinterpret_cast<struct tcp_socket_params*>(ptr);
 
   PRINTF("do_tcp_socket_register\n");
-  MicroIPClient* client = const_cast<MicroIPClient*>(params->client);
+  ClientSocket* client = const_cast<ClientSocket*>(params->client);
   params->retval = tcp_socket_register(&client->sock, client,
 		  client->socket_rxbuf, 4, client->socket_txbuf, MICROIPCLIENT_TXBUF_SIZE,
-		  MicroIPClient::data_callback, MicroIPClient::event_callback);
+		  ClientSocket::data_callback, ClientSocket::event_callback);
 }
 
-void MicroIPClient::do_tcp_socket_connect(void* ptr)
+void ClientSocket::do_tcp_socket_connect(void* ptr)
 {
   struct tcp_socket_params* params = reinterpret_cast<struct tcp_socket_params*>(ptr);
 
   PRINTF("do_tcp_socket_connect\n");
-  const_cast<MicroIPClient*>(params->client)->event_wait = true;
+  const_cast<ClientSocket*>(params->client)->event_wait = true;
 
   int ret = tcp_socket_connect(&params->client->sock, params->ipaddr, params->port);
   PRINTF("return do_tcp_socket_connect %d\n", ret);
@@ -218,9 +218,9 @@ void MicroIPClient::do_tcp_socket_connect(void* ptr)
   }
 }
 
-int MicroIPClient::wait_tcp_socket_event(process_event_t ev, process_data_t data, void* ptr) {
+int ClientSocket::wait_tcp_socket_event(process_event_t ev, process_data_t data, void* ptr) {
   struct tcp_socket_params* params = reinterpret_cast<struct tcp_socket_params*>(ptr);
-  MicroIPClient* client = const_cast<MicroIPClient*>(params->client);
+  ClientSocket* client = const_cast<ClientSocket*>(params->client);
   (void)ev;
   (void)data;
 
@@ -233,10 +233,10 @@ int MicroIPClient::wait_tcp_socket_event(process_event_t ev, process_data_t data
   return 1;
 }
 
-void MicroIPClient::do_tcp_socket_send(void* ptr) {
+void ClientSocket::do_tcp_socket_send(void* ptr) {
   struct tcp_send_params* params = reinterpret_cast<struct tcp_send_params*>(ptr);
-  MicroIPClient* client = const_cast<MicroIPClient*>(params->client);
-  const_cast<MicroIPClient*>(params->client)->event_wait = true;
+  ClientSocket* client = const_cast<ClientSocket*>(params->client);
+  const_cast<ClientSocket*>(params->client)->event_wait = true;
 
   PRINTF("call tcp_socket_send\n");
   //params->retval = tcp_socket_send(client->_psock, params->buf, params->size);
@@ -248,7 +248,7 @@ void MicroIPClient::do_tcp_socket_send(void* ptr) {
   }
 }
 
-void MicroIPClient::do_tcp_socket_listen(void* ptr)
+void ClientSocket::do_tcp_socket_listen(void* ptr)
 {
   struct tcp_socket_params* params = reinterpret_cast<struct tcp_socket_params*>(ptr);
 
@@ -256,14 +256,14 @@ void MicroIPClient::do_tcp_socket_listen(void* ptr)
   params->retval = tcp_socket_listen(&params->client->sock, params->port);
 }
 
-int MicroIPClient::listen(uint16_t port)
+int ClientSocket::listen(uint16_t port)
 {
-  PRINTF("MicroIPClient::listen(%d)\n", port);
+  PRINTF("ClientSocket::listen(%d)\n", port);
   struct tcp_socket_params reg_params = { this, NULL, 0, 0 };
 
   yield_continue(do_tcp_socket_register, &reg_params);
 
-  PRINTF("MicroIPClient::listen(port) reg_params.retval=%d\n", reg_params.retval);
+  PRINTF("ClientSocket::listen(port) reg_params.retval=%d\n", reg_params.retval);
   if(reg_params.retval != 1)
   {
     return 0;
@@ -272,7 +272,7 @@ int MicroIPClient::listen(uint16_t port)
   struct tcp_socket_params params = { this, NULL, port, 0 };
   yield_continue(do_tcp_socket_listen, &params);
 
-  PRINTF("return MicroIPClient::listen(port) params.retval=%d\n", params.retval);
+  PRINTF("return ClientSocket::listen(port) params.retval=%d\n", params.retval);
   if(params.retval != 1)
   {
     return 0;
@@ -281,17 +281,17 @@ int MicroIPClient::listen(uint16_t port)
   return 1;
 }
 
-int MicroIPClient::data_callback(struct tcp_socket *s, void *ptr, const uint8_t *input_data_ptr, int input_data_len) {
-  PRINTF("MicroIPClient::data_callback %d\n", input_data_len);
-  MicroIPClient* client = reinterpret_cast<MicroIPClient*>(ptr);
+int ClientSocket::data_callback(struct tcp_socket *s, void *ptr, const uint8_t *input_data_ptr, int input_data_len) {
+  PRINTF("ClientSocket::data_callback %d\n", input_data_len);
+  ClientSocket* client = reinterpret_cast<ClientSocket*>(ptr);
   (void)s;
   int wb = client->receive(input_data_ptr, input_data_len);
   return (input_data_len - wb);
 }
 
-void MicroIPClient::event_callback(struct tcp_socket *s, void *ptr, tcp_socket_event_t event) {
-  PRINTF("MicroIPClient::event_callback %d\n", event);
-  MicroIPClient* client = reinterpret_cast<MicroIPClient*>(ptr);
+void ClientSocket::event_callback(struct tcp_socket *s, void *ptr, tcp_socket_event_t event) {
+  PRINTF("ClientSocket::event_callback %d\n", event);
+  ClientSocket* client = reinterpret_cast<ClientSocket*>(ptr);
   (void)s;
   client->state = event;
   client->event_wait= false;

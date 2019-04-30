@@ -16,22 +16,22 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef MICROIPSERVER_H
-#define MICROIPSERVER_H
+#ifndef SOCKET_SERVERSOCKET_H
+#define SOCKET_SERVERSOCKET_H
 
 #include "Server.h"
 
 #include "ClientSocket.h"
 
-class MicroIPServer : 
+class ServerSocket : 
 public Server {
 private:
-  static MicroIPClient null_client;
-  MicroIPClient internal_client;
+  static ClientSocket null_client;
+  ClientSocket internal_client;
   uint16_t port;
 public:
-  MicroIPServer(uint16_t);
-  MicroIPClient& available();
+  ServerSocket(uint16_t);
+  ClientSocket& available();
   virtual void begin();
   virtual size_t write(uint8_t);
   virtual size_t write(const uint8_t *buf, size_t size);

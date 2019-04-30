@@ -17,17 +17,16 @@
   by Tokita Hiroshi
 */
 
-#include <MicroIp.h>
-#include <MicroIpUdp.h>
+#include <NetworkInterface.h>
+#include <UdpSocket.h>
 #include <IPAddress.h>
 
 const size_t MAX_PAYLOAD_LEN = 40;
-const char* HOSTNAME = "contiki-udp-server";
-const char* PREFIX = "AAAA::0";
-const unsigned short LOCAL_PORT = 3000;
-const unsigned short DEST_PORT  = 3001;
+//const char* HOSTNAME = "contiki-udp-server";
+const unsigned short LOCAL_PORT = 7;
+const unsigned short DEST_PORT  = 7;
 
-MicroIPUDP Udp;
+UDPSocket Udp;
 
 char packetBuffer[MAX_PAYLOAD_LEN];
 long seq_id;
@@ -36,15 +35,10 @@ void setup() {
   Serial.begin(1000000);
   Serial.println("Start udp-echo-server-rpl");
 
-  MicroIP.begin();
+  NetIf.begin();
 
   // set hostname to mDNS announcing
-  MicroIP.setHostname(HOSTNAME);
-
-  // start RPL to find neighbors
-  IPAddress rpl_prefix;
-  rpl_prefix.fromString(PREFIX);
-  RPL.begin(rpl_prefix);
+  //NetIf.setHostname(HOSTNAME);
 
   Udp.begin(LOCAL_PORT);
   Serial.print("Start listen port:");

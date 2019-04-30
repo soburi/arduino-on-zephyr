@@ -24,23 +24,23 @@ extern "C" {
 #include "ClientSocket.h"
 #include "ServerSocket.h"
 
-MicroIPClient MicroIPServer::null_client(0);
+ClientSocket ServerSocket::null_client(0);
 
-MicroIPServer::MicroIPServer(uint16_t port_)
+ServerSocket::ServerSocket(uint16_t port_)
 {
   port = port_;
 }
 
-void MicroIPServer::begin()
+void ServerSocket::begin()
 {
-  PRINTF("MicroIPServer::begin\n");
+  PRINTF("ServerSocket::begin\n");
 
   internal_client.listen(port);
 }
 
-MicroIPClient& MicroIPServer::available()
+ClientSocket& ServerSocket::available()
 {
-  //printf("MicroIPServer::available\n");
+  //printf("ServerSocket::available\n");
   uint8_t s = internal_client.status();
   if (s == TCP_SOCKET_CONNECTED || s == TCP_SOCKET_DATA_SENT) {
     if (internal_client.available()) {
@@ -51,12 +51,12 @@ MicroIPClient& MicroIPServer::available()
   return null_client;
 }
 
-size_t MicroIPServer::write(uint8_t b) 
+size_t ServerSocket::write(uint8_t b) 
 {
   return internal_client.write(&b, 1);
 }
 
-size_t MicroIPServer::write(const uint8_t *buffer, size_t size) 
+size_t ServerSocket::write(const uint8_t *buffer, size_t size) 
 {
   return internal_client.write(buffer, size);
 }

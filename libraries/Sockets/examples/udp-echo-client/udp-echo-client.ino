@@ -16,46 +16,34 @@
   by Tokita Hiroshi
 */
 
-#include <MicroIp.h>
-#include <MicroIpUdp.h>
+#include <NetworkInterface.h>
+#include <UdpSocket.h>
 #include <IPAddress.h>
-#include <DNSClient.h>
 
 const size_t MAX_PAYLOAD_LEN = 40;
-const char* UDP_CONNECTION_ADDR = "contiki-udp-server.local";
-const unsigned short LOCAL_PORT = 3001;
-const unsigned short DEST_PORT  = 3000;
+const unsigned short LOCAL_PORT = 7;
+const unsigned short DEST_PORT  = 7;
 const int INTERVAL = 15;
 
-MicroIPUDP Udp;
-IPAddress server;
-DNSClient DNS;
+UDPSocket Udp;
+IPAddress server(0xfe80, 0, 0, 0, 0, 0, 0, 1); // Configure server manually.
 
-char packetBuffer[MAX_PAYLOAD_LEN];
+String message;
+char recvBuffer[MAX_PAYLOAD_LEN];
 long lastsend;
-long seq_id;
+uint16_t seq_id;
 
 void setup() {
-  Serial.begin(1000000);
+  Serial.begin(115200);
   Serial.println("Start udp-echo-cleint");
-  MicroIP.begin();
-  DNS.begin();
+  NetIf.begin();
 
-  int success = DNS.getHostByName(UDP_CONNECTION_ADDR, server);
-
-  if (success) {
-    Serial.print("Server [");
-    Serial.print(UDP_CONNECTION_ADDR);
-    Serial.println("] is not found.");
-    while (true) {
-      yield();
-    }
-  }
-
-  Serial.print("Server ");
-  Serial.print(UDP_CONNECTION_ADDR);
-  Serial.print(" is [");
+  Serial.print("Server is [");
   Serial.print(server);
+  Serial.println("]");
+
+  Serial.print("Client is [");
+  Serial.print(NetIf.globalAddress());
   Serial.println("]");
 
   Udp.begin(LOCAL_PORT);
@@ -70,40 +58,30 @@ void loop() {
   // Periodically send.
   if ((now - lastsend) > (INTERVAL * 1000)) {
     // format message
-    memset(packetBuffer, 0, MAX_PAYLOAD_LEN);
-    strcpy(packetBuffer, "Hello ");
-    itoa(++seq_id, packetBuffer + strlen(packetBuffer), 10);
-    strcpy(packetBuffer + strlen(packetBuffer), " from the client");
+    message = "Hello ";
+    message.concat(++seq_id);
 
-    Serial.print("Client sending to ");
+    Serial.print("Send to [");
     Serial.print(server);
-    Serial.print(" (msg: ");
-    Serial.print(packetBuffer);
-    Serial.println(");");
+    Serial.print("]: '");
+    Serial.print(message);
+    Serial.println("'");
 
     // send packet
     Udp.beginPacket(server, DEST_PORT);
-    Udp.write(packetBuffer, strlen(packetBuffer));
+    Udp.write(message.c_str(), message.length() );
     Udp.endPacket();
 
     lastsend = now;
   }
 
   while (int packetSize = Udp.parsePacket()) {
-    /*
-      //more info
-      Serial.print("Receive from ");
-      Serial.print(Udp.remoteIP());
-      Serial.print(":");
-      Serial.print(Udp.remotePort());
-      Serial.print(" size:");
-      Serial.println(packetSize);
-    */
-
     // read the packet into packetBufffer
-    Udp.read(packetBuffer, packetSize);
-    Serial.print("Response from the server: '");
-    Serial.print(packetBuffer);
+    Udp.read(recvBuffer, packetSize);
+    Serial.print("Response from [");
+    Serial.print(Udp.remoteIP());
+    Serial.print("]: '");
+    Serial.print(recvBuffer);
     Serial.println("'");
   }
 

@@ -1,16 +1,15 @@
 #######################################
-# Syntax Coloring Map For MicroIP
+# Syntax Coloring Map For Socket API
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-MicroIP		KEYWORD1	MicroIPClass
-MicroIPClient	KEYWORD1	MicroIPClient
-MicroIPServer	KEYWORD1	MicroIPServer
-MicroIPUDP	KEYWORD1	MicroIPUDP
-RPL		KEYWORD1	MicroIPRPL
+NetworkInterface		KEYWORD1	NetIf
+ClientSocket	KEYWORD1	ClientSocket
+ServerSocket	KEYWORD1	ServerSocket
+UDPSocket	KEYWORD1	UDPSocket
 
 #######################################
 # Methods and Functions (KEYWORD2)

@@ -22,11 +22,11 @@
 #pragma GCC diagnostic warning "-Wparentheses"
 #include <net/net_l2.h>
 
-MicroIPClass::MicroIPClass()
+NetworkInterface::NetworkInterface()
 {
 }
 
-int MicroIPClass::begin()
+int NetworkInterface::begin()
 {
   int ret = 0;
   if( !net_if_is_up(net_if_get_default() ) ) {
@@ -36,21 +36,21 @@ int MicroIPClass::begin()
 }
 
 #if defined(CONFIG_NET_IPV6)
-IPAddress MicroIPClass::linklocalAddress(int state, int idx)
+IPAddress NetworkInterface::linklocalAddress(int state, int idx)
 {
   struct in6_addr* v6 = net_if_ipv6_get_ll(iface, static_cast<enum net_addr_state>(state));
   if(v6) return IPAddress(v6->s6_addr16);
   else   return IN6ADDR::ANY_INIT;
 }
 
-IPAddress MicroIPClass::globalAddress(int idx)
+IPAddress NetworkInterface::globalAddress(int idx)
 {
   struct in6_addr* v6 = net_if_ipv6_get_global_addr(&iface);
   if(v6) return IPAddress(v6->s6_addr16);
   else   return IN6ADDR::ANY_INIT;
 }
 
-int MicroIPClass::prefixLength(IPAddress ip)
+int NetworkInterface::prefixLength(IPAddress ip)
 {
   struct in6_addr v6;
   v6.s6_addr16[0] = htons(ip.v6[0]);
@@ -69,22 +69,22 @@ int MicroIPClass::prefixLength(IPAddress ip)
 }
 #endif
 
-IPAddress MicroIPClass::localIP()
+IPAddress NetworkInterface::localIP()
 {
   //TODO
   return IN6ADDR::ANY_INIT;
 }
 
-IPAddress MicroIPClass::subnetMask()
+IPAddress NetworkInterface::subnetMask()
 {
   //TODO
   return IN6ADDR::ANY_INIT;
 }
 
-IPAddress MicroIPClass::gatewayIP()
+IPAddress NetworkInterface::gatewayIP()
 {
   //TODO
   return IN6ADDR::ANY_INIT;
 }
 
-MicroIPClass MicroIP;
+NetworkInterface NetIf;

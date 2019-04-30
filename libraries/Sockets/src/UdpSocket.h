@@ -16,8 +16,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef MICROIPUDP_H
-#define MICROIPUDP_H
+#ifndef SOCKET_UDPSOCKET_H
+#define SOCKET_UDPSOCKET_H
 
 #include <zephyr.h>
 #include <net/socket.h>
@@ -27,7 +27,7 @@
 
 struct sockaddr_storage;
 
-class MicroIPUDP : public UDP {
+class UDPSocket : public UDP {
 friend class Dispatcher;
 private:
   IPAddress destIP; 
@@ -43,13 +43,13 @@ private:
   uint8_t recv_buffer[128];
   struct udp_work {
 	struct k_work Work;
-	MicroIPUDP* This;
+	UDPSocket* This;
   } work;
 
   int sock;
 
 public:
-  MicroIPUDP();  
+  UDPSocket();  
   virtual uint8_t begin(uint16_t);	
   virtual void stop();  
   virtual int beginPacket(IPAddress ip, uint16_t port);

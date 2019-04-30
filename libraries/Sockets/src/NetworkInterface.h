@@ -16,8 +16,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef MICROIP_H
-#define MICROIP_H
+#ifndef NETWORKINTERFACE_H
+#define NETWORKINTERFACE_H
 
 #include <inttypes.h>
 #include "IPAddress.h"
@@ -44,9 +44,9 @@
 
 struct net_if;
 
-class MicroIPClass {
+class NetworkInterface {
 public:
-  MicroIPClass();
+  NetworkInterface();
 
   int begin();
 
@@ -61,12 +61,12 @@ public:
 #endif
 
 private:
-  friend class MicroIPClient;
-  friend class MicroIPServer;
+  friend class ClientSocket;
+  friend class ServerSocket;
 protected:
   struct net_if* iface;
 };
 
-extern MicroIPClass MicroIP;
+extern NetworkInterface NetIf;
 
 #endif

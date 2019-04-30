@@ -16,8 +16,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef MICROIPCLIENT_H
-#define MICROIPCLIENT_H
+#ifndef SOCKET_CLIENTSOCKET_H
+#define SOCKET_CLIENTSOCKET_H
 
 #include <stdint.h>
 
@@ -34,10 +34,10 @@
 #define MICROIPCLIENT_RXBUF_SIZE UIP_BUFSIZE
 #endif
 
-class MicroIPClient : public Client {
+class ClientSocket : public Client {
 
 public:
-  MicroIPClient();
+  ClientSocket();
 
   uint8_t status();
   virtual int connect(IPAddress ip, uint16_t port);
@@ -53,12 +53,12 @@ public:
   virtual uint8_t connected();
   virtual operator bool();
 
-  friend class MicroIPServer;
+  friend class ServerSocket;
   
   using Print::write;
 
 private:
-  //MicroIPClient(struct tcp_socket* psock);
+  //ClientSocket(struct tcp_socket* psock);
   size_t receive(const uint8_t *input_data_ptr, int input_data_len);
 
   int listen(uint16_t port);
@@ -69,20 +69,7 @@ private:
   static void do_tcp_socket_listen(void* ptr);
   static void do_tcp_socket_close(void* ptr);
 
-  //static  int wait_tcp_socket_event(process_event_t ev, process_data_t data, void* param);
-
-  //static  int  data_callback(struct tcp_socket *s, void *ptr, const unsigned char* input_data_ptr, int input_data_len);
-  //static void event_callback(struct tcp_socket *s, void *ptr, tcp_socket_event_t event);
-
-  //struct tcp_socket* _psock;
-  //struct tcp_socket sock;
-  //struct ringbuf rxbuf;
-  //uint8_t rbuf[MICROIPCLIENT_RXBUF_SIZE];
-
   uint8_t socket_rxbuf[4];
-  //uint8_t socket_txbuf[MICROIPCLIENT_TXBUF_SIZE];
-
-  //tcp_socket_event_t state;
 
   bool event_wait;
 };
