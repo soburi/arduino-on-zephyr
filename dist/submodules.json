@@ -10,11 +10,6 @@
     "revision": "111f7a215cc4efa49fd03a7835719adca83b4388"
   },
   {
-    "path": "system/net-tools",
-    "url": "https://github.com/zephyrproject-rtos/net-tools",
-    "revision": "30b7efa827b04d2e47840716b0372737fe7d6c92"
-  },
-  {
     "path": "system/openthread",
     "url": "https://github.com/openthread/openthread.git",
     "revision": "f9d757a161fea4775d033a1ce88cf7962fe24a93"
