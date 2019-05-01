@@ -22,7 +22,7 @@
 
 #include "Arduino.h"
 #ifdef __cplusplus
-#include "Uart.h"
+#include "UartDevice.h"
 #endif // __cplusplus
 
 #ifdef __cplusplus

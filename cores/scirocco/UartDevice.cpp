@@ -18,7 +18,7 @@
 
 #include <zephyr.h>
 #include <uart.h>
-#include "Uart.h"
+#include "UartDevice.h"
 #include "Arduino.h"
 
 Uart::Uart(struct device *_s)
