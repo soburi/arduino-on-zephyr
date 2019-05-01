@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.0.2)
 
-set(build_dir ${ARDUINO_BUILD_PATH})
+if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
+  set(build_dir ${ARDUINO_BUILD_PATH})
+else()
+  set(build_dir ${ARDUINO_BUILD_PATH}/preproc)
+endif()
+
 set(conffiles ${ARDUINO_VARIANT_PATH}/prj.conf)
 
 get_cmake_property(_variableNames VARIABLES)
@@ -15,6 +20,7 @@ string(JOIN " " conffile_opt ${conffiles})
 #message(STATUS "-DCONF_FILE="${conffile_opt})
 
 
+# restore symlinks
 if(EXISTS ${build_dir}/zephyr/ )
   execute_process(
     COMMAND  python3   $ENV{ZEPHYR_BASE}/scripts/subfolder_list.py
@@ -25,23 +31,60 @@ if(EXISTS ${build_dir}/zephyr/ )
   )
 endif()
 
-if(EXISTS ${ARDUINO_BUILD_PATH}/_cmakefile/.NOT_CHANGED )
-  file(REMOVE ${ARDUINO_BUILD_PATH}/_cmakefile/.NOT_CHANGED )
+if(EXISTS ${build_dir}/_cmakefile/.NOT_CHANGED )
+  file(REMOVE ${build_dir}/_cmakefile/.NOT_CHANGED )
+else()
+  if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} _cmakefile
+      WORKING_DIRECTORY ${build_dir}
+    )
+  else()
+    if(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.sh )
+      #message(${conffiles})
+      execute_process(
+        COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} _cmakefile
+        WORKING_DIRECTORY ${build_dir}
+        OUTPUT_QUIET
+        ERROR_QUIET
+      )
+
+      # enforce GENERETE_OUTPUT
+      execute_process(
+        COMMAND ${CMAKE_COMMAND} --build ${build_dir} -- zephyr/linker.cmd
+        WORKING_DIRECTORY ${build_dir}
+        OUTPUT_QUIET
+        ERROR_QUIET
+      )
+    endif()
+  endif()
+endif()
+
+set(run_preproc_script bash ${ARDUINO_BUILD_PATH}/preproc/preproc.sh)
+
+if(NOT WIN32)
+  if(${ARDUINO_PREPROC_TARGET} STREQUAL "nul")
+    message(STATUS ARDUINO_PREPROC_TARGET=nul)
+    set(ARDUINO_PREPROC_TARGET /dev/null)
+  endif()
+endif()
+
+if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} --build ${build_dir} --
+    WORKING_DIRECTORY ${build_dir}
+    RESULT_VARIABLE retcode
+  )
 else()
   execute_process(
-    COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} _cmakefile
+    COMMAND ${run_preproc_script} ${ARDUINO_PREPROC_SOURCE} ${ARDUINO_PREPROC_TARGET}
     WORKING_DIRECTORY ${build_dir}
+    RESULT_VARIABLE retcode
   )
 endif()
 
-execute_process(
-  COMMAND ${CMAKE_COMMAND} --build ${build_dir} --
-  WORKING_DIRECTORY ${build_dir}
-  RESULT_VARIABLE retcode
-)
-
+# remove symlinks (Prevent system file deletion by cleanup on Arduino IDE exit)
 file(GLOB_RECURSE sc_links ${build_dir}/zephyr/misc/generated/syscalls_links/*)
-
 foreach(l ${sc_links})
   if(IS_SYMLINK ${l})
     file(REMOVE ${l})

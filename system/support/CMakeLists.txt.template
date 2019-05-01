@@ -18,10 +18,6 @@ include_directories( ### <<<ARDUINO_INCLUDE_DIRS>>> ### )
 link_directories( ### <<<ARDUINO_LIBRARY_DIRS>>> ### )
 add_definitions( ### <<<ARDUINO_DEFINE_MACROS>>> ### )
 
-if(DEFINED ARDUINO_PREPROC)
-  zephyr_compile_definitions(ARDUINO_PREPROC=1)
-endif()
-
 zephyr_compile_options(-nostdinc)
 
 get_target_property(defs zephyr_interface INTERFACE_COMPILE_DEFINITIONS)
