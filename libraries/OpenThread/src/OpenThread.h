@@ -38,7 +38,9 @@
 #include <openthread/server.h>
 #include <openthread/platform/radio.h>
 #include <openthread-system.h>
+#ifndef ARDUINO_PREPROC
 #include <openthread-config-generic.h>
+#endif
 
 #define OT_CALL_FUNC0(cls, fn) ot##cls##fn (instance)
 #define OT_CALL_FUNC1(cls, fn) ot##cls##fn (instance, a1)

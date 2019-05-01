@@ -25,6 +25,7 @@
 
 #include <autoconf.h>
 
+#ifndef ARDUINO_PREPROC
 #include <openthread/config.h>
 #include <openthread/commissioner.h>
 #include <openthread/icmp6.h>
@@ -44,6 +45,7 @@
 #endif
 #if OPENTHREAD_ENABLE_SERVICE
 #include <openthread/server.h>
+#endif
 #endif
 
 static void find_openthread_instance(struct net_if* nif, void* data)

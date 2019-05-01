@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.0.2)
 
 if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
   set(build_dir ${ARDUINO_BUILD_PATH})
+  set(preproc_flag "")
 else()
   set(build_dir ${ARDUINO_BUILD_PATH}/preproc)
+  set(preproc_flag -DARDUINO_PREPROC=1)
 endif()
 
 set(conffiles ${ARDUINO_VARIANT_PATH}/prj.conf)
@@ -31,19 +33,28 @@ if(EXISTS ${build_dir}/zephyr/ )
   )
 endif()
 
+set(run_preproc_script bash ${ARDUINO_BUILD_PATH}/preproc/preproc.sh)
+
+if(NOT WIN32)
+  if(${ARDUINO_PREPROC_TARGET} STREQUAL "nul")
+    message(STATUS ARDUINO_PREPROC_TARGET=nul)
+    set(ARDUINO_PREPROC_TARGET /dev/null)
+  endif()
+endif()
+
 if(EXISTS ${build_dir}/_cmakefile/.NOT_CHANGED )
   file(REMOVE ${build_dir}/_cmakefile/.NOT_CHANGED )
 else()
   if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
     execute_process(
-      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} _cmakefile
+      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} ${preproc_flag} _cmakefile
       WORKING_DIRECTORY ${build_dir}
     )
   else()
     if(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.sh )
       #message(${conffiles})
       execute_process(
-        COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} _cmakefile
+        COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} ${preproc_flag} _cmakefile
         WORKING_DIRECTORY ${build_dir}
         OUTPUT_QUIET
         ERROR_QUIET
@@ -57,15 +68,6 @@ else()
         ERROR_QUIET
       )
     endif()
-  endif()
-endif()
-
-set(run_preproc_script bash ${ARDUINO_BUILD_PATH}/preproc/preproc.sh)
-
-if(NOT WIN32)
-  if(${ARDUINO_PREPROC_TARGET} STREQUAL "nul")
-    message(STATUS ARDUINO_PREPROC_TARGET=nul)
-    set(ARDUINO_PREPROC_TARGET /dev/null)
   endif()
 endif()
 

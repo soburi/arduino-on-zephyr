@@ -19,11 +19,16 @@ link_directories( ### <<<ARDUINO_LIBRARY_DIRS>>> ### )
 add_definitions( ### <<<ARDUINO_DEFINE_MACROS>>> ### )
 
 zephyr_compile_options(-nostdinc)
+if(DEFINED ARDUINO_PREPROC)
+  zephyr_compile_definitions(-DARDUINO_PREPROC=1)
+endif()
 
 get_target_property(defs zephyr_interface INTERFACE_COMPILE_DEFINITIONS)
 get_target_property(copts zephyr_interface INTERFACE_COMPILE_OPTIONS)
 get_target_property(incs zephyr_interface INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(sysincs zephyr_interface INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
+
+add_dependencies(app ot)
 
 foreach(x IN LISTS sysincs)
 	list(REMOVE_ITEM incs ${x})
