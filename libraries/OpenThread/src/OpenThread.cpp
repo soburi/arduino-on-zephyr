@@ -48,6 +48,8 @@
 #endif
 #endif
 
+extern struct k_sem ot_sem;
+
 static void find_openthread_instance(struct net_if* nif, void* data)
 {
   struct net_if** piface = reinterpret_cast<struct net_if**>(data);
@@ -525,8 +527,10 @@ otError OpenThreadClass::joiner_start(char* pskc, char* provision)
   memset(&sync_joiner_start_context, 0, sizeof(struct joiner_start_data));
   k_sem_init(&sync_joiner_start_context.sem, 0, 1);
 
+  k_sem_take(&ot_sem, K_FOREVER);
   otError err = otJoinerStart(instance, pskc, provision, PACKAGE_NAME, CONFIG_OPENTHREAD_PLATFORM_INFO,
                       PACKAGE_VERSION, NULL, joiner_start_sync_callback, &sync_joiner_start_context);
+  k_sem_give(&ot_sem);
 
   if(err) return err;
 
