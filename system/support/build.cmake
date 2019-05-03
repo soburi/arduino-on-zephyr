@@ -9,6 +9,7 @@ else()
 endif()
 
 set(conffiles ${ARDUINO_VARIANT_PATH}/prj.conf)
+set(extradeps "")
 
 get_cmake_property(_variableNames VARIABLES)
 foreach(varname ${_variableNames})
@@ -17,8 +18,14 @@ foreach(varname ${_variableNames})
     #message(STATUS "${varname}=${${varname}}")
     list(APPEND conffiles ${${varname}})
   endif()
+
+  string(FIND ${varname} DEPENDENCY_APPEND_ match)
+  if(${match} EQUAL 0)
+    list(APPEND extradeps ${${varname}})
+  endif()
 endforeach()
 string(JOIN " " conffile_opt ${conffiles})
+string(JOIN " " extradeps_opt ${extradeps})
 #message(STATUS "-DCONF_FILE="${conffile_opt})
 
 
@@ -47,14 +54,14 @@ if(EXISTS ${build_dir}/_cmakefile/.NOT_CHANGED )
 else()
   if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
     execute_process(
-      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} ${preproc_flag} _cmakefile
+      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} ${preproc_flag} -DARDUINO_EXTRA_DEPENDENCIES=${extradeps_opt} _cmakefile
       WORKING_DIRECTORY ${build_dir}
     )
   else()
     if(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.sh )
       #message(${conffiles})
       execute_process(
-        COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} ${preproc_flag} _cmakefile
+        COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} ${preproc_flag} -DARDUINO_EXTRA_DEPENDENCIES=${extradeps_opt} _cmakefile
         WORKING_DIRECTORY ${build_dir}
         OUTPUT_QUIET
         ERROR_QUIET

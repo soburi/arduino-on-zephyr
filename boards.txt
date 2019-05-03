@@ -23,7 +23,7 @@ nrf52840_pca10056.build.variant=nrf52840_pca10056
 nrf52840_pca10056.menu.network.802154=IEEE802.15.4
 nrf52840_pca10056.menu.network.802154.build.network_conf=-DOVERLAY_APPEND_NETWORK={runtime.platform.path}/variants/{build.variant}/overlay-802154.conf
 nrf52840_pca10056.menu.network.ot=OpenThread
-nrf52840_pca10056.menu.network.ot.build.network_conf=-DOVERLAY_APPEND_NETWORK={runtime.platform.path}/variants/{build.variant}/overlay-ot.conf
+nrf52840_pca10056.menu.network.ot.build.network_conf=-DOVERLAY_APPEND_NETWORK={runtime.platform.path}/variants/{build.variant}/overlay-ot.conf -DDEPENDENCY_APPEND_OT=ot
 nrf52840_pca10056.menu.network.bt=Bluetooth
 nrf52840_pca10056.menu.network.bt.build.network_conf=-DOVERLAY_APPEND_NETWORK={runtime.platform.path}/variants/{build.variant}/overlay-bt.conf
 nrf52840_pca10056.menu.uartlog.enable=Enable
