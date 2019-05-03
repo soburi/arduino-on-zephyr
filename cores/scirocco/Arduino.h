@@ -29,7 +29,6 @@
 #endif
 
 #include <zephyr.h>
-//#include <board.h>
 #include <device.h>
 #include <gpio.h>
 
@@ -60,7 +59,7 @@ extern "C"{
 #define clockCyclesToMicroseconds(a) ( ((a) * 1000L) / (SystemCoreClock / 1000L) )
 #define microsecondsToClockCycles(a) ( (a) * (SystemCoreClock / 1000000L) )
 
-void yield( void ) ;
+static inline void yield( void ) { k_yield(); }
 
 /* system functions */
 int main( void );
