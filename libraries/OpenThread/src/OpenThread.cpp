@@ -103,8 +103,10 @@ int OpenThreadClass::dump(Print& p)
   OTExtAddress e64 = &ex64;
   n += p.print("eui64="); n += p.println(e64);
 
+#ifdef CONFIG_OPENTHREAD_FTD
   OTPSKc pk = pskc();
   n += p.print("pskc="); n += p.println(pk);
+#endif
   OTMasterKey mkey = masterkey();
   n += p.print("masterkey="); n += p.println(mkey);
   DUMP(channel);
@@ -113,12 +115,16 @@ int OpenThreadClass::dump(Print& p)
   DUMP(version);
 
   DUMP(autostart);
+#ifdef CONFIG_OPENTHREAD_COMMISSIONER
   DUMP(commissioner);
+#endif
   DUMP(ifconfig);
   OTLinkModeConfig lmode = mode();
   n += p.print("mode="); n += p.println(lmode);
   DUMP(promiscuous);
+#ifdef CONFIG_OPENTHREAD_FTD
   DUMP(routerrole);
+#endif
   DUMP(state);
   DUMP(singleton);
   DUMP(txpower);
@@ -212,11 +218,14 @@ void OpenThreadClass:: na (ty a1) \
 OT_SETGET_IMPL(bool, autostart, Thread, AutoStart);
 OT_FUNC_1_IMPL(void, bufferinfo, Message, GetBufferInfo, otBufferInfo*);
 OT_SETGET_IMPL(uint8_t, channel, Link, Channel);
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_FUNC_2_IMPL(otError, child, Thread, GetChildInfoByIndex, int, otChildInfo*);
 OT_SETGET_IMPL(uint8_t, childmax, Thread, MaxAllowedChildren);
+#endif
 OT_V_SETGET_IMPL(uint32_t, childtimeout, Thread, ChildTimeout);
 // x coap
 // x coaps
+#ifdef CONFIG_OPENTHREAD_COMMISSIONER
 OT_GETTER_IMPL(otCommissionerState, commissioner, Commissioner, State);
 OT_FUNC_0_IMPL(otError, commissioner_start, Commissioner, Start);
 OT_FUNC_0_IMPL(otError, commissioner_stop, Commissioner, Stop);
@@ -225,7 +234,10 @@ OT_SETTER_IMPL(const char*, commissioner_provisioningurl, Commissioner, Provisio
 //otError commissioner_energy(uint32_t mask, uint8_t count, uint16_t period, uint16_t duration, IPAddress& addr, otCommissionerEnergyReportCallback cb, void* ctx);
 //otError commissioner_panid(uint16_t, uint32_t, IPAddress&, otCommissionerPanIdConflictCallback, void* ctx);
 OT_GETTER_IMPL(uint16_t, commissioner_sessionid, Commissioner, SessionId);
+#endif
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_V_SETGET_IMPL(uint32_t, contextreusedelay, Thread, ContextIdReuseDelay);
+#endif
 //uint32_t counter(int type);
 OT_FUNC_1_IMPL(otError, dataset_active, Dataset, GetActive, otOperationalDataset*);
 OT_FUNC_1_IMPL(otError, dataset_pending, Dataset, GetPending, otOperationalDataset*);
@@ -239,12 +251,16 @@ OT_FUNC_4_IMPL(otError, dataset_mgmtget_pending, Dataset, SendMgmtPendingGet, ot
 //otError dataset_mgmtget_pending(otOperationalDatasetComponents* dataset, uint8_t* tlvs, uint8_t len, IPAddress& addr);
 OT_FUNC_3_IMPL(otError, dataset_mgmtset_active, Dataset, SendMgmtActiveSet, otOperationalDataset*, uint8_t*, uint8_t);
 OT_FUNC_3_IMPL(otError, dataset_mgmtset_pending, Dataset, SendMgmtPendingSet, otOperationalDataset*, uint8_t*, uint8_t);
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_SETGET_IMPL(uint32_t, delaytimermin, Dataset, DelayTimerMinimal);
+#endif
 // x diag
 //otError discover(uint32_t chbits, otHandleActiveScanResult callback, void* context);
 // x dns
 //int eidcache_num();
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_FUNC_2_IMPL(otError, eidcache, Thread, GetEidCacheEntry, int, otEidCacheEntry*);
+#endif
 OT_FUNC_1_IMPL(void, eui64, Link, GetFactoryAssignedIeeeEui64, otExtAddress*);
 // x exit
 // x logfilename
@@ -262,43 +278,59 @@ OT_SET_IS_IMPL(bool, ifconfig, Ip6, Enabled);
 //IPAddress ipmaddr(int idx=0);
 //otError ipmaddr_add(IPAddress& addr);
 //otError ipmaddr_del(IPAddress& addr);
+#ifdef CONFIG_OPENTHREAD_JOINER
 //otError joiner_start(char* pskc, char* provision, otJoinerCallback, void*);
 OT_FUNC_0_IMPL(otError, joiner_stop, Joiner, Stop);
 OT_FUNC_1_IMPL(otError, joinerid, Joiner, GetId, otExtAddress*);
+#endif
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_GETTER_IMPL(uint16_t, joinerport, Thread, JoinerUdpPort);
+#endif
 OT_V_SETGET_IMPL(uint32_t, keysequencecounter, Thread, KeySequenceCounter);
 OT_V_SETGET_IMPL(uint32_t, keyswitchguadtime, Thread, KeySwitchGuardTime);
 OT_FUNC_1_IMPL(otError, leaderdata, Thread, GetLeaderData, otLeaderData*);
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_V_SETGET_IMPL(uint32_t, leaderpartitionid, Thread, LocalLeaderPartitionId);
 OT_V_SETGET_IMPL(uint8_t, leaderweight, Thread, LocalLeaderWeight);
+#endif
 // x macfilter
 OT_SETGET_IMPL(OTMasterKey, masterkey, Thread, MasterKey);
 OT_SETGET_IMPL(otLinkModeConfig, mode, Thread, LinkMode);
+#ifdef CONFIG_OPENTHREAD_FTD
 //otError neighbor(int idx, otNeighborInfo*);
+#endif
 // x neighborregister
 // x neighborshow
 // x networkdiagnostic
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_V_SETGET_IMPL(uint8_t, networkidtimeout, Thread, NetworkIdTimeout);
+#endif
 OT_SETGET_IMPL(const char*, networkname, Thread, NetworkName);
 // x networktime
 OT_SETGET_IMPL(uint16_t, panid, Link, PanId);
 //otError parent(otRouterInfo* parent);
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_SETGET_IMPL(uint8_t, parentpriority, Thread, ParentPriority);
+#endif
 //otError ping(IPAddress& addr, const uint8_t*, uint16_t);
 OT_SETGET_IMPL(uint32_t, pollperiod, Link, PollPeriod);
 OT_SET_IS_IMPL(bool, promiscuous, Link, Promiscuous);
 //otError promiscuous(otLinkPcapCallback, void* ctx=NULL);
 // x prefix
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_SETGET_IMPL(const uint8_t*, pskc, Thread, PSKc);
 OT_FUNC_1_IMPL(otError, releaserouterid, Thread, ReleaseRouterId, uint8_t);
+#endif
 OT_FUNC_0_IMPL(void, reset, Instance, Reset);
 OT_GETTER_IMPL(uint16_t, rloc16, Thread, Rloc16);
 // x route
+#ifdef CONFIG_OPENTHREAD_FTD
 OT_FUNC_2_IMPL(otError, router, Thread, GetRouterInfo, int, otRouterInfo*);
 OT_V_SETGET_IMPL(uint8_t, routerdowngradethreshold, Thread, RouterDowngradeThreshold);
 OT_V_SET_IS_IMPL(bool, routerrole, Thread, RouterRoleEnabled);
 OT_V_SETGET_IMPL(uint8_t, routerselectionjitter, Thread, RouterSelectionJitter);
 OT_V_SETGET_IMPL(uint8_t, routerupgradethreshold, Thread, RouterUpgradeThreshold);
+#endif
 OT_FUNC_4_IMPL(otError, activescan, Link, ActiveScan, uint16_t, uint32_t, otHandleActiveScanResult, void*);
 OT_FUNC_4_IMPL(otError, energyscan, Link, EnergyScan, uint16_t, uint32_t, otHandleEnergyScanResult, void*);
 OT_IS_IMPL(bool, singleton, Thread, Singleton);
@@ -311,6 +343,7 @@ OT_FUNC_1_IMPL(otError, txpower, PlatRadio, GetTransmitPower, int8_t*);
 //const char* version() { return otGetVersionString(); }
 
 
+#ifdef CONFIG_OPENTHREAD_COMMISSIONER
 otError OpenThreadClass::commissioner_announce(uint32_t mask, uint8_t count, uint16_t period, IPAddress& addr)
 {
   struct otIp6Address address;
@@ -335,6 +368,7 @@ otError OpenThreadClass::commissioner_panid(uint16_t panid, uint32_t mask, IPAdd
   error = otCommissionerPanIdQuery(instance, panid, mask, &address, cb, ctx);
   return error;
 }
+#endif
 
 uint32_t OpenThreadClass::counter(int type)
 {
@@ -405,6 +439,7 @@ otError OpenThreadClass::discover(otActiveScanResult* table, size_t tablesize, u
   return sync_discover_context.error;
 }
 
+#ifdef CONFIG_OPENTHREAD_FTD
 int OpenThreadClass::eidcache_num()
 {
   int ret = 0;
@@ -419,6 +454,7 @@ int OpenThreadClass::eidcache_num()
 
   return ret;
 }
+#endif
 
 int OpenThreadClass::ipaddr_num()
 {
@@ -539,6 +575,7 @@ otError OpenThreadClass::joiner_start(char* pskc, char* provision)
   return sync_joiner_start_context.error;
 }
 
+#ifdef CONFIG_OPENTHREAD_FTD
 otError OpenThreadClass::neighbor(int index, otNeighborInfo* neighborInfo)
 {
   otError err = OT_ERROR_NONE;
@@ -549,6 +586,7 @@ otError OpenThreadClass::neighbor(int index, otNeighborInfo* neighborInfo)
   }
   return err;
 }
+#endif
 
 otError OpenThreadClass::ping(IPAddress& addr, const uint8_t* buffer, uint16_t buflen)
 {

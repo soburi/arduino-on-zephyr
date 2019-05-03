@@ -171,11 +171,14 @@ public:
   OT_SETGET_DECL(bool, autostart, Thread, AutoStart);
   OT_FUNC_1_DECL(void, bufferinfo, Message, GetBufferInfo, otBufferInfo*);
   OT_SETGET_DECL(uint8_t, channel, Link, Channel);
+#ifdef CONFIG_OPENTHREAD_FTD
   OT_FUNC_2_DECL(otError, child, Thread, GetChildInfoByIndex, int, otChildInfo*);
   OT_SETGET_DECL(uint8_t, childmax, Thread, MaxAllowedChildren);
+#endif
   OT_V_SETGET_DECL(uint32_t, childtimeout, Thread, ChildTimeout);
   // x coap
   // x coaps
+#ifdef CONFIG_OPENTHREAD_COMMISSIONER
   OT_GETTER_DECL(otCommissionerState, commissioner, Commissioner, State);
   OT_FUNC_0_DECL(otError, commissioner_start, Commissioner, Start);
   OT_FUNC_0_DECL(otError, commissioner_stop, Commissioner, Stop);
@@ -184,7 +187,10 @@ public:
   otError commissioner_energy(uint32_t mask, uint8_t count, uint16_t period, uint16_t duration, IPAddress& addr, otCommissionerEnergyReportCallback cb, void* ctx);
   otError commissioner_panid(uint16_t, uint32_t, IPAddress&, otCommissionerPanIdConflictCallback, void* ctx);
   OT_GETTER_DECL(uint16_t, commissioner_sessionid, Commissioner, SessionId);
+#endif
+#ifdef CONFIG_OPENTHREAD_FTD
   OT_V_SETGET_DECL(uint32_t, contextreusedelay, Thread, ContextIdReuseDelay);
+#endif
   uint32_t counter(int type);
   OT_FUNC_1_DECL(otError, dataset_active, Dataset, GetActive, otOperationalDataset*);
   OT_FUNC_1_DECL(otError, dataset_pending, Dataset, GetPending, otOperationalDataset*);
@@ -203,8 +209,10 @@ public:
   otError discover(uint32_t chbits, otHandleActiveScanResult callback, void* context);
   otError discover(otActiveScanResult* table, size_t tablesize, uint32_t chbits=0xFFFFFFFF);
   // x dns
+#ifdef CONFIG_OPENTHREAD_FTD
   int eidcache_num();
   OT_FUNC_2_DECL(otError, eidcache, Thread, GetEidCacheEntry, int, otEidCacheEntry*);
+#endif
   OT_FUNC_1_DECL(void, eui64, Link, GetFactoryAssignedIeeeEui64, otExtAddress*);
   // x exit
   // x logfilename
@@ -222,20 +230,28 @@ public:
   IPAddress ipmaddr(int idx=0);
   otError ipmaddr_add(IPAddress& addr);
   otError ipmaddr_del(IPAddress& addr);
+#ifdef CONFIG_OPENTHREAD_JOINER
   otError joiner_start(char* pskc, char* provision, otJoinerCallback, void*);
   otError joiner_start(char* pskc, char* provision=NULL);
   OT_FUNC_0_DECL(otError, joiner_stop, Joiner, Stop);
   OT_FUNC_1_DECL(otError, joinerid, Joiner, GetId, otExtAddress*);
+#endif
+#ifdef CONFIG_OPENTHREAD_FTD
   OT_GETTER_DECL(uint16_t, joinerport, Thread, JoinerUdpPort);
+#endif
   OT_V_SETGET_DECL(uint32_t, keysequencecounter, Thread, KeySequenceCounter);
   OT_V_SETGET_DECL(uint32_t, keyswitchguadtime, Thread, KeySwitchGuardTime);
   OT_FUNC_1_DECL(otError, leaderdata, Thread, GetLeaderData, otLeaderData*);
+#ifdef CONFIG_OPENTHREAD_FTD
   OT_V_SETGET_DECL(uint32_t, leaderpartitionid, Thread, LocalLeaderPartitionId);
   OT_V_SETGET_DECL(uint8_t, leaderweight, Thread, LocalLeaderWeight);
+#endif
   // x macfilter
   OT_SETGET_DECL(OTMasterKey, masterkey, Thread, MasterKey);
   OT_SETGET_DECL(otLinkModeConfig, mode, Thread, LinkMode);
+#ifdef CONFIG_OPENTHREAD_FTD
   otError neighbor(int idx, otNeighborInfo*);
+#endif
   // x neighborregister
   // x neighborshow
   // x networkdiagnostic
@@ -250,16 +266,20 @@ public:
   OT_SET_IS_DECL(bool, promiscuous, Link, Promiscuous);
   otError promiscuous(otLinkPcapCallback, void* ctx=NULL);
   // x prefix
+#ifdef CONFIG_OPENTHREAD_FTD
   OT_SETGET_DECL(const uint8_t*, pskc, Thread, PSKc);
   OT_FUNC_1_DECL(otError, releaserouterid, Thread, ReleaseRouterId, uint8_t);
+#endif
   OT_FUNC_0_DECL(void, reset, Instance, Reset);
   OT_GETTER_DECL(uint16_t, rloc16, Thread, Rloc16);
   // x route
+#ifdef CONFIG_OPENTHREAD_FTD
   OT_FUNC_2_DECL(otError, router, Thread, GetRouterInfo, int, otRouterInfo*);
   OT_V_SETGET_DECL(uint8_t, routerdowngradethreshold, Thread, RouterDowngradeThreshold);
   OT_V_SET_IS_DECL(bool, routerrole, Thread, RouterRoleEnabled);
   OT_V_SETGET_DECL(uint8_t, routerselectionjitter, Thread, RouterSelectionJitter);
   OT_V_SETGET_DECL(uint8_t, routerupgradethreshold, Thread, RouterUpgradeThreshold);
+#endif
   OT_FUNC_4_DECL(otError, activescan, Link, ActiveScan, uint16_t, uint32_t, otHandleActiveScanResult, void*);
   OT_FUNC_4_DECL(otError, energyscan, Link, EnergyScan, uint16_t, uint32_t, otHandleEnergyScanResult, void*);
   OT_IS_DECL(bool, singleton, Thread, Singleton);
