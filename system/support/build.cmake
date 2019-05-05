@@ -40,6 +40,13 @@ if(EXISTS ${build_dir}/zephyr/ )
   )
 endif()
 
+if(EXISTS ${build_dir}/build.ninja )
+  execute_process(
+    COMMAND  python3   ${CMAKE_CURRENT_LIST_DIR}/copy_timestamp.py
+    ${build_dir}/build.ninja ${build_dir}/zephyr/misc/generated/syscalls_subdirs.txt
+  )
+endif()
+
 set(run_preproc_script bash ${ARDUINO_BUILD_PATH}/preproc/preproc.sh)
 
 if(NOT WIN32)
