@@ -40,6 +40,7 @@ intiki.cmd={runtime.tools.intiki.path}/intiki
 intiki.cmd-v={intiki.cmd} {compiler.warning_flags} -verbose {build.intiki.verbose}
 intiki.opts=
 intiki.opts.windows=-path.format msys -path.prefix /mnt
+intiki.opts.macosx=-build.usr.bin.path=/usr/local/bin
 make.paths=-build.system.path "{build.system.path}" -build.variant.path "{build.variant.path}" -build.core.path "{build.core.path}" -build.path "{build.path}" -build.variant {build.variant} -runtime.platform.path {runtime.platform.path} -platform.version {version} {intiki.opts}
 make.args=-E env {build.zephyr.env} cmake {build.zephyr.args}
 
