@@ -56,12 +56,18 @@ if(NOT WIN32)
   endif()
 endif()
 
+if(NOT ${EXTERNAL_PROJECT_PATH_OPENTHREAD} STREQUAL "")
+  set(external_ot_path -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD})
+else()
+  set(external_ot_path "")
+endif()
+
 if(EXISTS ${build_dir}/_cmakefile/.NOT_CHANGED )
   file(REMOVE ${build_dir}/_cmakefile/.NOT_CHANGED )
 else()
   if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
     execute_process(
-      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} ${preproc_flag} -DARDUINO_EXTRA_DEPENDENCIES=${extradeps_opt} _cmakefile
+      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} ${external_ot_path} ${preproc_flag} -DARDUINO_EXTRA_DEPENDENCIES=${extradeps_opt} _cmakefile
       WORKING_DIRECTORY ${build_dir}
     )
   else()

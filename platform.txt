@@ -33,7 +33,7 @@ build.zephyr.env.compiler=ZEPHYR_TOOLCHAIN_VARIANT=zephyr ZEPHYR_SDK_INSTALL_DIR
 build.zephyr.env.compiler.macosx=ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb GNUARMEMB_TOOLCHAIN_PATH=/opt/gcc-arm-none-eabi
 build.zephyr.env=ZEPHYR_BASE={build.system.path}/zephyr {build.zephyr.env.compiler}
 build.zephyr.args.arduino=-DARDUINO_BUILD_PATH={build.path} -DARDUINO_VARIANT_PATH={build.variant.path} -DARDUINO_PREPROC_SOURCE={source_file} -DARDUINO_PREPROC_TARGET={preprocessed_file_path}
-build.zephyr.args.board=-DBOARD={build.variant} -DEXTERNAL_PROJECT_PATH_OPENTHREAD={build.system.path}/openthread
+build.zephyr.args.board=-DBOARD={build.variant}
 build.zephyr.args.configs={build.network_conf} {build.uartlog_conf}
 build.zephyr.args={build.zephyr.args.arduino} {build.zephyr.args.board} {build.zephyr.args.configs}
 intiki.cmd={runtime.tools.intiki.path}/intiki
