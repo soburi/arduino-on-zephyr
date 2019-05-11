@@ -60,7 +60,10 @@ void _analogReadResolution(int res)
 
 void analogWrite( uint32_t ulPin, uint32_t ulValue )
 {
-	pwm_pin_set_cycles(NULL, ulPin, pwm_resolution, ulValue);
+	struct device* dev = device_get_binding(W_PWM_DEV_NAME(ulPin));
+	if(!dev) return;
+
+	pwm_pin_set_cycles(dev, ulPin, pwm_resolution, ulValue);
 }
 
 void analogWriteResolution(int res)

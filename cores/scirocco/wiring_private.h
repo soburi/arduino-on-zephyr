@@ -32,11 +32,29 @@
 extern "C" {
 #endif
 
+#ifndef W_GPIO_PINS_PER_PORT
 #define W_GPIO_PINS_PER_PORT 32
+#endif
+
+#ifndef W_GPIO_PORT_NUM
 #define W_GPIO_PORT_NUM (sizeof(gpio_port_names)/sizeof(const char*))
+#endif
+
+#ifndef W_PIN2PORT
 #define W_PIN2PORT(x) (gpio_port_names[x / W_GPIO_PINS_PER_PORT])
+#endif
+
+#ifndef W_PIN2PORTPIN
 #define W_PIN2PORTPIN(x) (x % W_GPIO_PINS_PER_PORT)
+#endif
+
+#ifndef W_GPIO_PIN_NUM
 #define W_GPIO_PIN_NUM (W_GPIO_PINS_PER_PORT * W_GPIO_PORT_NUM)
+#endif
+
+#ifndef W_PWM_DEV_NAME
+#define W_PWM_DEV_NAME(x) NULL
+#endif
 
 typedef void (*voidFuncPtr)(void);
 

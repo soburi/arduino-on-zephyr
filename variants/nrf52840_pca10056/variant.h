@@ -31,6 +31,7 @@ extern "C"
 
 #define GPIO_PORT_NAMES	{ DT_GPIO_P0_DEV_NAME, DT_GPIO_P1_DEV_NAME }
 
+#define W_PWM_DEV_NAME(x) DT_NORDIC_NRF_PWM_0_LABEL
 
 /*----------------------------------------------------------------------------
  *        Pins
