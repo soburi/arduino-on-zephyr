@@ -42,6 +42,7 @@ user,repo = slug.split('/')
 ghpage_url = "https://#{user}.github.io/#{repo}/#{jsonfile}"
 
 suffix = nil
+suffix = ".tar.xz" if pkg_url.end_with?(".tar.xz")
 suffix = ".tar.bz2" if pkg_url.end_with?(".tar.bz2")
 suffix = ".tar.gz" if pkg_url.end_with?(".tar.gz")
 

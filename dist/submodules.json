@@ -1,20 +1,5 @@
 [
   {
-    "path": "system/.west/west",
-    "url": "https://github.com/zephyrproject-rtos/west",
-    "revision": "5113fecc09399226010beb508f1b66d9f60856af"
-  },
-  {
-    "path": "system/modules/lib/tinycbor",
-    "url": "https://github.com/zephyrproject-rtos/tinycbor",
-    "revision": "111f7a215cc4efa49fd03a7835719adca83b4388"
-  },
-  {
-    "path": "system/openthread",
-    "url": "https://github.com/openthread/openthread.git",
-    "revision": "f9d757a161fea4775d033a1ce88cf7962fe24a93"
-  },
-  {
     "path": "system/zephyr",
     "url": "https://github.com/zephyrproject-rtos/zephyr",
     "revision": "cebe11544ebeaed9a0c9ffd722c1639fa7463cbe"

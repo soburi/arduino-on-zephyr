@@ -1,12 +1,3 @@
 [submodule "system/zephyr"]
 	path = system/zephyr
 	url = https://github.com/zephyrproject-rtos/zephyr
-[submodule "system/.west/west"]
-	path = system/.west/west
-	url = https://github.com/zephyrproject-rtos/west
-[submodule "system/modules/lib/tinycbor"]
-	path = system/modules/lib/tinycbor
-	url = https://github.com/zephyrproject-rtos/tinycbor
-[submodule "system/openthread"]
-	path = system/openthread
-	url = https://github.com/openthread/openthread.git

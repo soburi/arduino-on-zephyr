@@ -1,12 +1,11 @@
 language: generic
-sudo: false
-dist: xenial
+dist: bionic
 addons:
   apt:
-    sources:
-    - ubuntu-toolchain-r-test
     packages:
     - ruby-rugged
+    - python3-pip
+    - python3-setuptools
 env:
   global:
   - secure: Yl3ck+I1FSplYWSQ9lpCby62WBlqxxk05q8dMW2XXz0yWrU3Fi37d5SJqYw0kL67kgJ50Qw0soZawGHopYDKeKzSyh/Kr11oiyf10EU7z40gIFNtpBSpg2YqwnyAK1dKY7eKJc3N92Rjvvvps+tGs//8ezTjmaRLrdwytaMBCYTG8du/8OTuIm3oHxXn8BIXmFJ/W5idcuFZ10vOCB5G68RsMXyEn/xdmsWFG1xSU2sBmPLw3A2Hy0kLUt+1UHULrNz6mN17Fsuxi8qribMO/O9wluLyZ0pdMNRI61Dm+QAU/rlS6jTMVpnI4hn/E2rK0BwNiFSHxQxuINx0aa0Y/CmaWOvJmBjalU9Bj2yI42EdlbxVEfLH1IufSavr4aTaJGhEpWJVd++IQPL/gbs9cGWRqsf38vcC+W1rS/YgDduHRqezj1XNeGqVE5VJCyKQonGuzSjfwuAsFa+DSwTW4T2stzd1ou5R5ij62sbjD9RpQe2pPpgKkoRHbOPYog1bgdY17+9HO0U8w50ahbYwWIb6Hgs+lvR71GqvHRia3B9DCwsZw1bEF4DFD3oCpjEhq7p/xhLErpGELcaVsuUVo0Qx6kwsnzFCAtbtF7Wro+AaNhvrLaQm7gpwg+2MG0lBv/iymXhKl/SqVq5EvvkRjFB4XU3dPTitmmPN4MnDJWE=
@@ -15,7 +14,6 @@ env:
 deploy:
   provider: releases
   file: ../${ARCHIVENAME}.tar.bz2
-  skip_cleanup: true
   api_key:
     secure: PZlqjQ5h/OoX37fiMGEvI/7z+rOnhE2FS6NQ2OaV8mP89uaZzbzXmcfeWfVOdqoYNP38nIjd+YrO9h48k2GXty7QI7jvSozzlRqvxlWxAdkWaCKS/ox57253wcVqjS50HcmHGR6V9E77RuZh3FJR/OqO++znVhcinPRSmLYEHgtlTcXqOErK8g1ReZmIUj+LfUpUXWQzm/9lZv0aVTvfSf/tK24DiI5jjDlWvJGZ93WlS2Jaojv6wCTOLqS4rKi2KhTiZb50JSskqKZYhdiheBFqhnyWkVEKIqX4X2JSec7FY7DSS4wVc+jajVrh66/fUiG4YEqkTnJEyOldwshWJiLy5xRMv3M9ttDCEQkAeuQfQlJfyHUqlk8B6P7TGAHcL2vwyMXbBBp3ya6nsDyO7+838Neho+PfgaWlZyUOSr/zIdY1MLGoJ8MJMCESLIh9jmkwbT1BTISaMvB6abs8XvB59gTc4U7iVqnYLWPa1YCyqAxKsD0Is/34SOD5LtuP/HeDFebQWmt67KNJpZcxBHud20RUc6zEjgw1hvWucnUA5XIAJig4UtFFRVLAt0fz08dtnGY+hEfnORnLgzdZ59op1rM5VC7kkrpUU8R8S28q3McywrlktnozVbJIjC07jle7k7gyor+gL57ScubjgFy4Ly0g8MI+Y7dSli59XVc=
   on:
@@ -27,25 +25,30 @@ before_script:
 - git remote add gh-origin "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}"
 - git config --global user.email "travisci@example.com"
 - git config --global user.name "Travis-CI"
-- export PATH=~/bin:$PATH
-- curl -l -L https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux64.tar.xz | tar xfJ - -C ~
+- export PATH=~/bin:~/.local/bin:$PATH
+#- curl -l -L https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux64.tar.xz | tar xfJ - -C ~
 - if [ "$TRAVIS_TAG" != "" ] ; then bash dist/setup_tools.sh ; fi
 
 
 script:
 # check submojule.json
-- ruby2.3 dist/ci_submodules.rb -c dist/submodules.json
+#- ruby dist/ci_submodules.rb -c dist/submodules.json
+- pip3 install --user wheel
+- pip3 install --user west
+- (cd system && west init -l zephyr && west update)
 # generate archive
-- EXCLUDEGIT=$(find . -name '.git' -printf '%f ' | xargs -i echo -n --exclude {})
-- BZIP2=-9 tar cfj ../${ARCHIVENAME}.tar.bz2 -C .. ${EXCLUDEGIT} $(basename ${PWD})
+- EXCLUDEGIT=$(cd .. && find $(basename $OLDPWD) -name '.git' | xargs -i echo -n --exclude {}" ")
+  #- echo XZ_OPT=-9 tar cfJ ../${ARCHIVENAME}.tar.xz -C .. ${EXCLUDEGIT} $(basename ${PWD})
+- BZIP2=-9 tar cfhj ../${ARCHIVENAME}.tar.bz2 -C .. ${EXCLUDEGIT} $(basename ${PWD})
+- git clean -xdf
 after_script:
-- if [ ${TRAVIS_TEST_RESULT} -ne 0 ] ; then echo ${TRAVIS_TEST_RESULT} ; exit ${TRAVIS_TEST_RESULT} ; fi
-- echo ruby dist/ci_boardmanager.rb ${BM_FORCEOPT} -g ${GHREPO} -t dist/tool_template.json -p dist/platform_template.json -j ${PKGJSON} -u ${ARCHIVEURL} -r ${RELEASEVER} --package-name=scirocco --package-maintainer=soburi --package-website='https://github.com/soburi/arduino-on-zephyr' --package-email='soburi@gmail.com' > ../tmp.json || exit $?
+#- if [ ${TRAVIS_TEST_RESULT} -ne 0 ] ; then echo ${TRAVIS_TEST_RESULT} ; exit ${TRAVIS_TEST_RESULT} ; fi
+- echo ruby dist/ci_boardmanager.rb ${BM_FORCEOPT} -g ${GHREPO} -t dist/tool_template.json -p dist/platform_template.json -j ${PKGJSON} -u ${ARCHIVEURL} -r ${RELEASEVER} --package-name=scirocco --package-maintainer=soburi --package-website='https://github.com/soburi/arduino-on-zephyr' --package-email='soburi@gmail.com'
 - ruby dist/ci_boardmanager.rb ${BM_FORCEOPT} -g ${GHREPO} -t dist/tool_template.json -p dist/platform_template.json -j ${PKGJSON} -u ${ARCHIVEURL} -r ${RELEASEVER} --package-name=scirocco --package-maintainer=soburi --package-website='https://github.com/soburi/arduino-on-zephyr' --package-email='soburi@gmail.com' > ../tmp.json || exit $?
 - git fetch --all || exit $?
-- if [ "$TRAVIS_TAG" != "" ] ; then echo twelite.build.options.sdkbase=SDK_BASE_DIR=${HOME}/MWSDK/ChipLib/SW4063V1416 > boards.local.txt ; fi
-- if [ "$TRAVIS_TAG" != "" ] ; then bats dist/compile_examples.bats ; fi
-- rm -rf boards.local.txt
+  #- if [ "$TRAVIS_TAG" != "" ] ; then echo twelite.build.options.sdkbase=SDK_BASE_DIR=${HOME}/MWSDK/ChipLib/SW4063V1416 > boards.local.txt ; fi
+  #- if [ "$TRAVIS_TAG" != "" ] ; then bats dist/compile_examples.bats ; fi
+  #- rm -rf boards.local.txt
 - git checkout gh-origin/gh-pages -b gh-pages || exit $?
 - cp ../tmp.json ${PKGJSON} || exit $?
 - git add ${PKGJSON} || exit $?
