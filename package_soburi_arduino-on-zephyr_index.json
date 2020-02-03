@@ -6,7 +6,7 @@
           "name": "ZephyrOS supported Boards",
           "architecture": "zephyr",
           "category": "Contributed",
-          "version": "9.9.999",
+          "version": "9.99.99",
           "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/9.9.999/arduino-on-zephyr-9.9.999.tar.bz2",
           "archiveFileName": "arduino-on-zephyr-9.9.999.tar.bz2",
           "checksum": "SHA-256:a46c2687f709001579d434ac439149552afeebc754c12c8f5cbb82e86f03998e",
