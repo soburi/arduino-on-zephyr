@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.8.2)
+set(_ignore_warning ${ARDUINO_BUILD_PATH})
+set(_ignore_warning ${ARDUINO_VARIANT_PATH})
+
 set(ZEPHYR_MODULE_BASE_PATH $ENV{ZEPHYR_BASE}/../modules)
-set(ZEPHYR_MODULES ${ZEPHYR_MODULE_BASE_PATH}/hal/atmel
+set(ZEPHYR_MODULES $ENV{ZEPHYR_BASE}/../../
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/atmel
                    ${ZEPHYR_MODULE_BASE_PATH}/lib/civetweb
                    ${ZEPHYR_MODULE_BASE_PATH}/hal/esp-idf
                    ${ZEPHYR_MODULE_BASE_PATH}/fs/fatfs

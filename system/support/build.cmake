@@ -53,34 +53,32 @@ if(NOT WIN32)
   endif()
 endif()
 
-message(STATUS "${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile")
+message(STATUS "COMMAND ${CMAKE_COMMAND} -GNinja -DARDUINO_BUILD_PATH=${ARDUINO_BUILD_PATH} -DARDUINO_VARIANT_PATH=${ARDUINO_VARIANT_PATH} -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile")
 
 if(EXISTS ${build_dir}/_cmakefile/.NOT_CHANGED )
   file(REMOVE ${build_dir}/_cmakefile/.NOT_CHANGED )
 else()
   if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
     execute_process(
-      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile
+      COMMAND ${CMAKE_COMMAND} -GNinja -DARDUINO_BUILD_PATH=${ARDUINO_BUILD_PATH} -DARDUINO_VARIANT_PATH=${ARDUINO_VARIANT_PATH} -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile
       WORKING_DIRECTORY ${build_dir}
     )
-  else()
-    if(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.cpp.sh )
-      #message(${conffiles})
-      execute_process(
-        COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile
-        WORKING_DIRECTORY ${build_dir}
-        OUTPUT_QUIET
-        ERROR_QUIET
-      )
+  elseif(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.cpp.sh)
+    #message(${conffiles})
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -GNinja -DARDUINO_BUILD_PATH=${ARDUINO_BUILD_PATH} -DARDUINO_VARIANT_PATH=${ARDUINO_VARIANT_PATH} -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile
+      WORKING_DIRECTORY ${build_dir}
+      OUTPUT_QUIET
+      ERROR_QUIET
+    )
 
-      # enforce GENERETE_OUTPUT
-      execute_process(
-        COMMAND ${CMAKE_COMMAND} --build ${build_dir} -- zephyr/linker.cmd
-        WORKING_DIRECTORY ${build_dir}
-        OUTPUT_QUIET
-        ERROR_QUIET
-      )
-    endif()
+    # enforce GENERETE_OUTPUT
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} --build ${build_dir} -- zephyr/linker.cmd
+      WORKING_DIRECTORY ${build_dir}
+      OUTPUT_QUIET
+      ERROR_QUIET
+    )
   endif()
 endif()
 

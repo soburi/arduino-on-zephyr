@@ -21,6 +21,8 @@
 #include "UartDevice.h"
 #include "Arduino.h"
 
+#ifdef CONFIG_UART_INTERRUPT_DRIVEN
+
 Uart::Uart(struct device *_s)
 {
 	uart = _s;
@@ -202,3 +204,5 @@ size_t Uart::write(const uint8_t data)
 {
 	return write(&data, 1);
 }
+
+#endif

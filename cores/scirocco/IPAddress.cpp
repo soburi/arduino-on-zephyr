@@ -19,6 +19,8 @@
 #include "Print.h"
 #include "IPAddress.h"
 
+#if defined(CONFIG_NET_IPV4) || defined(CONFIG_NET_IPV6)
+
 #include <zephyr.h>
 #pragma GCC diagnostic ignored "-Wparentheses"
 #include <net/net_ip.h>
@@ -227,3 +229,5 @@ const IPAddress IN6ADDR::INKLOCAL_ALLROUTERS_INIT(0xff02,0,0,0, 0,0,0,2);
 const IPAddress IN6ADDR::INTERFACELOCAL_ALLNODES_INIT(0xff01,0,0,0, 0,0,0,1);
 const IPAddress IN6ADDR::INTERFACELOCAL_ALLROUTERS_INIT(0xff01,0,0,0, 0,0,0,2);
 const IPAddress IN6ADDR::SITELOCAL_ALLROUTERS_INIT(0xff05,0,0,0, 0,0,0,2);
+
+#endif

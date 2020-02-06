@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015 Arduino LLC.  All right reserved.
+  Copyright (c) 2014-2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,48 +16,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#define ARDUINO_MAIN
-#include "Arduino.h"
+// API compatibility
+#include "variant.h"
 
-// Weak empty variant initialization function.
-// May be redefined by variant files.
-void initVariant() __attribute__((weak));
-void initVariant() { }
-
-// Initialize C library
-extern "C" void __libc_init_array(void);
-
-#ifdef CONFIG_ARDUINO_MAIN_LOOP
-
-/*
- * \brief Main entry point of Arduino application
- */
-int main( void )
-{
-  init();
-
-#if defined(CONFIG_NEWLIB_LIBC)
-  __libc_init_array();
-#endif
-
-  initVariant();
-
-  delay(1);
-#if defined(USBCON)
-  USBDevice.init();
-  USBDevice.attach();
-#endif
-
-  setup();
-
-  for (;;)
-  {
-    loop();
-    if (serialEventRun) serialEventRun();
-    k_yield();
-  }
-
-  return 0;
-}
-
-#endif

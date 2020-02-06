@@ -27,7 +27,7 @@ extern "C" {
 #include <adc.h>
 #include <pwm.h>
 
-static int pwm_resolution = 255;
+#ifdef CONFIG_ADC
 
 void analogReference( eAnalogReference ulMode )
 {
@@ -58,6 +58,12 @@ void _analogReadResolution(int res)
 	adc_channel_setup(NULL, &cfg);
 }
 
+#endif
+
+#ifdef CONFIG_PWM
+
+static int pwm_resolution = 255;
+
 void analogWrite( uint32_t ulPin, uint32_t ulValue )
 {
 	struct device* dev = device_get_binding(W_PWM_DEV_NAME(ulPin));
@@ -72,6 +78,7 @@ void analogWriteResolution(int res)
 }
 
 
+#endif
 
 
 #ifdef __cplusplus

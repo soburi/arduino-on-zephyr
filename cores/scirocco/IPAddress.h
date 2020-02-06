@@ -28,6 +28,8 @@
 #include "Printable.h"
 #include "WString.h"
 
+#if defined(CONFIG_NET_IPV4) || defined(CONFIG_NET_IPV6)
+
 struct z_in_addr {
   union {
 #if defined(CONFIG_NET_IPV6)
@@ -155,6 +157,8 @@ public:
 };
 
 const IN6ADDR IN6ADDR;
+#endif
+
 #endif
 
 #endif
