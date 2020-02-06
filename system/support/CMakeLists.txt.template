@@ -1,4 +1,30 @@
 cmake_minimum_required(VERSION 3.8.2)
+set(ZEPHYR_MODULE_BASE_PATH $ENV{ZEPHYR_BASE}/../modules)
+set(ZEPHYR_MODULES ${ZEPHYR_MODULE_BASE_PATH}/hal/atmel
+                   ${ZEPHYR_MODULE_BASE_PATH}/lib/civetweb
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/esp-idf
+                   ${ZEPHYR_MODULE_BASE_PATH}/fs/fatfs
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/cypress
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/nordic
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/openisa
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/microchip
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/silabs
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/st
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/stm32
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/ti
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/libmetal
+                   ${ZEPHYR_MODULE_BASE_PATH}/lib/gui/lvgl
+                   ${ZEPHYR_MODULE_BASE_PATH}/crypto/mbedtls
+                   ${ZEPHYR_MODULE_BASE_PATH}/lib/mcumgr
+                   ${ZEPHYR_MODULE_BASE_PATH}/fs/nffs
+                   ${ZEPHYR_MODULE_BASE_PATH}/hal/nxp
+                   ${ZEPHYR_MODULE_BASE_PATH}/lib/open-amp
+                   ${ZEPHYR_MODULE_BASE_PATH}/lib/openthread
+                   ${ZEPHYR_MODULE_BASE_PATH}/debug/segger
+                   ${ZEPHYR_MODULE_BASE_PATH}/lib/tinycbor
+                   ${ZEPHYR_MODULE_BASE_PATH}/fs/littlefs
+                   ${ZEPHYR_MODULE_BASE_PATH}/debug/mipi-sys-t
+)
 
 include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(NONE)
