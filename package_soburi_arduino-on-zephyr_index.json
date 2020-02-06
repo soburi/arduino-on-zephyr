@@ -6,6 +6,28 @@
           "name": "ZephyrOS supported Boards",
           "architecture": "zephyr",
           "category": "Contributed",
+          "version": "3.3.3.3",
+          "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/3.3.3.3/arduino-on-zephyr-3.3.3.3.tar.bz2",
+          "archiveFileName": "arduino-on-zephyr-3.3.3.3.tar.bz2",
+          "checksum": "SHA-256:4815b2b8b535d8c233b19d6780691d54215bdc8eca06e204e4fe010f01a97f8a",
+          "size": "160162190",
+          "boards": [
+            {
+              "name": "ZephyrOS supported boards"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "scirocco",
+              "name": "intiki",
+              "version": "1.0.3"
+            }
+          ]
+        },
+        {
+          "name": "ZephyrOS supported Boards",
+          "architecture": "zephyr",
+          "category": "Contributed",
           "version": "4.4.4",
           "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/4.4.4/arduino-on-zephyr-4.4.4.tar.bz2",
           "archiveFileName": "arduino-on-zephyr-4.4.4.tar.bz2",
