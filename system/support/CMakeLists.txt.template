@@ -45,27 +45,12 @@ link_directories( ### <<<ARDUINO_LIBRARY_DIRS>>> ### )
 add_definitions( ### <<<ARDUINO_DEFINE_MACROS>>> ### )
 
 zephyr_compile_options(-nostdinc)
-if(DEFINED ARDUINO_PREPROC)
-  zephyr_compile_definitions(-DARDUINO_PREPROC=1)
-endif()
-
-get_target_property(defs zephyr_interface INTERFACE_COMPILE_DEFINITIONS)
-get_target_property(copts zephyr_interface INTERFACE_COMPILE_OPTIONS)
-get_target_property(incs zephyr_interface INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(sysincs zephyr_interface INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
 
 foreach(dep IN ITEMS ${ARDUINO_EXTRA_DEPENDENCIES})
   add_dependencies(app ${dep})
 endforeach()
 
-foreach(x IN LISTS sysincs)
-  list(REMOVE_ITEM incs ${x})
-endforeach()
-
-file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/preproc$<$<COMPILE_LANGUAGE:C>:.c>$<$<COMPILE_LANGUAGE:ASM>:.asm>.sh
+file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/preproc$<$<COMPILE_LANGUAGE:C>:.c>$<$<COMPILE_LANGUAGE:ASM>:.asm>$<$<COMPILE_LANGUAGE:CXX>:.cpp>.sh
 	CONTENT
 "#! /bin/sh
-INCS=$(grep target_include_directories `dirname $0`/_cmakefile/CMakeLists.txt | grep -v '$ENV' | sed 's/.*INTERFACE//' | sed 's/)$//' | awk ' { for (i=1; i<NF; i++ ) printf \"-I\"$i\" \" ; printf \"-I\"$NF}')
-${CMAKE_CXX_COMPILER} -D$<JOIN:${defs}, -D> $<JOIN:${copts}, > -I$<JOIN:${incs}, -I> -isystem $<JOIN:${sysincs}, -isystem > $INCS -w -x c++ -E -CC -c $1 -o $2")
-
-
+${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} -D$<JOIN:$<TARGET_PROPERTY:app,COMPILE_DEFINITIONS>, -D> -I$<JOIN:$<TARGET_PROPERTY:app,INTERFACE_INCLUDE_DIRECTORIES>, -I> -isystem $<JOIN:$<TARGET_PROPERTY:app,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>, -isystem > $<TARGET_PROPERTY:app,COMPILE_FLAGS> $<JOIN:$<TARGET_PROPERTY:app,COMPILE_OPTIONS>, > -w -x c++ -E -CC -c $1 -o $2")
