@@ -32,61 +32,6 @@
 extern "C" {
 #endif
 
-#ifndef W_GPIO_PINS_PER_PORT
-#define W_GPIO_PINS_PER_PORT 32
-#endif
-
-#ifndef W_GPIO_PORT_NUM
-#define W_GPIO_PORT_NUM (sizeof(gpio_port_names)/sizeof(const char*))
-#endif
-
-#ifndef W_PIN2PORT
-#define W_PIN2PORT(x) (gpio_port_names[x / W_GPIO_PINS_PER_PORT])
-#endif
-
-#ifndef W_PIN2PORTPIN
-#define W_PIN2PORTPIN(x) (x % W_GPIO_PINS_PER_PORT)
-#endif
-
-#ifndef W_GPIO_PIN_NUM
-#define W_GPIO_PIN_NUM (W_GPIO_PINS_PER_PORT * W_GPIO_PORT_NUM)
-#endif
-
-#ifndef W_PWM_DEV_NAME
-#define W_PWM_DEV_NAME(x) NULL
-#endif
-
-typedef void (*voidFuncPtr)(void);
-
-struct w_gpio_callbacks {
-	struct gpio_callback z_callback;
-	voidFuncPtr callback;
-};
-
-static const char* gpio_port_names[] = GPIO_PORT_NAMES;
-
-extern int w_pin_mode[W_GPIO_PIN_NUM];
-extern struct w_gpio_callbacks w_callbacks[W_GPIO_PIN_NUM];
-
-extern void w_digital_write( uint32_t ulPin, uint32_t ulVal );
-extern int w_digital_read( uint32_t ulPin );
-extern void w_attach_interrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode);
-extern void w_detach_interrupt(uint32_t pin);
-
-extern void w_configure_gpio_interrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode, uint32_t pinmode, uint32_t extraflag);
-
-
-struct spi_device {
-	int     (*init)(void*);
-	int	(*configure)(void*, bool, bool, bool, uint32_t);
-	int	(*start)(void*);
-	void	(*stop)(void*);
-	uint8_t (*transfer)(void*, uint8_t);
-	int	(*mask_interrupt_on_transaction)(void*, int);
-	int     (*deinit)(void*);
-	void*	devinfo;
-};
-
 #ifdef __cplusplus
 } // extern "C"
 #endif

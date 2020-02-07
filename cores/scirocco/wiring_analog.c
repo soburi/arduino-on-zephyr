@@ -27,6 +27,10 @@ extern "C" {
 #include <adc.h>
 #include <pwm.h>
 
+#ifndef W_PWM_DEV_NAME
+#define W_PWM_DEV_NAME(x) NULL
+#endif
+
 #ifdef CONFIG_ADC
 
 void analogReference( eAnalogReference ulMode )
