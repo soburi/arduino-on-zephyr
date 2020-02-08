@@ -19,6 +19,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <zephyr.h>
 #include <uart.h>
 #include "HardwareSerial.h"
@@ -72,3 +74,5 @@ class Uart : public HardwareSerial
     SercomParityMode extractParity(uint8_t config);
 #endif
 };
+
+#endif
