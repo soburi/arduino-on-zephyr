@@ -27,10 +27,6 @@ extern "C" {
 #include <adc.h>
 #include <pwm.h>
 
-#ifndef W_PWM_DEV_NAME
-#define W_PWM_DEV_NAME(x) NULL
-#endif
-
 #ifdef CONFIG_ADC
 
 void analogReference( eAnalogReference ulMode )
@@ -66,11 +62,22 @@ void _analogReadResolution(int res)
 
 #ifdef CONFIG_PWM
 
+struct pindev { int pin; char* name; };
+static struct pindev pwm_pinmap[] = W_PWM_PIN2DEV_MAP;
+
+static char* pwm_dev_name(int pin)
+{
+	for(int i=0; i<sizeof(pwm_pinmap)/sizeof(struct pindev); i++) {
+		if(pwm_pinmap[i].pin == pin) return pwm_pinmap[i].name;
+	}
+	return NULL;
+}
+
 static int pwm_resolution = 255;
 
 void analogWrite( uint32_t ulPin, uint32_t ulValue )
 {
-	struct device* dev = device_get_binding(W_PWM_DEV_NAME(ulPin));
+	struct device* dev = device_get_binding(pwm_dev_name(ulPin));
 	if(!dev) return;
 
 	pwm_pin_set_cycles(dev, ulPin, pwm_resolution, ulValue);
