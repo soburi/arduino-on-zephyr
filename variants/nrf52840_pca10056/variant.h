@@ -16,10 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _VARIANT_NRF52840_PCA10056_
-#define _VARIANT_NRF52840_PCA10056_
-
-#include "wiring_private.h"
+#pragma once
 
 #ifdef CONFIG_ADC_NRFX_SAADC
 #include <nrfx_saadc.h>
@@ -28,11 +25,7 @@
 #ifdef __cplusplus
 extern "C"
 {
-#endif // __cplusplus
-
-/*----------------------------------------------------------------------------
- *        Pins
- *----------------------------------------------------------------------------*/
+#endif
 
 /*
  * Analog pins
@@ -55,5 +48,4 @@ extern "C"
 }
 #endif
 
-#endif /* _VARIANT_NRF52840_PCA10056_ */
-
+#include "wiring_private.h" /* MUST PLACE LAST LINE */
