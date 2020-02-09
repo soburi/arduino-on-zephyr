@@ -1,3 +1,5 @@
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${BOARD})
   add_subdirectory(${BOARD})
+else()
+  add_subdirectory(_FALLBACK_)
 endif()

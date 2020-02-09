@@ -5,12 +5,39 @@
 #include "wiring_private.h"
 #include "WInterrupts.h"
 
-int w_pin_mode[W_GPIO_PIN_NUM] = { 0 };
-struct w_gpio_callbacks w_callbacks[W_GPIO_PIN_NUM] = { 0 };
+#ifndef W_GPIO_PINS_PER_PORT
+#define W_GPIO_PINS_PER_PORT 32
+#endif
+
+#ifndef W_GPIO_PORT_NUM
+#define W_GPIO_PORT_NUM (sizeof(gpio_port_names)/sizeof(const char*))
+#endif
+
+#ifndef W_PIN2PORT
+#define W_PIN2PORT(x) (gpio_port_names[x / W_GPIO_PINS_PER_PORT])
+#endif
+
+#ifndef W_PIN2PORTPIN
+#define W_PIN2PORTPIN(x) (x % W_GPIO_PINS_PER_PORT)
+#endif
+
+#ifndef W_GPIO_PIN_NUM
+#define W_GPIO_PIN_NUM (W_GPIO_PINS_PER_PORT * W_GPIO_PORT_NUM)
+#endif
+
+
+struct w_gpio_callbacks {
+	struct gpio_callback z_callback;
+	voidFuncPtr callback;
+};
+
+static const char* gpio_port_names[] = W_GPIO_PORT_NAMES;
+static int w_pin_mode[W_GPIO_PIN_NUM] = { 0 };
+static struct w_gpio_callbacks w_callbacks[W_GPIO_PIN_NUM] = { 0 };
 
 static void gpio_handler(struct device *port, struct gpio_callback *cb, u32_t pins)
 {
-	for(int i=0; i<W_GPIO_PIN_NUM; i++)
+	for(uint32_t i=0; i<W_GPIO_PIN_NUM; i++)
 	{
 		if( (&w_callbacks[i].z_callback) == cb) {
 			w_callbacks[i].callback();
@@ -71,29 +98,40 @@ void w_configure_gpio_interrupt(uint32_t pin, voidFuncPtr callback, uint32_t int
 		gpio_pin_enable_callback(device_get_binding(W_PIN2PORT(pin)), pin);
 	}
 	else {
-		w_detach_interrupt(pin);
+		detachInterrupt(pin);
 	}
 
 }
 
-void w_attach_interrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode)
+void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode)
 {
 	uint32_t pinmode = w_pin_mode[pin];
 	w_configure_gpio_interrupt(pin, callback, mode, pinmode, 0);
 }
-
-void w_detach_interrupt(uint32_t pin)
+/*
+void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode, uint32_t pinmode, uint32_t extraflag)
+{
+	w_configure_gpio_interrupt(pin, callback, mode, pinmode, extraflag);
+}
+*/
+void detachInterrupt(uint32_t pin)
 {
 	gpio_pin_disable_callback(device_get_binding(W_PIN2PORT(pin)), pin);
 	gpio_remove_callback(device_get_binding(W_PIN2PORT(pin)), &w_callbacks[pin].z_callback);
 }
 
-void w_digital_write( uint32_t ulPin, uint32_t ulVal )
+void pinMode( uint32_t dwPin, uint32_t dwMode )
+{
+	w_configure_gpio_interrupt(dwPin, NULL, -1, dwMode, 0);
+}
+
+
+void digitalWrite( uint32_t ulPin, uint32_t ulVal )
 {
 	gpio_pin_write(device_get_binding(W_PIN2PORT(ulPin)), W_PIN2PORTPIN(ulPin), ulVal ? 1 : 0);
 }
 
-int w_digital_read( uint32_t ulPin )
+int digitalRead( uint32_t ulPin )
 {
 	u32_t value;
 	gpio_pin_read(device_get_binding(W_PIN2PORT(ulPin)), W_PIN2PORTPIN(ulPin), &value);

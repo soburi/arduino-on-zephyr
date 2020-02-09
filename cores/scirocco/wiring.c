@@ -1,5 +1,3 @@
-#include "Arduino.h"
-
-void init()
+void __attribute__((__weak__)) init()
 {
 }

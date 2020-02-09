@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2020 Tokita, Hiroshi  All right reserved.
+  Copyright (c) 2014-2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,19 +16,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _VARIANT_BBC_MICROBIT_
-#define _VARIANT_BBC_MICROBIT_
-
-#include "wiring_private.h"
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
-#endif /* _VARIANT_BBC_MICROBIT_ */
+// API compatibility
+#include "variant.h"
 

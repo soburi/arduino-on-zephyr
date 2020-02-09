@@ -2,10 +2,8 @@ cmake_minimum_required(VERSION 3.0.2)
 
 if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
   set(build_dir ${ARDUINO_BUILD_PATH})
-  set(preproc_flag "")
 else()
   set(build_dir ${ARDUINO_BUILD_PATH}/preproc)
-  set(preproc_flag -DARDUINO_PREPROC=1)
 endif()
 
 set(conffiles ${ARDUINO_VARIANT_PATH}/prj.conf)
@@ -25,7 +23,6 @@ foreach(varname ${_variableNames})
   endif()
 endforeach()
 string(JOIN " " conffile_opt ${conffiles})
-string(JOIN " " extradeps_opt ${extradeps})
 #message(STATUS "-DCONF_FILE="${conffile_opt})
 
 
@@ -47,7 +44,7 @@ if(EXISTS ${build_dir}/build.ninja )
   )
 endif()
 
-set(run_preproc_script bash ${ARDUINO_BUILD_PATH}/preproc/preproc.sh)
+set(run_preproc_script bash ${ARDUINO_BUILD_PATH}/preproc/preproc.cpp.sh)
 
 if(NOT WIN32)
   if(${ARDUINO_PREPROC_TARGET} STREQUAL "nul")
@@ -56,38 +53,32 @@ if(NOT WIN32)
   endif()
 endif()
 
-if(NOT ${EXTERNAL_PROJECT_PATH_OPENTHREAD} STREQUAL "")
-  set(external_ot_path -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD})
-else()
-  set(external_ot_path "")
-endif()
+message(STATUS "COMMAND ${CMAKE_COMMAND} -GNinja -DARDUINO_BUILD_PATH=${ARDUINO_BUILD_PATH} -DARDUINO_VARIANT_PATH=${ARDUINO_VARIANT_PATH} -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile")
 
 if(EXISTS ${build_dir}/_cmakefile/.NOT_CHANGED )
   file(REMOVE ${build_dir}/_cmakefile/.NOT_CHANGED )
 else()
   if("${ARDUINO_PREPROC_TARGET}" STREQUAL "{preprocessed_file_path}")
     execute_process(
-      COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} ${external_ot_path} ${preproc_flag} -DARDUINO_EXTRA_DEPENDENCIES=${extradeps_opt} _cmakefile
+      COMMAND ${CMAKE_COMMAND} -GNinja -DARDUINO_BUILD_PATH=${ARDUINO_BUILD_PATH} -DARDUINO_VARIANT_PATH=${ARDUINO_VARIANT_PATH} -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile
       WORKING_DIRECTORY ${build_dir}
     )
-  else()
-    if(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.sh )
-      #message(${conffiles})
-      execute_process(
-        COMMAND ${CMAKE_COMMAND} -GNinja -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DEXTERNAL_PROJECT_PATH_OPENTHREAD=${EXTERNAL_PROJECT_PATH_OPENTHREAD} ${preproc_flag} -DARDUINO_EXTRA_DEPENDENCIES=${extradeps_opt} _cmakefile
-        WORKING_DIRECTORY ${build_dir}
-        OUTPUT_QUIET
-        ERROR_QUIET
-      )
+  elseif(NOT EXISTS ${ARDUINO_BUILD_PATH}/preproc/preproc.cpp.sh)
+    #message(${conffiles})
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -GNinja -DARDUINO_BUILD_PATH=${ARDUINO_BUILD_PATH} -DARDUINO_VARIANT_PATH=${ARDUINO_VARIANT_PATH} -DBOARD=${BOARD} -DCONF_FILE=${conffile_opt} -DZEPHYR_MODULES=${ZEPHYR_MODULES} _cmakefile
+      WORKING_DIRECTORY ${build_dir}
+      OUTPUT_QUIET
+      ERROR_QUIET
+    )
 
-      # enforce GENERETE_OUTPUT
-      execute_process(
-        COMMAND ${CMAKE_COMMAND} --build ${build_dir} -- zephyr/linker.cmd
-        WORKING_DIRECTORY ${build_dir}
-        OUTPUT_QUIET
-        ERROR_QUIET
-      )
-    endif()
+    # enforce GENERETE_OUTPUT
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} --build ${build_dir} -- zephyr/linker.cmd
+      WORKING_DIRECTORY ${build_dir}
+      OUTPUT_QUIET
+      ERROR_QUIET
+    )
   endif()
 endif()
 
