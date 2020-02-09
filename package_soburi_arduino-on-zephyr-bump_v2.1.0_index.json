@@ -1,0 +1,70 @@
+{
+  "packages": [
+    {
+      "platforms": [
+        {
+          "name": "ZephyrOS supported Boards",
+          "architecture": "zephyr",
+          "category": "Contributed",
+          "version": "0.0.2002080738",
+          "url": "https://github.com/soburi/arduino-on-zephyr/archive/8014f68cde2bbd076b54d980db86ebd70abbdb39.tar.gz",
+          "archiveFileName": "arduino-on-zephyr-bump_v2.1.0-0.0.2002080738.tar.gz",
+          "checksum": "SHA-256:27f0bdccc142ae14f55693fea8086f5efdb9781b0687edd53786385c21764b96",
+          "size": "102319",
+          "boards": [
+            {
+              "name": "ZephyrOS supported boards"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "scirocco",
+              "name": "intiki",
+              "version": "1.0.3"
+            }
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "name": "intiki",
+          "version": "1.0.3",
+          "systems": [
+            {
+              "archiveFileName": "intiki_x86_64-apple-darwin_1.0.3.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.3/intiki_x86_64-apple-darwin_1.0.3.tar.bz2",
+              "host": "x86_64-apple-darwin",
+              "checksum": "SHA-256:af695543edcc66ec8c67bdfee54fc26fd0acf865b9e3a6f758e75b363bc357ac",
+              "size": "1035291"
+            },
+            {
+              "archiveFileName": "intiki_x86_64-pc-linux-gnu_1.0.3.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.3/intiki_x86_64-pc-linux-gnu_1.0.3.tar.bz2",
+              "host": "x86_64-pc-linux-gnu",
+              "checksum": "SHA-256:791a910096877bf7b45ef04eefab6af988fe5f5f7ddaff199bfac55887d3370e",
+              "size": "1045584"
+            },
+            {
+              "archiveFileName": "intiki_i686-mingw32_1.0.3.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.3/intiki_i686-mingw32_1.0.3.tar.bz2",
+              "host": "i686-mingw32",
+              "checksum": "SHA-256:4cc314f9b11dfe08b000e3bb66624c34d3d6b56285c1b74d008843e8135f7f54",
+              "size": "1016923"
+            },
+            {
+              "archiveFileName": "intiki_arm-linux-gnueabihf_1.0.3.tar.bz2",
+              "url": "https://github.com/soburi/intiki/releases/download/1.0.3/intiki_arm-linux-gnueabihf_1.0.3.tar.bz2",
+              "host": "arm-linux-gnueabihf",
+              "checksum": "SHA-256:1a6b7c39a6b52dca5933c610b0beb506a4a02a1c377e6c0d46842313d2108df8",
+              "size": "945663"
+            }
+          ]
+        }
+      ],
+      "name": "scirocco",
+      "maintainer": "soburi",
+      "websiteURL": "https://github.com/soburi/arduino-on-zephyr",
+      "email": "soburi@gmail.com"
+    }
+  ]
+}
