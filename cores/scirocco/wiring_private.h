@@ -176,6 +176,7 @@ echo "#endif"
 
 #include <stdint.h>
 #include "wiring_constants.h"
+#include "variant.h"
 
 #ifdef __cplusplus
 class Uart;

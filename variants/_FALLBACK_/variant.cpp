@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2020 Tokita, Hiroshi  All right reserved.
+  Copyright (c) 202X ... All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,12 +16,4 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
-
-
-#ifdef __cplusplus
-}
-#endif
+#include "variant.h"

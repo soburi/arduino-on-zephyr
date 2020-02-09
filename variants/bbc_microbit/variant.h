@@ -16,19 +16,15 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _VARIANT_BBC_MICROBIT_
-#define _VARIANT_BBC_MICROBIT_
-
-#include "wiring_private.h"
+#pragma once
 
 #ifdef __cplusplus
 extern "C"
 {
-#endif // __cplusplus
+#endif
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif
 
-#endif /* _VARIANT_BBC_MICROBIT_ */
-
+#include "wiring_private.h" /* MUST PLACE LAST LINE */
