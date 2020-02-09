@@ -52,7 +52,7 @@ string(JOIN " " conffile_opt ${conffiles})
 
 
 # restore symlinks
-if(EXISTS ${build_dir}/zephyr/ )
+if(EXISTS ${build_dir}/zephyr/ AND NOT WIN32)
   execute_process(
     COMMAND  python3   $ENV{ZEPHYR_BASE}/scripts/subfolder_list.py
     --directory        $ENV{ZEPHYR_BASE}/include
@@ -69,7 +69,11 @@ if(EXISTS ${build_dir}/build.ninja )
   )
 endif()
 
+if(WIN32)
+set(run_preproc_script ${ARDUINO_BUILD_PATH}/preproc/preproc.cpp.bat)
+else()
 set(run_preproc_script bash ${ARDUINO_BUILD_PATH}/preproc/preproc.cpp.sh)
+endif()
 
 if(NOT WIN32)
   if(${ARDUINO_PREPROC_TARGET} STREQUAL "nul")
