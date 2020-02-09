@@ -1,40 +1,66 @@
 About
 =====
 
-This is a Arduino add-on package which use [Zephyr OS](https://www.zephyrproject.org/) as backend and develop with Arduino API.
+This is a Arduino package which able to develop with Arduino API with using [Zephyr RTOS](https://www.zephyrproject.org/) as base system.
+
+This source code can also use as a module for Zephyr.
 
 Install
 =======
 
-Install Arduino on Zephyr plugin
+Install from ArduinoIDE
 --------------------------------
 
 Use this additional package definition of 'Additional Boards Manager URLs' option that is on Arduino's preferences.
 * [https://soburi.github.io/arduino-on-zephyr/package_soburi_scirocco_index.json](https://soburi.github.io/arduino-on-zephyr/package_soburi_scirocco_index.json)
+
+Use as a Zephyr Module
+--------------------------------
+
+To use this module download(clone) `zephyr` source and configure `west.yml`.
+Append lines to `remotes` and `projects` section to `west.yml` like a below.
+
+```
+manifest:
+  defaults:
+    remote: upstream
+
+  remotes:
+    - name: upstream
+      url-base: https://github.com/zephyrproject-rtos
+    - name: soburi                                        # ADD
+      url-base: https://github.com/soburi                 # ADD
+  #
+  # Please add items below based on alphabetical order
+  projects:
+    - name: arduino-on-zephyr                             # ADD
+      revision: 9e23502fe34bb1edf524b9177c75cce056e98840  # ADD
+      path: modules/lib/arduino-on-zephyr                 # ADD
+      remote: soburi                                      # ADD
+    - name: hal_atmel
+      revision: 5a44c9d54dffd685fb6664a646922cfe41c5cf8e
+      path: modules/hal/atmel
+  ........ snip  ........
+```
+
+And run command in below to fetch modules.
+
+```
+west init -l zephyr
+west update
+```
+
+See a example in [https://github.com/soburi/zephyr/tree/arduino-example](https://github.com/soburi/zephyr/tree/arduino-api-example) for using this module.
 
 Build environment setup
 ----------------------------
 
 Read [Set Up a Development System](https://docs.zephyrproject.org/latest/getting_started/index.html#set-up-a-development-system) instructions.
 
-On Debian/Ubuntu system, run this commands.
-
-```
-sudo apt-get install --no-install-recommends git cmake ninja-build gperf \
-  ccache dfu-util device-tree-compiler wget \
-  python3-pip python3-setuptools python3-wheel xz-utils file make gcc \
-  gcc-multilib
-
-sudo apt-get install --no-install-recommends automake libtool
-
-pip3 install -r <(wget https://raw.githubusercontent.com/zephyrproject-rtos/zephyr/master/scripts/requirements.txt)
-pip3 install west
-
-wget https://github.com/zephyrproject-rtos/meta-zephyr-sdk/releases/download/0.9.5/zephyr-sdk-0.9.5-setup.run
-chmod +x zephyr-sdk-0.9.5-setup.run
-sudo ./zephyr-sdk-0.9.5-setup.run --target /opt/zephyr-sdk/ -- -y -d /opt/zephyr-sdk/
-```
-
+In summary,
+- Install OS packages and python dependencies
+- Install `zephyr-sdk`
+- Install `west` (Don't forget append `.local/bin` to `PATH`)
 
 Limitations
 ===========
