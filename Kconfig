@@ -6,11 +6,15 @@
 
 config ARDUINO_API
 	bool "ARDUINO_API"
-	depends on SERIAL
-	depends on UART_INTERRUPT_DRIVEN
 	depends on CPLUSPLUS
 
 if ARDUINO_API
+
+config ARDUINO_UART
+	bool "ARDUINO_API"
+	depends on SERIAL
+	depends on UART_INTERRUPT_DRIVEN
+	default true
 
 config ARDUINO_MAIN_LOOP
 	bool "ARDUINO_MAIN_LOOP"
