@@ -24,9 +24,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(CONFIG_NEWLIB_LIBC)
 #include <math.h>
-#endif
 
 #include <zephyr.h>
 #include <device.h>
