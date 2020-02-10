@@ -34,7 +34,7 @@ manifest:
   # Please add items below based on alphabetical order
   projects:
     - name: arduino-on-zephyr                             # ADD
-      revision: 9e23502fe34bb1edf524b9177c75cce056e98840  # ADD
+      revision: scirocco-0.0.20200210                     # ADD
       path: modules/lib/arduino-on-zephyr                 # ADD
       remote: soburi                                      # ADD
     - name: hal_atmel
