@@ -49,7 +49,7 @@ extern "C"{
 #endif // __cplusplus
 
 // Include Atmel headers
-//#include "sam.h"
+#include "sam.h"
 
 #include "wiring_constants.h"
 
