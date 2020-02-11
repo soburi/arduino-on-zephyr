@@ -136,4 +136,8 @@ void loop( void ) ;
 #include "USB/USBAPI.h"
 #include "USB/USB_host.h"
 
+#ifdef __cplusplus
+  #include "USB/CDC.h"
+#endif
+
 #endif // Arduino_h
