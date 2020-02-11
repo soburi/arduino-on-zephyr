@@ -85,6 +85,6 @@ recipe.hooks.objcopy.preobjcopy.2.pattern={intiki.cmd-v} -recipe make {make.path
 
 tools.west.upload.cmd={runtime.platform.path}/system/support/west_wrap.sh
 tools.west.upload.cmd.windows={runtime.platform.path}/system/support/west_wrap.bat
-tools.west.upload.pattern={upload.cmd} -z {runtime.platform.path}/system/zephyr flash --skip-rebuild --build-dir {build.path} --hex-file {build.path}/zephyr/zephyr.hex
+tools.west.upload.pattern={upload.cmd} -z {runtime.platform.path}/system/zephyr flash --skip-rebuild --build-dir {build.path} --hex-file {build.path}/zephyr/zephyr.hex -- {upload.extra_args}
 tools.west.upload.params.verbose=
 tools.west.upload.params.quiet=

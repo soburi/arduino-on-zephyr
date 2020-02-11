@@ -13,6 +13,7 @@ bbc_microbit.menu.network.bt=Bluetooth
 bbc_microbit.menu.network.bt.build.network_conf=-DOVERLAY_APPEND_NETWORK={runtime.platform.path}/variants/{build.variant}/overlay-bt.conf
 
 nrf52840_pca10056.name=nRF52840 Development Kit
+nrf52840_pca10056.upload.extra_args=--softreset
 nrf52840_pca10056.upload.tool=west
 nrf52840_pca10056.upload.protocol=west
 nrf52840_pca10056.build.mcu=cortex-m0
