@@ -106,7 +106,7 @@ uint32_t w_gpio_port_pin_no(uint32_t pin)
     return  (pin % W_GPIO_PINS_PER_PORT);
 }
 
-char* w_gpio_port_name(uint32_t pin)
+const char* w_gpio_port_name(uint32_t pin)
 {
     if((pin/W_GPIO_PINS_PER_PORT) < W_GPIO_PORT_NUM) {
         return (gpio_port_names[pin / W_GPIO_PINS_PER_PORT]);
