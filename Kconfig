@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2017 Linaro Limited
+# Copyright (c) 2020 Toita, Hiroshi
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -7,16 +7,18 @@
 config ARDUINO_API
 	bool "ARDUINO_API"
 	depends on CPLUSPLUS
+	default n
 
 if ARDUINO_API
+
+config ARDUINO_MAIN_LOOP
+	bool "ARDUINO_MAIN_LOOP"
+	default n
 
 config ARDUINO_UART
 	bool "ARDUINO_API"
 	depends on SERIAL
 	depends on UART_INTERRUPT_DRIVEN
-	default true
+	default y
 
-config ARDUINO_MAIN_LOOP
-	bool "ARDUINO_MAIN_LOOP"
-	default true
 endif
