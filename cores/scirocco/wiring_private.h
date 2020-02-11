@@ -31,6 +31,17 @@ extern "C" {
 
 #include "wiring_constants.h"
 
+typedef void (*voidFuncPtr)(void);
+struct device;
+
+void w_gpio_pin_callback_configure(struct device* port, uint32_t pin, voidFuncPtr callback, uint32_t pinconf, uint32_t intconf, uint32_t extconf);
+uint32_t w_gpio_port_pin_no(uint32_t pin);
+char* w_gpio_port_name(uint32_t pin);
+
+#ifdef CONFIG_ARDUINO_PORT_CONFIG_QUERY
+uint32_t gpio_pin_query_config(struct device* port, uint32_t pin);
+#endif
+
 int pinPeripheral( uint32_t ulPin, EPioType ulPeripheral );
 
 #ifdef __cplusplus
