@@ -22,21 +22,21 @@
 #include <ctype.h>
 
 #if !defined(CONFIG_NEWLIB_LIBC)
-static inline int islower(int c)
+static inline int islower(int a)
 {
-	return (int)(((unsigned)(c)-(unsigned)'a') < 26U);
+	return (int)(((unsigned)(a)-(unsigned)'a') < 26U);
 }
 static inline int ispunct(int c)
 {
-	return (int)((0x20 < c && c < 0x30) || (0x3a <= c && c <= 0x40) || (0x5b <= c && c <= 0x60) || (0x7a < c && c < 0x7f) );
+	return (int)(((int)'!' <= c && c <= '/') || ((int)':' <= c && c <= (int)'@') || ((int)'[' <= c && c <= (int)'`') || ((int)'{' <= c && c <= (int)'~') );
 }
 static inline int isblank(int c)
 {
-	return (int)(c == 0x09 || c == 0x20);
+	return (int)(c == (int)' ' || c == (int)'\t');
 }
 static inline int iscntrl(int c)
 {
-	return (int)(c == 0x7f || c < 0x20);
+	return (int)(c == (int)'\x7F' || c < (int)' ');
 }
 #endif
 
