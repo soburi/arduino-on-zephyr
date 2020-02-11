@@ -6,6 +6,33 @@
           "name": "ZephyrOS supported Boards",
           "architecture": "zephyr",
           "category": "Contributed",
+          "version": "0.0.4",
+          "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/0.0.4/arduino-on-zephyr-0.0.4.tar.bz2",
+          "archiveFileName": "arduino-on-zephyr-0.0.4.tar.bz2",
+          "checksum": "SHA-256:8da6156bd8d82620964c21ed770577cb7dc8d5ad0aba907f2ad95f8abb8b39c0",
+          "size": "160161190",
+          "boards": [
+            {
+              "name": "ZephyrOS supported boards"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "scirocco",
+              "name": "intiki",
+              "version": "1.0.3"
+            },
+            {
+              "packager": "arduino",
+              "name": "arm-none-eabi-gcc",
+              "version": "7-2017q4"
+            }
+          ]
+        },
+        {
+          "name": "ZephyrOS supported Boards",
+          "architecture": "zephyr",
+          "category": "Contributed",
           "version": "missing_ctype",
           "url": "https://github.com/soburi/arduino-on-zephyr/releases/download/missing_ctype/arduino-on-zephyr-missing_ctype.tar.bz2",
           "archiveFileName": "arduino-on-zephyr-missing_ctype.tar.bz2",
