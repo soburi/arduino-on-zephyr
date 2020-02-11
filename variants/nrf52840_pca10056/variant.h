@@ -48,4 +48,4 @@ extern "C"
 }
 #endif
 
-#include "wiring_private.h" /* MUST PLACE LAST LINE */
+#include "variant_common.h" /* MUST PLACE LAST LINE */

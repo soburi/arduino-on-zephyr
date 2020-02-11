@@ -51,7 +51,7 @@ extern "C"{
 #endif // __cplusplus
 
 // Include Atmel headers
-//#include "sam.h"
+#include "sam.h"
 
 #include "wiring_constants.h"
 
@@ -135,5 +135,9 @@ void loop( void ) ;
 #include "USB/USBCore.h"
 #include "USB/USBAPI.h"
 #include "USB/USB_host.h"
+
+#ifdef __cplusplus
+  #include "USB/CDC.h"
+#endif
 
 #endif // Arduino_h
