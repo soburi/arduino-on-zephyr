@@ -1,0 +1,11 @@
+# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+# file LICENSE
+
+set (CMAKE_Arduino_COMPILER "@CMAKE_Arduino_COMPILER@")
+set (CMAKE_Arduino_SOURCE_FILE_EXTENSIONS ino;pde)
+set (CMAKE_Arduino_COMPILER_ENV_VAR "@CMAKE_Arduino_COMPILER_ENV_VAR@")
+
+set (CMAKE_AR "@CMAKE_AR@")
+set (CMAKE_RANLIB "@CMAKE_RANLIB@")
+set (CMAKE_LINKER "@CMAKE_LINKER@")
+
