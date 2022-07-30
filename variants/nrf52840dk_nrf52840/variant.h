@@ -16,12 +16,39 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#pragma once
+
+#ifdef CONFIG_ADC_NRFX_SAADC
+#include <nrfx_saadc.h>
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
-#endif // __cplusplus
+#endif
 
+#define GPIOPORT_COMPAT nordic_nrf_gpio
+#define UART_COMPAT nordic_nrf_uarte
+
+/*
+ * Analog pins
+ */
+#if   defined(CONFIG_ADC_NRFX_SAADC)
+#define PIN_A0 (NRF_SAADC_INPUT_AIN0)
+#define PIN_A1 (NRF_SAADC_INPUT_AIN1)
+#define PIN_A2 (NRF_SAADC_INPUT_AIN2)
+#define PIN_A3 (NRF_SAADC_INPUT_AIN3)
+#define PIN_A4 (NRF_SAADC_INPUT_AIN4)
+#define PIN_A5 (NRF_SAADC_INPUT_AIN5)
+#define PIN_A6 (NRF_SAADC_INPUT_AIN6)
+#define PIN_A7 (NRF_SAADC_INPUT_AIN7)
+#define PIN_V8 (NRF_SAADC_INPUT_VDD)
+#elif defined(CONFIG_ADC_NRFX_ADC_CHANNEL_COUNT)
+//TODO
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+#include "wiring_private.h" /* MUST PLACE LAST LINE */
