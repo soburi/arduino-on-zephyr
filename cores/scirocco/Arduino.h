@@ -29,8 +29,8 @@
 #endif
 
 #include <zephyr.h>
-#include <device.h>
-#include <gpio.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
 
 typedef bool boolean;
 typedef uint8_t byte;

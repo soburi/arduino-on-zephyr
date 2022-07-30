@@ -59,7 +59,7 @@ extern int z_clock_hw_cycles_per_sec;
 #else
 #define HW_CYCLES_PER_SEC CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC
 #endif
-	return ( (u32_t)( (u64_t)k_cycle_get_32() * USEC_PER_SEC / HW_CYCLES_PER_SEC) );
+	return ( (uint32_t)( (uint64_t)k_cycle_get_32() * USEC_PER_SEC / HW_CYCLES_PER_SEC) );
 }
 
 /**
@@ -70,7 +70,7 @@ extern int z_clock_hw_cycles_per_sec;
  */
 static inline void delay( unsigned long dwMs )
 {
-	k_sleep(dwMs);
+	k_msleep(dwMs);
 }
 
 /**

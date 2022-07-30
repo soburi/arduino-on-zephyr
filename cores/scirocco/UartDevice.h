@@ -22,7 +22,7 @@
 #ifdef __cplusplus
 
 #include <zephyr.h>
-#include <uart.h>
+#include <zephyr/drivers/uart.h>
 #include "HardwareSerial.h"
 #include "RingBuffer.h"
 
@@ -31,7 +31,7 @@
 class Uart : public HardwareSerial
 {
   public:
-    Uart(struct device *_s);
+    Uart(const struct device *_s);
     void begin(unsigned long baudRate);
     void begin(unsigned long baudrate, uint16_t config);
     void end();
@@ -51,8 +51,8 @@ class Uart : public HardwareSerial
 
   protected:
     virtual void begin_impl(unsigned long baudrate, uint16_t config);
-    static void IrqDispatch(void* data);
-    struct device *uart;
+    static void IrqDispatch(const struct device *dev, void* data);
+    const struct device *uart;
 
   private:
     RingBuffer rxBuffer;

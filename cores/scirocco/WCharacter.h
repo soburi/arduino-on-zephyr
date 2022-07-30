@@ -34,10 +34,6 @@ static inline int isblank(int c)
 {
 	return (int)(c == 0x09 || c == 0x20);
 }
-static inline int iscntrl(int c)
-{
-	return (int)(c == 0x7f || c < 0x20);
-}
 #endif
 
 #ifdef __cplusplus

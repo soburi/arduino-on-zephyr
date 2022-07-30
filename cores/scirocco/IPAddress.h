@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 #include <zephyr/types.h>
-#include <misc/byteorder.h>
+#include <zephyr/sys/byteorder.h>
 
 #include "Printable.h"
 #include "WString.h"

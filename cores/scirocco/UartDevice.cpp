@@ -17,13 +17,13 @@
 */
 
 #include <zephyr.h>
-#include <uart.h>
+#include <zephyr/drivers/uart.h>
 #include "UartDevice.h"
 #include "Arduino.h"
 
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 
-Uart::Uart(struct device *_s)
+Uart::Uart(const struct device *_s)
 {
 	uart = _s;
 	k_sem_init(&tx_sem, 1, 1);
@@ -84,7 +84,7 @@ static enum uart_config_data_bits conf_data_bits(uint16_t conf)
 void Uart::begin_impl(unsigned long baud, uint16_t conf)
 {
 	struct uart_config config = {
-		.baudrate = baud,
+		.baudrate = (uint32_t)baud,
 		.parity = conf_parity(conf),
 		.stop_bits = conf_stop_bits(conf),
 		.data_bits = conf_data_bits(conf),
@@ -136,7 +136,7 @@ void Uart::IrqHandler()
 		k_sem_take(&tx_sem, K_NO_WAIT);
 
 		if ( (txcount-txidx) > 0) {
-			int written = uart_fifo_fill(uart, const_cast<const u8_t*>(txbuffer)+txidx, txcount-txidx);
+			int written = uart_fifo_fill(uart, const_cast<const uint8_t*>(txbuffer)+txidx, txcount-txidx);
 			txidx += written;
 		}
 
@@ -144,7 +144,7 @@ void Uart::IrqHandler()
 	}
 }
 
-void Uart::IrqDispatch(void* data)
+void Uart::IrqDispatch(const struct device *dev, void* data)
 {
 	reinterpret_cast<Uart*>(data)->IrqHandler();
 }

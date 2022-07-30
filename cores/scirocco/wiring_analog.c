@@ -24,8 +24,8 @@ extern "C" {
 #endif
 
 #include <zephyr.h>
-#include <adc.h>
-#include <pwm.h>
+#include <zephyr/drivers/adc.h>
+#include <zephyr/drivers/pwm.h>
 
 #ifdef CONFIG_ADC
 
@@ -62,13 +62,16 @@ void _analogReadResolution(int res)
 
 #ifdef CONFIG_PWM
 
-struct pindev { int pin; char* name; };
-static struct pindev pwm_pinmap[] = W_PWM_PIN2DEV_MAP;
+struct pwm_dev_pin {
+	struct device* dev;
+	uint32_t ch;
+};
+static struct pwm_dev_pin pwm_table[] = { LISTIFY(NUM_UART, GEN_PWM_CFG_N, (,)) };
 
-static char* pwm_dev_name(int pin)
+static struct device* pwm_device(int pin)
 {
-	for(int i=0; i<sizeof(pwm_pinmap)/sizeof(struct pindev); i++) {
-		if(pwm_pinmap[i].pin == pin) return pwm_pinmap[i].name;
+	if(pin<ARRAY_SIZE(pwm_table)) {
+		return pwm_table[pin].dev;
 	}
 	return NULL;
 }
@@ -77,10 +80,9 @@ static int pwm_resolution = 255;
 
 void analogWrite( uint32_t ulPin, uint32_t ulValue )
 {
-	struct device* dev = device_get_binding(pwm_dev_name(ulPin));
-	if(!dev) return;
+	if(!pwm_device(ulPin)) return;
 
-	pwm_pin_set_cycles(dev, ulPin, pwm_resolution, ulValue);
+	pwm_set_cycles(pwm_device(ulPin), pwm_table[ulPin].ch, pwm_resolution, ulValue);
 }
 
 void analogWriteResolution(int res)

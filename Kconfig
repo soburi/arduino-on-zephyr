@@ -6,7 +6,7 @@
 
 config ARDUINO_API
 	bool "ARDUINO_API"
-	depends on CPLUSPLUS
+	select CPLUSPLUS
 
 if ARDUINO_API
 
