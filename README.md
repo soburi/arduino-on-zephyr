@@ -1,3 +1,10 @@
+THIS PROJECT IS ARCHIVED
+========================
+
+All achivements of this project have been merged into [https://github.com/zephyrproject-rtos/gsoc-2022-arduino-core](https://github.com/zephyrproject-rtos/gsoc-2022-arduino-core). Please use them.
+
+-------------------------------------------------------------------------------
+
 About
 =====
 
